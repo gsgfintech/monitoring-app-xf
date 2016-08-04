@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Capital.GSG.FX.Monitor.App.XF;assembly=Capital.GSG.FX.Monitor.App.XF"
+             xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+             xmlns:conv="clr-namespace:DataGridSample.Views.Converters;assembly=DataGridSample"
+             x:Class="Capital.GSG.FX.Monitor.App.XF.ExecutionsList"
+             Title="Trades">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:CrossShortenerConverter x:Key="crossShortenerConverter" />
+      <local:ExecutionSideConverter x:Key="executionSideConverter" />
+      <local:OriginConverter x:Key="originConverter" />
+      <local:QuantityConverter x:Key="quantityConverter" />
+      <local:DurationConverter x:Key="durationConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <Grid RowSpacing="0">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <ActivityIndicator Grid.RowSpan="2"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       IsVisible="False"
+                       IsEnabled="True"
+                       x:Name="syncIndicator"/>
+    <dg:DataGrid x:Name="tradesList" SelectionEnabled="False">
+      <dg:DataGrid.Columns>
+        <dg:DataGridColumn Title="Exec Time" PropertyName="ExecutionTime" />
+        <dg:DataGridColumn Title="Origin" PropertyName="OrderOrigin," />
+        <dg:DataGridColumn Title="Side" PropertyName="Side" />
+        <dg:DataGridColumn Title="Qty" PropertyName="CumulativeQuantity" />
+        <dg:DataGridColumn Title="Pair" PropertyName="Cross" />
+        <dg:DataGridColumn Title="Rate" PropertyName="Price" />
+        <dg:DataGridColumn Title="RPnL (USD)" PropertyName="RealizedPnlUsd" />
+        <dg:DataGridColumn Title="RPnL (pips)" PropertyName="RealizedPnlPips" />
+        <dg:DataGridColumn Title="Duration" PropertyName="TradeDuration" />
+      </dg:DataGrid.Columns>
+    </dg:DataGrid>
+    
+    <!--<ListView x:Name="todoList"
+				ItemSelected="OnSelected"
+				IsPullToRefreshEnabled="true" Refreshing="OnRefresh"
+				Grid.Row="1">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+
+            --><!--<ViewCell.ContextActions>
+              <MenuItem Clicked="OnComplete" Text="Complete" CommandParameter="{Binding .}"/>
+            </ViewCell.ContextActions>--><!--
+
+            <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal" Padding="15,5,0,0">
+              <Label Text="{Binding ExecutionTime, StringFormat='{0:HH:mm:ss}'}" />
+              <Label Text="{Binding OrderOrigin, Converter={StaticResource originConverter}}" />
+              <Label Text="{Binding Side, Converter={StaticResource executionSideConverter}}" />
+              <Label Text="{Binding CumulativeQuantity, Converter={StaticResource quantityConverter}}" />
+              <Label Text="{Binding Cross, Converter={StaticResource crossShortenerConverter}}" />
+              <Label Text="{Binding Price}" />
+              <Label Text="{Binding RealizedPnlUsd, StringFormat='{0:N0}'}" />
+              <Label Text="{Binding RealizedPnlPips, StringFormat='{0:N1}'}" />
+              <Label Text="{Binding TradeDuration, Converter={StaticResource durationConverter}}" />
+            </StackLayout>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>-->
+  </Grid>
+</ContentPage>
