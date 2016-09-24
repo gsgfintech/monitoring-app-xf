@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,12 @@ namespace MonitoringApp.XF.Components.Executions
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to load today's executions");
+                    throw new AuthenticationRequiredException(typeof(ExecutionManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
                 Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
@@ -100,6 +107,12 @@ namespace MonitoringApp.XF.Components.Executions
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to load execution");
+                    throw new AuthenticationRequiredException(typeof(ExecutionManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
                 Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }

@@ -10,12 +10,16 @@ namespace MonitoringApp.XF.Components.Login
 {
     public class LoginPage : ContentPage
     {
+        private ContentPage sender;
+
         private bool authenticated = false;
 
         private Label messageLabel;
 
-        public LoginPage()
+        public LoginPage(ContentPage sender)
         {
+            this.sender = sender;
+
             messageLabel = new Label() { Text = "Sign in" };
 
             Content = new StackLayout
@@ -37,13 +41,16 @@ namespace MonitoringApp.XF.Components.Login
 
                 if (authenticated)
                 {
-                    if (Device.OS == TargetPlatform.iOS)
+                    if (sender != null)
+                        await Navigation.PopAsync();
+                    //await Navigation.PushAsync(sender);
+                    else
                     {
-                        await Navigation.PopToRootAsync();
+                        if (Device.OS == TargetPlatform.iOS)
+                            await Navigation.PopToRootAsync();
+
                         Application.Current.MainPage = new MainPage();
                     }
-                    else
-                        Application.Current.MainPage = new MainPage();
                 }
             }
             catch (InvalidOperationException ex)
@@ -51,11 +58,11 @@ namespace MonitoringApp.XF.Components.Login
                 if (ex.Message.Contains("Authentication was cancelled"))
                     messageLabel.Text = "Authentication cancelled by the user";
                 else
-                    messageLabel.Text = "Authentication failed";
+                    messageLabel.Text = $"Authentication failed: {ex.Message}";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                messageLabel.Text = "Authentication failed";
+                messageLabel.Text = $"Authentication failed: {ex.Message}";
             }
         }
     }

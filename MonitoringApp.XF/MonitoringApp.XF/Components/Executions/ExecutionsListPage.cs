@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MonitoringApp.XF.Components.Login;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -16,7 +17,6 @@ namespace MonitoringApp.XF.Components.Executions
         public ExecutionsListPage()
         {
             vm = new ExecutionsListVM();
-
             lstView = new ListView();
             lstView.ItemTemplate = new DataTemplate(typeof(TextCell));
             lstView.ItemTemplate.SetBinding(TextCell.TextProperty, "Item2");
@@ -58,7 +58,8 @@ namespace MonitoringApp.XF.Components.Executions
                 await DisplayAlert("Refresh Error", "Couldn't refresh data (" + error.Message + ")", "OK");
             }
         }
-        public async void OnSelected(object sender, SelectedItemChangedEventArgs e)
+
+        private async void OnSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var item = e.SelectedItem as Tuple<string, string, string>;
 

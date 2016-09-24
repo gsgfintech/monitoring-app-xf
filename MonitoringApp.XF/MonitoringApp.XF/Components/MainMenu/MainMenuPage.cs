@@ -2,7 +2,7 @@
 using MonitoringApp.XF.Components.Executions;
 using MonitoringApp.XF.Components.FXEvents;
 using MonitoringApp.XF.Components.Positions;
-using MonitoringApp.XF.Components.Systems;
+using MonitoringApp.XF.Components.SystemsStatus;
 using System.Collections.Generic;
 
 using Xamarin.Forms;
@@ -51,7 +51,7 @@ namespace MonitoringApp.XF.Components.MainMenu
             mainMenuPageItems.Add(new MainMenuPageItem()
             {
                 IconSource = "contacts.png",
-                TargetType = typeof(SystemsListPage),
+                TargetType = typeof(SystemsStatusesListPage),
                 Title = "Systems"
             });
 

@@ -1,5 +1,6 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
 using Capital.GSG.FX.Utils.Portable;
+using MonitoringApp.XF.Components.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,26 @@ namespace MonitoringApp.XF.Components.Executions
     public class ExecutionsListVM
     {
         public async Task<List<Tuple<string, string, string>>> RefreshTodaysExecutions(bool refresh)
+        {
+            try
+            {
+                return await LoadExecutions(refresh);
+            }
+            catch (AuthenticationRequiredException)
+            {
+                if (App.Authenticator != null)
+                {
+                    bool authenticated = await App.Authenticator.AuthenticateAsync();
+
+                    if (authenticated)
+                        await LoadExecutions(refresh);
+                }
+
+                return null;
+            }
+        }
+
+        private async Task<List<Tuple<string, string, string>>> LoadExecutions(bool refresh)
         {
             var executions = await ExecutionManager.Instance.LoadTodaysExecutions(refresh);
 
@@ -37,6 +58,26 @@ namespace MonitoringApp.XF.Components.Executions
         }
 
         public async Task<ExecutionFull> GetExecutionById(string id)
+        {
+            try
+            {
+                return await LoadExecutionById(id);
+            }
+            catch (AuthenticationRequiredException)
+            {
+                if (App.Authenticator != null)
+                {
+                    bool authenticated = await App.Authenticator.AuthenticateAsync();
+
+                    if (authenticated)
+                        await LoadExecutionById(id);
+                }
+
+                return null;
+            }
+        }
+
+        private static async Task<ExecutionFull> LoadExecutionById(string id)
         {
             return await ExecutionManager.Instance.GetExecutionById(id);
         }

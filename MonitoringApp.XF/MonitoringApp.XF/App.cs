@@ -20,7 +20,8 @@ namespace MonitoringApp.XF
             MobileServiceClient = new MobileServiceClient(Constants.ApplicationURL);
 
             // The root page of your application
-            MainPage = new LoginPage();
+            //MainPage = new LoginPage();
+            MainPage = new MainPage();
         }
 
         public static void Init(IAuthenticate authenticator)

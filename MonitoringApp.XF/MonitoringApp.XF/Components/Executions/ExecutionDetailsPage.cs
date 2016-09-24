@@ -74,8 +74,6 @@ namespace MonitoringApp.XF.Components.Executions
                     grid.Children.Add(new Label() { Text = $"{execution.RealizedPnlUsd} {USD}", VerticalTextAlignment = TextAlignment.Center }, 1, 5);
             }
 
-            grid.Children.Add(new Label() { Text = $"{execution.RealizedPnlUsd} {USD}", VerticalTextAlignment = TextAlignment.Center }, 1, 5);
-
             grid.Children.Add(new Label() { Text = "Duration", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 6);
             grid.Children.Add(new Label() { Text = execution.TradeDuration, VerticalTextAlignment = TextAlignment.Center }, 1, 6);
 

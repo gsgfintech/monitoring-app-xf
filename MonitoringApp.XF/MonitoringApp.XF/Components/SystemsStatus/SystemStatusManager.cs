@@ -1,0 +1,128 @@
+﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+using Microsoft.WindowsAzure.MobileServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace MonitoringApp.XF.Components.SystemsStatus
+{
+    public class SystemStatusManager
+    {
+        private const string SystemsRoute = "systems";
+
+        private readonly MobileServiceClient client;
+
+        private List<SystemStatusSlim> statuses;
+        private Dictionary<string, SystemStatusFull> detailedStatuses = new Dictionary<string, SystemStatusFull>();
+
+        private static SystemStatusManager instance;
+        public static SystemStatusManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new SystemStatusManager();
+
+                return instance;
+            }
+        }
+
+        private SystemStatusManager()
+        {
+            client = App.MobileServiceClient;
+        }
+
+        public async Task<List<SystemStatusSlim>> LoadSystemsStatuses(bool refresh)
+        {
+            try
+            {
+                if (statuses == null || refresh)
+                {
+                    detailedStatuses.Clear();
+
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                    statuses = await client.InvokeApiAsync<List<SystemStatusSlim>>($"{SystemsRoute}", HttpMethod.Get, null, cts.Token);
+                }
+
+                return statuses;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Not retrieving systems statuses: operation cancelled");
+                return null;
+            }
+            catch (MobileServiceInvalidOperationException msioe)
+            {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to load systems statuses");
+                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
+                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
+                return null;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Sync error: {e.Message}");
+                return null;
+            }
+        }
+
+        public async Task<SystemStatusFull> GetSystemStatusByName(string name)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(name))
+                    throw new ArgumentNullException(nameof(name));
+
+                if (detailedStatuses.ContainsKey(name) && detailedStatuses[name] != null)
+                    return detailedStatuses[name];
+                else
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                    SystemStatusFull status = await client.InvokeApiAsync<SystemStatusFull>($"{SystemsRoute}/{name}", HttpMethod.Get, null, cts.Token);
+
+                    if (status != null)
+                        detailedStatuses[name] = status;
+
+                    return status;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Not retrieving system status details: operation cancelled");
+                return null;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Debug.WriteLine($"Not retrieving system status: missing or invalid parameter {ex.ParamName}");
+                return null;
+            }
+            catch (MobileServiceInvalidOperationException msioe)
+            {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to system status");
+                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
+                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
+                return null;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Sync error: {e.Message}");
+                return null;
+            }
+        }
+    }
+}
