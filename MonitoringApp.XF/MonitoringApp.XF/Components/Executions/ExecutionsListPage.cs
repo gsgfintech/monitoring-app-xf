@@ -24,7 +24,7 @@ namespace MonitoringApp.XF.Components.Executions
             lstView.IsPullToRefreshEnabled = true;
             lstView.ItemSelected += OnSelected;
             lstView.Refreshing += OnRefresh;
-
+            
             Content = lstView;
         }
 
