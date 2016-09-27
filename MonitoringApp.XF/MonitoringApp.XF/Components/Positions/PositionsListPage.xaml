@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MonitoringApp.XF.Components.Positions.PositionsListPage"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions">
+
+  <ContentPage.BindingContext>
+    <local:PositionsListVM x:Name="ViewModel" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:NumberToColorConverter x:Key="NumberToColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+              </Grid.RowDefinitions>
+              <Label Text="{Binding Cross}" FontSize="20" Margin="20,0,0,0" />
+              <Label Text="{Binding Quantity, StringFormat='{0:N0}'}" Grid.Row="1" Margin="20,0,0,0"
+                     TextColor="{Binding Quantity, Converter={StaticResource NumberToColorConverter}}" />
+              <Label Text="{Binding TotalPnlUsd, StringFormat='{0:N0}'}" HorizontalTextAlignment="End"
+                     FontSize="18" VerticalTextAlignment="Center" Margin="0,0,20,0"
+                     TextColor="{Binding TotalPnlUsd, Converter={StaticResource NumberToColorConverter}}"
+                     Grid.Column="1" Grid.RowSpan="2" />
+            </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </ContentPage.Content>
+</ContentPage>

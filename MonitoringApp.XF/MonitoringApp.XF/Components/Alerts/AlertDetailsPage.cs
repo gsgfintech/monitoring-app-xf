@@ -1,9 +1,4 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 
 using Xamarin.Forms;
 
@@ -14,49 +9,33 @@ namespace MonitoringApp.XF.Components.Alerts
         public AlertDetailsPage(AlertFull alert)
         {
             Title = $"Alert {alert.Id}";
-            Padding = new Thickness(20);
 
-            Grid grid = new Grid()
+            Content = new TableView()
             {
-                ColumnDefinitions = new ColumnDefinitionCollection()
+                Intent = TableIntent.Data,
+                Root = new TableRoot()
                 {
-                    new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) },
-                    new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) }
-                },
-                RowDefinitions = new RowDefinitionCollection()
-                {
-                    new RowDefinition(),
-                    new RowDefinition(),
-                    new RowDefinition(),
-                    new RowDefinition(),
-                    new RowDefinition(),
-                    new RowDefinition(),
-                    new RowDefinition()
+                    new TableSection("CONTENT")
+                    {
+                        new TextCell() { Text = alert.Subject, TextColor = Color.Black },
+                        new TextCell() { Text = alert.Body, TextColor = Color.Black },
+                        new TextCell() {
+                            Text = alert.Level,
+                            TextColor = (alert.Level == "FATAL" || alert.Level == "ERROR") ? Color.Red : alert.Level == "WARNING" ? Color.Yellow : Color.Green },
+                        new TextCell() { Text = alert.Source, TextColor = Color.Black },
+                        new TextCell() { Text = $"{alert.Timestamp:dd/MM/yy HH:mm:ss zzz}", TextColor = Color.Black }
+                    },
+                    new TableSection("INFORMATION")
+                    {
+                        new TextCell() { Text = alert.Status, TextColor = alert.Status == "OPEN" ? Color.Red : Color.Green },
+                        new TextCell() { Text = alert.Id, TextColor = Color.Black },
+                        new ViewCell()
+                        {
+                            View = new Button() { Text = "Close Alert" }
+                        }
+                    }
                 }
             };
-
-            grid.Children.Add(new Label() { Text = "Header", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center });
-            grid.Children.Add(new Label() { Text = alert.Subject, VerticalTextAlignment = TextAlignment.Center }, 1, 0);
-
-            grid.Children.Add(new Label() { Text = "Message", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 1);
-            grid.Children.Add(new Label() { Text = alert.Body, VerticalTextAlignment = TextAlignment.Center }, 1, 1);
-
-            grid.Children.Add(new Label() { Text = "Level", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 2);
-            grid.Children.Add(new Label() { Text = alert.Level, VerticalTextAlignment = TextAlignment.Center }, 1, 2);
-
-            grid.Children.Add(new Label() { Text = "Source", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 3);
-            grid.Children.Add(new Label() { Text = alert.Source, VerticalTextAlignment = TextAlignment.Center }, 1, 3);
-
-            grid.Children.Add(new Label() { Text = "Time", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 4);
-            grid.Children.Add(new Label() { Text = alert.Timestamp.ToString("dd/MM/yy HH:mm:ss zzz"), VerticalTextAlignment = TextAlignment.Center }, 1, 4);
-
-            grid.Children.Add(new Label() { Text = "Status", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 5);
-            grid.Children.Add(new Label() { Text = alert.Status, VerticalTextAlignment = TextAlignment.Center }, 1, 5);
-
-            grid.Children.Add(new Label() { Text = "ID", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 6);
-            grid.Children.Add(new Label() { Text = alert.Id, VerticalTextAlignment = TextAlignment.Center }, 1, 6);
-
-            Content = grid;
         }
     }
 }

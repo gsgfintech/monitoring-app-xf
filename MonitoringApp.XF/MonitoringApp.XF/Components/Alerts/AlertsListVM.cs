@@ -1,22 +1,44 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
 using Capital.GSG.FX.Utils.Portable;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Globalization;
-using System.ComponentModel;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
-    public class AlertsListVM : INotifyPropertyChanged
+    public class AlertsListVM : BaseViewModel
     {
         public ObservableCollection<AlertSlim> OpenAlerts { get; set; } = new ObservableCollection<AlertSlim>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public Command RefreshCommand { get; private set; }
+
+        private bool isRefreshing;
+        public bool IsRefreshing
+        {
+            get { return isRefreshing; }
+            set
+            {
+                if (value != isRefreshing)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged(nameof(IsRefreshing));
+                }
+            }
+        }
+
+        public AlertsListVM()
+        {
+            RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+        }
+
+        private async void ExecuteRefreshCommand()
+        {
+            await RefreshOpenAlerts(true);
+
+            IsRefreshing = false;
+        }
 
         public async Task RefreshOpenAlerts(bool refresh)
         {
@@ -47,11 +69,6 @@ namespace MonitoringApp.XF.Components.Alerts
                 foreach (var alert in alerts)
                     OpenAlerts.Add(alert);
             }
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public async Task<AlertFull> GetAlertById(string id)

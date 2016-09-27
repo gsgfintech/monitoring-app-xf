@@ -17,10 +17,17 @@
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView x:Name="listView" ItemsSource="{Binding OpenAlerts}">
+    <ListView x:Name="listView" ItemsSource="{Binding OpenAlerts}" CachingStrategy="RecycleElement"
+              Header="{Binding OpenAlerts.Count, StringFormat='Open Alerts ({0})'}}"
+              IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+              ItemSelected="OnItemSelected">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
+            <ViewCell.ContextActions>
+              <MenuItem Clicked="OnShowDetails" CommandParameter="{Binding .}" Text="Details" />
+              <MenuItem Clicked="OnClose" CommandParameter="{Binding .}" Text="Close" IsDestructive="True" />
+            </ViewCell.ContextActions>
             <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -38,58 +45,5 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-
-
-    <!--<syncfusion:SfDataGrid x:Name="openAlertsDataGrid" AutoGenerateColumns="False" ItemsSource="{Binding OpenAlerts}" ColumnSizer="Star" HeaderRowHeight="0"
-                           AllowPullToRefresh="True" AllowSwiping="True" SelectionMode="Single" SelectionChanged="OnSelected">
-      <syncfusion:SfDataGrid.Columns x:TypeArguments="sfgrid:Columns">
-        <syncfusion:GridTemplateColumn HeaderText="" MappingName="Invalid">
-          <syncfusion:GridTemplateColumn.CellTemplate>
-            <DataTemplate>
-              <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}">
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition />
-                  -->
-    <!--<ColumnDefinition />-->
-    <!--
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                  <RowDefinition />
-                  <RowDefinition />
-                </Grid.RowDefinitions>
-                <Label Text="{Binding Subject}"></Label>
-                <Label Text="{Binding Source}" FontSize="10" Grid.Row="1" />
-                -->
-    <!--<Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" FontSize="10" Grid.Row="1" Grid.Column="1" />-->
-    <!--
-              </Grid>
-            </DataTemplate>
-          </syncfusion:GridTemplateColumn.CellTemplate>
-        </syncfusion:GridTemplateColumn>
-        <syncfusion:GridTextColumn HeaderText="" MappingName="Timestamp" Format="dd/MM/yy HH:mm:ss zzz" CellTextSize="10">
-          <syncfusion:GridTextColumn.CellStyle>
-            <Style TargetType="syncfusion:GridCell">
-              <Setter Property="BackgroundColor" Value="{Binding Level, Converter={StaticResource LevelToColorConverter}}" />
-            </Style>
-          </syncfusion:GridTextColumn.CellStyle>
-        </syncfusion:GridTextColumn>
-      </syncfusion:SfDataGrid.Columns>
-      <syncfusion:SfDataGrid.RightSwipeTemplate>
-        <DataTemplate>
-          <Grid BackgroundColor="#DC595F">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Label
-                   BackgroundColor="Transparent"
-                   LineBreakMode="NoWrap"
-                   Text="CLOSE"
-                   TextColor="White"
-                   HorizontalTextAlignment ="Center"
-                   VerticalTextAlignment="Center" />
-          </Grid>
-        </DataTemplate>
-      </syncfusion:SfDataGrid.RightSwipeTemplate>
-    </syncfusion:SfDataGrid>-->
   </ContentPage.Content>
 </ContentPage>

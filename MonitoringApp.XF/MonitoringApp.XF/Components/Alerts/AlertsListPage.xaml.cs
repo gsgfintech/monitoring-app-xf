@@ -19,39 +19,47 @@ namespace MonitoringApp.XF.Components.Alerts
             InitializeComponent();
 
             vm = BindingContext as AlertsListVM;
-
-            //openAlertsDataGrid.PullToRefreshCommand = new Command(ExecutePullToRefreshCommand);
         }
 
-        private async void ExecutePullToRefreshCommand()
+        private async void OnShowDetails(object sender, EventArgs e)
         {
-            await RefreshAlerts(true);
+            var mi = ((MenuItem)sender);
+
+            var item = mi.CommandParameter as AlertSlim;
+
+            if (item != null)
+            {
+                var alert = await vm.GetAlertById(item.Id);
+                var detailsView = new AlertDetailsPage(alert);
+                await Navigation.PushAsync(detailsView);
+            }
+        }
+
+        public async void OnClose(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+
+            var item = mi.CommandParameter as AlertSlim;
+
+            if (item != null)
+            {
+                if (await DisplayAlert("Close Alert", $"Close alert '{item.Subject}'?", "OK", "Cancel"))
+                {
+                    // TODO : close
+                }
+            }
+        }
+
+        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            ((ListView)sender).SelectedItem = null;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            await RefreshAlerts(false);
+            await vm?.RefreshOpenAlerts(false);
         }
-
-        private async Task RefreshAlerts(bool refresh)
-        {
-            await vm?.RefreshOpenAlerts(refresh);
-        }
-
-        //private async void OnSelected(object sender, GridSelectionChangedEventArgs e)
-        //{
-        //    var item = openAlertsDataGrid.SelectedItem as AlertSlim;
-
-        //    if (item != null)
-        //    {
-        //        var alert = await vm.GetAlertById(item.Id);
-        //        var detailsView = new AlertDetailsPage(alert);
-        //        await Navigation.PushAsync(detailsView);
-        //    }
-
-        //    openAlertsDataGrid.SelectedItem = null;
-        //}
     }
 }

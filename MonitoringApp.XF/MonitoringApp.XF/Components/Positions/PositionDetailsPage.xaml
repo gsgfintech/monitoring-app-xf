@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MonitoringApp.XF.Components.Positions.PositionDetailsPage"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
+             Title="{Binding Position.Cross}">
+
+  <ContentPage.BindingContext>
+    <local:PositionDetailsVM x:Name="DetailsVM" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:NumberToColorConverter x:Key="NumberToColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <TableView Intent="Data">
+      <TableRoot>
+        <TableSection Title="QUANTITIES">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Quantity" />
+              <Label Text="{Binding Position.Quantity}" HorizontalOptions="EndAndExpand" 
+                     TextColor="{Binding Position.Quantity, Converter={StaticResource NumberToColorConverter}}" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="VALUES">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Average Cost" />
+              <Label Text="{Binding Position.AverageCost}" HorizontalOptions="EndAndExpand" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Market Price" />
+              <Label Text="{Binding Position.MarketPrice}" HorizontalOptions="EndAndExpand" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Market Value" />
+              <Label Text="{Binding Position.MarketValue}" HorizontalOptions="EndAndExpand" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="PNL">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Realized PnL" />
+              <Label Text="{Binding Position.RealizedPnl, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
+                     TextColor="{Binding Position.RealizedPnl, Converter={StaticResource NumberToColorConverter}}"/>
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Realized PnL (USD)" />
+              <Label Text="{Binding Position.RealizedPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand" 
+                     TextColor="{Binding Position.RealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Unrealized PnL" />
+              <Label Text="{Binding Position.UnealizedPnl, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
+                     TextColor="{Binding Position.UnealizedPnl, Converter={StaticResource NumberToColorConverter}}"/>
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Unrealized PnL (USD)" />
+              <Label Text="{Binding Position.UnrealizedPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
+                     TextColor="{Binding Position.UnrealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}"/>
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+  
+</ContentPage>
