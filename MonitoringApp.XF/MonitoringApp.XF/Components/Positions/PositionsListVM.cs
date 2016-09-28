@@ -1,7 +1,6 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
 using Capital.GSG.FX.Utils.Portable;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System;

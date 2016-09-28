@@ -6,7 +6,7 @@
              Title="{Binding Position.Cross}">
 
   <ContentPage.BindingContext>
-    <local:PositionDetailsVM x:Name="DetailsVM" />
+    <local:PositionDetailsVM x:Name="vm" />
   </ContentPage.BindingContext>
 
   <ContentPage.Resources>

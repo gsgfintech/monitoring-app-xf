@@ -1,6 +1,7 @@
 ﻿using MonitoringApp.XF.Components.Alerts;
 using MonitoringApp.XF.Components.Executions;
 using MonitoringApp.XF.Components.FXEvents;
+using MonitoringApp.XF.Components.Orders;
 using MonitoringApp.XF.Components.Positions;
 using MonitoringApp.XF.Components.SystemsStatus;
 using System.Collections.Generic;
@@ -74,6 +75,13 @@ namespace MonitoringApp.XF.Components.MainMenu
                 IconSource = "contacts.png",
                 TargetType = typeof(ExecutionsListPage),
                 Title = "Trades"
+            });
+
+            mainMenuPageItems.Add(new MainMenuPageItem()
+            {
+                IconSource = "contacts.png",
+                TargetType = typeof(OrdersListPage),
+                Title = "Orders"
             });
 
             mainMenuPageItems.Add(new MainMenuPageItem()

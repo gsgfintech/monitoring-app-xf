@@ -1,6 +1,5 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
 using Capital.GSG.FX.Utils.Portable;
-using MonitoringApp.XF.Components.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +41,7 @@ namespace MonitoringApp.XF.Components.Executions
                 {
                     string title = $"{e.Side} {e.Quantity / 1000}K {e.Cross} @ {e.Price}";
 
-                    StringBuilder details = new StringBuilder($"{e.ExecutionTime:dd/MM/yy HH:mm:ss} | {ShortenOrderOrigin(e.OrderOrigin)}");
+                    StringBuilder details = new StringBuilder($"{e.ExecutionTime:dd/MM/yy HH:mm:ss} | {Utils.ShortenOrderOrigin(e.OrderOrigin)}");
 
                     if (e.RealizedPnlUsd.HasValue)
                     {
@@ -80,31 +79,6 @@ namespace MonitoringApp.XF.Components.Executions
         private static async Task<ExecutionFull> LoadExecutionById(string id)
         {
             return await ExecutionManager.Instance.GetExecutionById(id);
-        }
-
-        private string ShortenOrderOrigin(string orderOrigin)
-        {
-            switch (orderOrigin)
-            {
-                case "PositionOpen":
-                    return "PO";
-                case "PositionClose":
-                    return "PC";
-                case "PositionClose_ContStop":
-                    return "PCS";
-                case "PositionClose_ContLimit":
-                    return "PCL";
-                case "PositionClose_TE":
-                    return "PCT";
-                case "PositionClose_CircuitBreaker":
-                    return "PCB";
-                case "PositionReverse_Close":
-                    return "PRC";
-                case "PositionReverse_Open":
-                    return "PRO";
-                default:
-                    return orderOrigin;
-            }
         }
     }
 }

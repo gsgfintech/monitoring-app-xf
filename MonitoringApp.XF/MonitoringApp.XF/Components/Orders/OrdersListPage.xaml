@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Orders"
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
+             x:Class="MonitoringApp.XF.Components.Orders.OrdersListPage">
+
+  <ContentPage.BindingContext>
+    <local:OrdersListVM x:Name="ViewModel" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:StatusToBackgroundColorConverter x:Key="StatusToBackgroundColorConverter" />
+   
+      <local:CrossShortener x:Key="CrossShortener" />
+      <local:OriginShortener x:Key="OriginShortener" />
+      <local:QuantityShortener x:Key="QuantityShortener" />
+      <local:TypeShortener x:Key="TypeShortener" />
+
+      <Style x:Key="CellStyle" TargetType="syncfusion:GridCell">
+        <Setter Property="BackgroundColor" Value="{Binding Status, Converter={StaticResource StatusToBackgroundColorConverter}}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <syncfusion:SfDataGrid ItemsSource="{Binding TodaysOrders}" AutoGenerateColumns="False" ColumnSizer="LastColumnFill"
+                           SelectionMode="SingleDeselect" SelectionChanged="OnItemSelected"
+                           AllowPullToRefresh="True" PullToRefreshCommand="{Binding RefreshCommand}">
+      <syncfusion:SfDataGrid.Columns x:TypeArguments="syncfusion:Columns">
+        <syncfusion:GridTextColumn HeaderText="Placed" MappingName="PlacedTime" Format="HH:mm:ss" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn MappingName="Type" DisplayBinding="{Binding Type, Converter={StaticResource TypeShortener}}" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn MappingName="Side" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn HeaderText="Size" MappingName="Quantity" DisplayBinding="{Binding Quantity, Converter={StaticResource QuantityShortener}}" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn HeaderText="Pair" MappingName="Cross" DisplayBinding="{Binding Cross, Converter={StaticResource CrossShortener}}" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn MappingName="Origin" DisplayBinding="{Binding Origin, Converter={StaticResource OriginShortener}}" CellStyle="{StaticResource CellStyle}" />
+        <syncfusion:GridTextColumn HeaderText="Fill" MappingName="FillPrice" CellStyle="{StaticResource CellStyle}" />
+      </syncfusion:SfDataGrid.Columns>
+    </syncfusion:SfDataGrid>
+  </ContentPage.Content>
+
+</ContentPage>
