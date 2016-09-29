@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Alerts"
+             x:Class="MonitoringApp.XF.Components.Alerts.AlertDetailsPage"
+             Title="{Binding Alert.Subject}">
+
+  <ContentPage.BindingContext>
+    <local:AlertDetailsVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:LevelToTextColorConverter x:Key="LevelToTextColorConverter" />
+      <local:StatusToTextColorConverter x:Key="StatusToTextColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <TableView Intent="Data" HasUnevenRows="True">
+      <TableRoot>
+        <TableSection Title="CONTENT">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Header" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Subject}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Message" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Body}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Level" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Level}" TextColor="{Binding Alert.Level, Converter={StaticResource LevelToTextColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Time" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="INFORMATION">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Status" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Status}" TextColor="{Binding Alert.Status, Converter={StaticResource StatusToTextColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="ID" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Alert.Id}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout>
+              <StackLayout IsVisible="{Binding IsCloseButtonVisible}" Margin="20,0,20,0">
+                <Button Text="Close Alert" Command="{Binding CloseAlertCommand}" />
+              </StackLayout>
+              <StackLayout Orientation="Horizontal" IsVisible="{Binding IsClosedTimestampVisible}" Margin="20,0,20,0">
+                <Label Text="Closed At" VerticalTextAlignment="Center" />
+                <Label Text="{Binding Alert.ClosedTimestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+              </StackLayout>
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+
+</ContentPage>

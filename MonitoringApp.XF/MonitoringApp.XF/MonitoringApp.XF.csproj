@@ -38,7 +38,10 @@
     <Compile Include="App.cs" />
     <Compile Include="AuthenticationRequiredException.cs" />
     <Compile Include="BaseViewModel.cs" />
-    <Compile Include="Components\Alerts\AlertDetailsPage.cs" />
+    <Compile Include="Components\Alerts\AlertDetailsPage.xaml.cs">
+      <DependentUpon>AlertDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Alerts\AlertDetailsVM.cs" />
     <Compile Include="Components\Alerts\AlertManager.cs" />
     <Compile Include="Components\Alerts\AlertsListPage.xaml.cs">
       <DependentUpon>AlertsListPage.xaml</DependentUpon>
@@ -183,6 +186,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\Orders\OrderDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Alerts\AlertDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

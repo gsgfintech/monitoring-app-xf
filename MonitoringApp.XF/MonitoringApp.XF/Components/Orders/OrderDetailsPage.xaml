@@ -17,7 +17,6 @@
     </ResourceDictionary>
   </ContentPage.Resources>
 
-
   <ContentPage.Content>
     <TableView Intent="Data" HasUnevenRows="True">
       <TableRoot>

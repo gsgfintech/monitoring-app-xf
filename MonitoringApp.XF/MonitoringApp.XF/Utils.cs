@@ -75,10 +75,13 @@ namespace MonitoringApp.XF
         }
     }
 
-    internal static class CustomColors
+    internal struct CustomColors
     {
         public static readonly Color LightGreen = Color.FromHex("#90EE90");
         public static readonly Color LightPink = Color.FromHex("#FFB6C1");
+        public static readonly Color LightSalmon = Color.FromHex("#FFA07A");
+        public static readonly Color LightSkyBlue = Color.FromHex("#87CEFA");
+        public static readonly Color Orange = Color.FromHex("#FFA500");
     }
 
     public class NullToBoolVisibilityConverter : IValueConverter

@@ -5,12 +5,13 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
     public class AlertsListVM : BaseViewModel
     {
-        public ObservableCollection<AlertSlim> OpenAlerts { get; set; } = new ObservableCollection<AlertSlim>();
+        public ObservableCollection<GroupedAlertList> Alerts { get; private set; } = new ObservableCollection<GroupedAlertList>();
 
         public Command RefreshCommand { get; private set; }
 
@@ -35,16 +36,16 @@ namespace MonitoringApp.XF.Components.Alerts
 
         private async void ExecuteRefreshCommand()
         {
-            await RefreshOpenAlerts(true);
+            await RefreshAlerts(true);
 
             IsRefreshing = false;
         }
 
-        public async Task RefreshOpenAlerts(bool refresh)
+        public async Task RefreshAlerts(bool refresh)
         {
             try
             {
-                await LoadOpenAlerts(refresh);
+                await LoadAlerts(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -53,29 +54,34 @@ namespace MonitoringApp.XF.Components.Alerts
                     bool authenticated = await App.Authenticator.AuthenticateAsync();
 
                     if (authenticated)
-                        await LoadOpenAlerts(refresh);
+                        await LoadAlerts(refresh);
                 }
             }
         }
 
-        private async Task LoadOpenAlerts(bool refresh)
+        private async Task LoadAlerts(bool refresh)
         {
-            var alerts = await AlertManager.Instance.LoadOpenAlerts(refresh);
+            var openAlerts = await AlertManager.Instance.LoadOpenAlerts(refresh);
+            var alertsClosedToday = await AlertManager.Instance.LoadAlertsClosedToday(refresh);
 
-            OpenAlerts.Clear();
+            Alerts.Clear();
 
-            if (!alerts.IsNullOrEmpty())
-            {
-                foreach (var alert in alerts)
-                    OpenAlerts.Add(alert);
-            }
+            if (!openAlerts.IsNullOrEmpty())
+                Alerts.Add(new GroupedAlertList($"Open Alerts ({openAlerts.Count})", "OPEN", true, openAlerts));
+            else
+                Alerts.Add(new GroupedAlertList("Open Alerts (0)", "OPEN", false));
+
+            if (!alertsClosedToday.IsNullOrEmpty())
+                Alerts.Add(new GroupedAlertList($"Alerts Closed Today ({alertsClosedToday.Count})", "CLOSED", false, alertsClosedToday));
+            else
+                Alerts.Add(new GroupedAlertList("Alerts Closed Today (0)", "CLOSED", false));
         }
 
-        public async Task<AlertFull> GetAlertById(string id)
+        public async Task CloseAllAlertsAuthenticated()
         {
             try
             {
-                return await LoadAlertById(id);
+                await CloseAllAlerts();
             }
             catch (AuthenticationRequiredException)
             {
@@ -84,16 +90,37 @@ namespace MonitoringApp.XF.Components.Alerts
                     bool authenticated = await App.Authenticator.AuthenticateAsync();
 
                     if (authenticated)
-                        await LoadAlertById(id);
+                        await CloseAllAlerts();
                 }
-
-                return null;
             }
         }
 
-        private static async Task<AlertFull> LoadAlertById(string id)
+        private async Task CloseAllAlerts()
         {
-            return await AlertManager.Instance.GetAlertById(id);
+            if (await AlertManager.Instance.CloseAllAlerts())
+                await RefreshAlerts(false);
+        }
+    }
+
+    public class GroupedAlertList : ObservableCollection<AlertSlim>
+    {
+        public string LongDescription { get; private set; }
+        public string ShortDescription { get; private set; }
+        public bool ShowCloseButton { get; set; }
+
+        public GroupedAlertList(string longDescription, string shortDescription, bool showCloseButton)
+        {
+            LongDescription = longDescription;
+            ShortDescription = shortDescription;
+            ShowCloseButton = showCloseButton;
+        }
+
+        public GroupedAlertList(string longDescription, string shortDescription, bool showCloseButton, IEnumerable<AlertSlim> alerts)
+            : base(alerts)
+        {
+            LongDescription = longDescription;
+            ShortDescription = shortDescription;
+            ShowCloseButton = showCloseButton;
         }
     }
 
@@ -104,17 +131,17 @@ namespace MonitoringApp.XF.Components.Alerts
             string level = value as string;
 
             if (string.IsNullOrEmpty(level))
-                return Color.White;
+                return Color.Transparent;
 
             switch (level)
             {
                 case "DEBUG":
                 case "INFO":
-                    return Color.Aqua;
+                    return CustomColors.LightSkyBlue;
                 case "WARNING":
-                    return Color.Yellow;
+                    return CustomColors.LightSalmon;
                 default:
-                    return Color.Red;
+                    return CustomColors.LightPink;
             }
         }
 

@@ -4,10 +4,11 @@
              x:Class="MonitoringApp.XF.Components.Alerts.AlertsListPage"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Alerts"
              xmlns:models="using:Capital.GSG.FX.Monitoring.AppDataTypes"
-             xmlns:syncfusion="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms">
+             xmlns:syncfusion="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
+             Title="Alerts">
 
   <ContentPage.BindingContext>
-    <local:AlertsListVM x:Name="ViewModel" />
+    <local:AlertsListVM x:Name="vm" />
   </ContentPage.BindingContext>
 
   <ContentPage.Resources>
@@ -17,18 +18,28 @@
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView x:Name="listView" ItemsSource="{Binding OpenAlerts}" CachingStrategy="RecycleElement"
-              Header="{Binding OpenAlerts.Count, StringFormat='Open Alerts ({0})'}}"
+    <ListView ItemsSource="{Binding Alerts}" CachingStrategy="RecycleElement" HasUnevenRows="True"
               IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
-              ItemSelected="OnItemSelected">
+              ItemSelected="OnItemSelected"
+              IsGroupingEnabled="True" GroupDisplayBinding="{Binding LongDescription}" GroupShortNameBinding="{Binding ShortDescription}">
+      <ListView.GroupHeaderTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid Margin="5,5,0,5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Label Text="{Binding LongDescription}" FontSize="20" VerticalTextAlignment="Center" />
+              <Button Text="Close All" Clicked="CloseAllButtonClicked" IsVisible="{Binding ShowCloseButton}" Grid.Column="1" />
+            </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.GroupHeaderTemplate>
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
-            <ViewCell.ContextActions>
-              <MenuItem Clicked="OnShowDetails" CommandParameter="{Binding .}" Text="Details" />
-              <MenuItem Clicked="OnClose" CommandParameter="{Binding .}" Text="Close" IsDestructive="True" />
-            </ViewCell.ContextActions>
-            <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}">
+            <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}" Padding="10,0,10,0">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -37,9 +48,9 @@
                 <RowDefinition />
                 <RowDefinition />
               </Grid.RowDefinitions>
-              <Label Text="{Binding Subject}"></Label>
+              <Label Text="{Binding Subject}" Grid.ColumnSpan="2"></Label>
               <Label Text="{Binding Source}" FontSize="10" Grid.Row="1" />
-              <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" FontSize="10" Grid.Row="1" Grid.Column="1" />
+              <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" FontSize="10" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" Grid.Row="1" Grid.Column="1" />
             </Grid>
           </ViewCell>
         </DataTemplate>

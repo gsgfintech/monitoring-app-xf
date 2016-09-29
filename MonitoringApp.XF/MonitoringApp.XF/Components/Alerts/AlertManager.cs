@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace MonitoringApp.XF.Components.Alerts
         private const string AlertsOpenRoute = "alerts/list/open";
         private const string AlertsClosedTodayRoute = "alerts/list/closedtoday";
         private const string AlertByIdRoute = "alerts/id";
+        private const string CloseAlertRoute = "alerts/close";
 
         private readonly MobileServiceClient client;
 
@@ -88,7 +90,7 @@ namespace MonitoringApp.XF.Components.Alerts
                     alertsClosedToday = await client.InvokeApiAsync<List<AlertSlim>>(AlertsClosedTodayRoute, HttpMethod.Get, null, cts.Token);
                 }
 
-                return openAlerts;
+                return alertsClosedToday;
             }
             catch (OperationCanceledException)
             {
@@ -160,6 +162,111 @@ namespace MonitoringApp.XF.Components.Alerts
             {
                 Debug.WriteLine($"Sync error: {e.Message}");
                 return null;
+            }
+        }
+
+        public async Task<bool> CloseAlert(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    throw new ArgumentNullException(nameof(id));
+
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/{id}", HttpMethod.Get, null, cts.Token);
+
+                if (success)
+                {
+                    AlertSlim alert = openAlerts.FirstOrDefault(a => a.Id == id);
+
+                    if (alert != null)
+                    {
+                        if (alertsClosedToday == null)
+                            alertsClosedToday = new List<AlertSlim>();
+
+                        alertsClosedToday.Add(alert);
+                        openAlerts.Remove(alert);
+                    }
+
+                    detailedAlerts.Remove(id);
+                }
+
+                return success;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Not closing alert: operation cancelled");
+                return false;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Debug.WriteLine($"Not closing alert: missing or invalid parameter {ex.ParamName}");
+                return false;
+            }
+            catch (MobileServiceInvalidOperationException msioe)
+            {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to close alert");
+                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
+                Debug.WriteLine($"Failed to close alert: {msioe.Message}");
+                return false;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Failed to close alert: {e.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> CloseAllAlerts()
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/all", HttpMethod.Get, null, cts.Token);
+
+                if (success)
+                {
+                    if (alertsClosedToday == null)
+                        alertsClosedToday = new List<AlertSlim>();
+
+                    alertsClosedToday.AddRange(openAlerts);
+
+                    foreach (var alert in openAlerts)
+                        detailedAlerts.Remove(alert.Id);
+
+                    openAlerts.Clear();
+                }
+
+                return success;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Not closing all alerts: operation cancelled");
+                return false;
+            }
+            catch (MobileServiceInvalidOperationException msioe)
+            {
+                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Authentication necessary to close all alerts");
+                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+                }
+
+                Debug.WriteLine($"Failed to close all alerts: {msioe.Message}");
+                return false;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Failed to close all alerts: {e.Message}");
+                return false;
             }
         }
     }
