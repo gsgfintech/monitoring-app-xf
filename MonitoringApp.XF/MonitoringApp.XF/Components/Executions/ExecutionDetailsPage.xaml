@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Executions"
+             x:Class="MonitoringApp.XF.Components.Executions.ExecutionDetailsPage"
+             Title="{Binding Trade.Header}">
+
+  <ContentPage.BindingContext>
+    <local:ExecutionDetailsVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <TableView Intent="Data" HasUnevenRows="True">
+      <TableRoot>
+        <TableSection Title="GENERAL">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Side" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Side}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Size" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Quantity, StringFormat='{0:N0}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Pair" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Cross}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Time" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.ExecutionTime, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Duration" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.TradeDuration}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Origin" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.OrderOrigin}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Account" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.AccountNumber}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Exchange" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Exchange}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="PNL">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Price" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Price}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="PnL (USD)" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.RealizedPnlUsd, StringFormat='{0:N2} USD'}" TextColor="{Binding Trade.RealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="PnL (pips)" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.RealizedPnlPips, StringFormat='{0:N2} pips'}" TextColor="{Binding Trade.RealizedPnlPips, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Commission" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.FormattedCommission}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Commission (USD)" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.CommissionUsd, StringFormat='{0:N2} USD'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="IDS">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Trade ID" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.Id}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Order ID" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.OrderId}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Order Permanent ID" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Trade.PermanentID}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+
+</ContentPage>

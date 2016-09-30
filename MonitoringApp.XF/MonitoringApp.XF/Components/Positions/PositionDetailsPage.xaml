@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MonitoringApp.XF.Components.Positions.PositionDetailsPage"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
              Title="{Binding Position.Cross}">
 
@@ -11,7 +12,7 @@
 
   <ContentPage.Resources>
     <ResourceDictionary>
-      <local:NumberToColorConverter x:Key="NumberToColorConverter" />
+      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
     </ResourceDictionary>
   </ContentPage.Resources>
 

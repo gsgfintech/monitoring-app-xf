@@ -106,4 +106,50 @@ namespace MonitoringApp.XF
             throw new NotImplementedException();
         }
     }
+
+    public class NumberToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double? number = value as double?;
+
+            if (!number.HasValue)
+                return Color.Default;
+
+            if (number.Value < 0)
+                return Color.Red;
+            else if (number.Value > 0)
+                return Color.Green;
+            else
+                return Color.Default;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NumberToBackgroundColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double? number = value as double?;
+
+            if (!number.HasValue)
+                return Color.Transparent;
+
+            if (number.Value < 0)
+                return CustomColors.LightPink;
+            else if (number.Value > 0)
+                return CustomColors.LightGreen;
+            else
+                return Color.Transparent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -71,27 +71,4 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
     }
-
-    public class NumberToColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            double? number = value as double?;
-
-            if (!number.HasValue)
-                return Color.Default;
-
-            if (number.Value < 0)
-                return Color.Red;
-            else if (number.Value > 0)
-                return Color.Green;
-            else
-                return Color.Default;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

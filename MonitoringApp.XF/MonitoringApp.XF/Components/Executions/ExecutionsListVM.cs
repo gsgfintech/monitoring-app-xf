@@ -1,20 +1,63 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Portable;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Executions
 {
-    public class ExecutionsListVM
+    public class ExecutionsListVM : BaseViewModel
     {
-        public async Task<List<Tuple<string, string, string>>> RefreshTodaysExecutions(bool refresh)
+        public ObservableCollection<ExecutionSlimViewModel> TodaysTrades { get; set; } = new ObservableCollection<ExecutionSlimViewModel>();
+
+        private DateTime day;
+        public DateTime Day
+        {
+            get { return day; }
+            set
+            {
+                if (day != value)
+                {
+                    day = value;
+                    OnPropertyChanged(nameof(Day));
+                }
+            }
+        }
+
+        public Command RefreshCommand { get; private set; }
+
+        private bool isRefreshing;
+        public bool IsRefreshing
+        {
+            get { return isRefreshing; }
+            set
+            {
+                if (value != isRefreshing)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged(nameof(IsRefreshing));
+                }
+            }
+        }
+
+        public ExecutionsListVM()
+        {
+            RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+            Day = DateTime.Today;
+        }
+
+        private async void ExecuteRefreshCommand()
+        {
+            await RefreshTodaysExecutions(true);
+
+            IsRefreshing = false;
+        }
+
+        public async Task RefreshTodaysExecutions(bool refresh)
         {
             try
             {
-                return await LoadExecutions(refresh);
+                await LoadExecutions(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -25,60 +68,20 @@ namespace MonitoringApp.XF.Components.Executions
                     if (authenticated)
                         await LoadExecutions(refresh);
                 }
-
-                return null;
             }
         }
 
-        private async Task<List<Tuple<string, string, string>>> LoadExecutions(bool refresh)
+        private async Task LoadExecutions(bool refresh)
         {
-            var executions = await ExecutionManager.Instance.LoadTodaysExecutions(refresh);
+            var trades = await ExecutionManager.Instance.LoadTodaysExecutions(refresh);
 
-            if (executions.IsNullOrEmpty())
-                return null;
-            else
-                return executions.Select(e =>
-                {
-                    string title = $"{e.Side} {e.Quantity / 1000}K {e.Cross} @ {e.Price}";
+            TodaysTrades.Clear();
 
-                    StringBuilder details = new StringBuilder($"{e.ExecutionTime:dd/MM/yy HH:mm:ss} | {Utils.ShortenOrderOrigin(e.OrderOrigin)}");
-
-                    if (e.RealizedPnlUsd.HasValue)
-                    {
-                        string prefix = e.RealizedPnlUsd.Value >= 0 ? "+" : "";
-                        details.Append($" | {prefix}{e.RealizedPnlUsd:N0} USD");
-                    }
-
-                    if (!string.IsNullOrEmpty(e.TradeDuration))
-                        details.Append($" | {e.TradeDuration}");
-
-                    return new Tuple<string, string, string>(e.Id, title, details.ToString());
-                }).ToList();
-        }
-
-        public async Task<ExecutionFull> GetExecutionById(string id)
-        {
-            try
+            if (!trades.IsNullOrEmpty())
             {
-                return await LoadExecutionById(id);
+                foreach (var trade in trades)
+                    TodaysTrades.Add(trade.ToExecutionSlimViewModel());
             }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadExecutionById(id);
-                }
-
-                return null;
-            }
-        }
-
-        private static async Task<ExecutionFull> LoadExecutionById(string id)
-        {
-            return await ExecutionManager.Instance.GetExecutionById(id);
         }
     }
 }

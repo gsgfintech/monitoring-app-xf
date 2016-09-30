@@ -28,9 +28,25 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
+        private DateTime day;
+        public DateTime Day
+        {
+            get { return day; }
+            set
+            {
+                if (day != value)
+                {
+                    day = value;
+                    OnPropertyChanged(nameof(Day));
+                }
+            }
+        }
+
         public OrdersListVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+
+            Day = DateTime.Today;
         }
 
         private async void ExecuteRefreshCommand()

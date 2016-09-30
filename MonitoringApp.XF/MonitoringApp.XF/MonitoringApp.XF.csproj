@@ -47,9 +47,15 @@
       <DependentUpon>AlertsListPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Alerts\AlertsListVM.cs" />
-    <Compile Include="Components\Executions\ExecutionDetailsPage.cs" />
+    <Compile Include="Components\Executions\ExecutionDetailsPage.xaml.cs">
+      <DependentUpon>ExecutionDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Executions\ExecutionDetailsVM.cs" />
     <Compile Include="Components\Executions\ExecutionManager.cs" />
-    <Compile Include="Components\Executions\ExecutionsListPage.cs" />
+    <Compile Include="Components\Executions\ExecutionSlimViewModel.cs" />
+    <Compile Include="Components\Executions\ExecutionsListPage.xaml.cs">
+      <DependentUpon>ExecutionsListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Executions\ExecutionsListVM.cs" />
     <Compile Include="Components\FXEvents\FXEventDetailsPage.cs" />
     <Compile Include="Components\FXEvents\FXEventManager.cs" />
@@ -83,6 +89,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="IAuthenticate.cs" />
     <Compile Include="Components\Main\MainPage.cs" />
+    <Compile Include="Components\Executions\ExecutionFullViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
@@ -192,6 +199,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\Alerts\AlertDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Executions\ExecutionDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Executions\ExecutionsListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
