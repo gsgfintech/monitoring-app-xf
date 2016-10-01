@@ -68,7 +68,9 @@
       <DependentUpon>OrderDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Orders\OrderDetailsVM.cs" />
+    <Compile Include="Components\Orders\OrderFullViewModel.cs" />
     <Compile Include="Components\Orders\OrderManager.cs" />
+    <Compile Include="Components\Orders\OrderSlimViewModel.cs" />
     <Compile Include="Components\Orders\OrdersListPage.xaml.cs">
       <DependentUpon>OrdersListPage.xaml</DependentUpon>
     </Compile>

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Orders"
-             xmlns:syncfusion="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
              x:Class="MonitoringApp.XF.Components.Orders.OrdersListPage"
              Title="{Binding Day, StringFormat='Orders {0:dd/MM/yy}'}">
 
@@ -13,32 +13,57 @@
   <ContentPage.Resources>
     <ResourceDictionary>
       <local:StatusToBackgroundColorConverter x:Key="StatusToBackgroundColorConverter" />
-   
-      <local:CrossShortener x:Key="CrossShortener" />
-      <local:OriginShortener x:Key="OriginShortener" />
-      <local:QuantityShortener x:Key="QuantityShortener" />
-      <local:TypeShortener x:Key="TypeShortener" />
-
-      <Style x:Key="CellStyle" TargetType="syncfusion:GridCell">
-        <Setter Property="BackgroundColor" Value="{Binding Status, Converter={StaticResource StatusToBackgroundColorConverter}}" />
-      </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <syncfusion:SfDataGrid ItemsSource="{Binding TodaysOrders}" AutoGenerateColumns="False" ColumnSizer="LastColumnFill"
-                           SelectionMode="SingleDeselect" SelectionChanged="OnItemSelected"
-                           AllowPullToRefresh="True" PullToRefreshCommand="{Binding RefreshCommand}">
-      <syncfusion:SfDataGrid.Columns x:TypeArguments="syncfusion:Columns">
-        <syncfusion:GridTextColumn HeaderText="Placed" MappingName="PlacedTime" Format="HH:mm:ss" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn MappingName="Type" DisplayBinding="{Binding Type, Converter={StaticResource TypeShortener}}" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn MappingName="Side" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn HeaderText="Size" MappingName="Quantity" DisplayBinding="{Binding Quantity, Converter={StaticResource QuantityShortener}}" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn HeaderText="Pair" MappingName="Cross" DisplayBinding="{Binding Cross, Converter={StaticResource CrossShortener}}" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn MappingName="Origin" DisplayBinding="{Binding Origin, Converter={StaticResource OriginShortener}}" CellStyle="{StaticResource CellStyle}" />
-        <syncfusion:GridTextColumn HeaderText="Fill" MappingName="FillPrice" CellStyle="{StaticResource CellStyle}" />
-      </syncfusion:SfDataGrid.Columns>
-    </syncfusion:SfDataGrid>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="14*" />
+      </Grid.RowDefinitions>
+      <Label Text="Change Day:" VerticalTextAlignment="Center" Margin="10,0,0,0" />
+      <DatePicker VerticalOptions="CenterAndExpand" Date="{Binding NewDay, Mode=TwoWay}" MaximumDate="{x:Static sys:DateTime.Now}" Format="dd/MM/yyyy" Grid.Column="1">
+        <DatePicker.MinimumDate>
+          <sys:DateTime x:FactoryMethod="Parse">
+            <x:Arguments>
+              <x:String>Jan 1 2016</x:String>
+            </x:Arguments>
+          </sys:DateTime>
+        </DatePicker.MinimumDate>
+      </DatePicker>
+      <Button Text="Go" Command="{Binding ChangeDayCommand}" Grid.Column="2" />
+      <ListView ItemsSource="{Binding Orders}" CachingStrategy="RecycleElement" HasUnevenRows="True"
+                IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+                ItemSelected="OnItemSelected"
+                IsGroupingEnabled="True" GroupDisplayBinding="{Binding LongDescription}" GroupShortNameBinding="{Binding ShortDescription}"
+                Grid.Row="1" Grid.ColumnSpan="3">
+        <ListView.GroupHeaderTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout>
+                <Label Text="{Binding LongDescription}" FontSize="20" VerticalTextAlignment="Center" />
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.GroupHeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout BackgroundColor="{Binding Status, Converter={StaticResource StatusToBackgroundColorConverter}}" Padding="10,10,10,10">
+                <Label Text="{Binding Header}" />
+                <Label Text="{Binding Details}" FontSize="10" />
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </Grid>
   </ContentPage.Content>
 
 </ContentPage>

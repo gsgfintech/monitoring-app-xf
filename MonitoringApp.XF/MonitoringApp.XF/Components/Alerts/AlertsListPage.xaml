@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MonitoringApp.XF.Components.Alerts.AlertsListPage"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Alerts"
-             xmlns:models="using:Capital.GSG.FX.Monitoring.AppDataTypes"
-             xmlns:syncfusion="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
              Title="Alerts">
 
   <ContentPage.BindingContext>

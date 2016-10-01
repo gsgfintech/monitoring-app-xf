@@ -1,6 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Syncfusion.SfDataGrid.XForms;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Orders
 {
@@ -15,12 +13,12 @@ namespace MonitoringApp.XF.Components.Orders
         {
             base.OnAppearing();
 
-            await ViewModel?.RefreshTodaysOrders(false);
+            await ViewModel?.RefreshOrders(false);
         }
 
-        private async void OnItemSelected(object sender, GridSelectionChangedEventArgs e)
+        private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            OrderSlim order = ((SfDataGrid)sender).SelectedItem as OrderSlim;
+            OrderSlimViewModel order = ((ListView)sender).SelectedItem as OrderSlimViewModel;
 
             if (order != null)
             {

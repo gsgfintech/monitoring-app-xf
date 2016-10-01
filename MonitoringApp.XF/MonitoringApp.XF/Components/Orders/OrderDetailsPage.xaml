@@ -4,7 +4,7 @@
              xmlns:main="clr-namespace:MonitoringApp.XF"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Orders"
              x:Class="MonitoringApp.XF.Components.Orders.OrderDetailsPage"
-             Title="{Binding Order.OrderId, StringFormat='Order {0}'}">
+             Title="{Binding Order.Header}">
 
   <ContentPage.BindingContext>
     <local:OrderDetailsVM x:Name="vm" />

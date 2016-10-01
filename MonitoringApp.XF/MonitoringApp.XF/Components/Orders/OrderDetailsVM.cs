@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xamarin.Forms;
 using System;
 using System.Globalization;
@@ -8,8 +7,8 @@ namespace MonitoringApp.XF.Components.Orders
 {
     public class OrderDetailsVM : BaseViewModel
     {
-        private OrderFull order;
-        public OrderFull Order
+        private OrderFullViewModel order;
+        public OrderFullViewModel Order
         {
             get { return order; }
             set
@@ -42,7 +41,7 @@ namespace MonitoringApp.XF.Components.Orders
 
         private async Task LoadOrderByPermanentId(int permanentId)
         {
-            Order = await OrderManager.Instance.GetOrderByPermanentId(permanentId);
+            Order = (await OrderManager.Instance.GetOrderByPermanentId(permanentId)).ToOrderFullViewModel();
         }
     }
 

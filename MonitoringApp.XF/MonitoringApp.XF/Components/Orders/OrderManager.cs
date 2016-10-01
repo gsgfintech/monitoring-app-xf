@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
-        private List<OrderSlim> todaysOrders;
+        private Dictionary<DateTime, List<OrderSlim>> ordersDict = new Dictionary<DateTime, List<OrderSlim>>();
         private Dictionary<int, OrderFull> detailedOrders = new Dictionary<int, OrderFull>();
 
         private OrderManager()
@@ -36,30 +37,37 @@ namespace MonitoringApp.XF.Components.Orders
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<OrderSlim>> LoadTodaysOrders(bool refresh)
+        public async Task<List<OrderSlim>> LoadOrders(DateTime day, bool refresh)
         {
             try
             {
-                if (todaysOrders == null || refresh)
+                if (!ordersDict.ContainsKey(day) || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    todaysOrders = await client.InvokeApiAsync<List<OrderSlim>>(OrdersRoute, HttpMethod.Get, null, cts.Token);
+                    var orders = await client.InvokeApiAsync<List<OrderSlim>>(OrdersRoute, HttpMethod.Get, new Dictionary<string, string>() {
+                        { "day", day.ToString("yyyy-MM-dd") }
+                    }, cts.Token);
+
+                    if (!orders.IsNullOrEmpty())
+                        ordersDict[day] = orders;
+                    else
+                        ordersDict[day] = new List<OrderSlim>();
                 }
 
-                return todaysOrders;
+                return ordersDict[day];
             }
             catch (OperationCanceledException)
             {
-                Debug.WriteLine("Not retrieving today's orders: operation cancelled");
+                Debug.WriteLine("Not retrieving orders: operation cancelled");
                 return null;
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
                 if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    Debug.WriteLine("Authentication necessary to load today's orders");
+                    Debug.WriteLine("Authentication necessary to load orders");
                     throw new AuthenticationRequiredException(typeof(OrderManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
                 }
 
@@ -68,7 +76,7 @@ namespace MonitoringApp.XF.Components.Orders
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Sync error: {e.Message}");
+                Debug.WriteLine($"Failed to load orders: {e.Message}");
                 return null;
             }
         }

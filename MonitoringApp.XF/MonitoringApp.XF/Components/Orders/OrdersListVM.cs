@@ -1,16 +1,16 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Portable;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace MonitoringApp.XF.Components.Orders
 {
     public class OrdersListVM : BaseViewModel
     {
-        public ObservableCollection<OrderSlim> TodaysOrders { get; set; } = new ObservableCollection<OrderSlim>();
+        public ObservableCollection<GroupedOrdersList> Orders { get; set; } = new ObservableCollection<GroupedOrdersList>();
 
         public Command RefreshCommand { get; private set; }
 
@@ -42,25 +42,53 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
+        private DateTime newDay;
+        public DateTime NewDay
+        {
+            get { return newDay; }
+            set
+            {
+                if (newDay != value)
+                {
+                    newDay = value;
+                    OnPropertyChanged(nameof(NewDay));
+                }
+            }
+        }
+
+        public Command ChangeDayCommand { get; private set; }
+
         public OrdersListVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+            ChangeDayCommand = new Command(ExecuteChangeDayCommand);
 
             Day = DateTime.Today;
+            NewDay = Day;
+        }
+
+        private async void ExecuteChangeDayCommand()
+        {
+            if (NewDay == Day)
+                return;
+
+            Day = NewDay;
+
+            await RefreshOrders(false);
         }
 
         private async void ExecuteRefreshCommand()
         {
-            await RefreshTodaysOrders(true);
+            await RefreshOrders(true);
 
             IsRefreshing = false;
         }
 
-        public async Task RefreshTodaysOrders(bool refresh)
+        public async Task RefreshOrders(bool refresh)
         {
             try
             {
-                await LoadTodaysOrders(refresh);
+                await LoadOrders(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -69,21 +97,34 @@ namespace MonitoringApp.XF.Components.Orders
                     bool authenticated = await App.Authenticator.AuthenticateAsync();
 
                     if (authenticated)
-                        await LoadTodaysOrders(refresh);
+                        await LoadOrders(refresh);
                 }
             }
         }
 
-        private async Task LoadTodaysOrders(bool refresh)
+        private async Task LoadOrders(bool refresh)
         {
-            var orders = await OrderManager.Instance.LoadTodaysOrders(refresh);
+            var orders = await OrderManager.Instance.LoadOrders(Day, refresh);
 
-            TodaysOrders.Clear();
+            Orders.Clear();
 
             if (!orders.IsNullOrEmpty())
             {
-                foreach (var alert in orders)
-                    TodaysOrders.Add(alert);
+                // 1. Active orders
+                var activeOrders = orders.Where(o => o.Status.ToLower().Contains("submit") || o.Status == "PendingCancel");
+
+                if (!activeOrders.IsNullOrEmpty())
+                    Orders.Add(new GroupedOrdersList($"Active Orders ({activeOrders.Count()})", "ACTIVE", activeOrders));
+                else
+                    Orders.Add(new GroupedOrdersList("Active Orders (0)", "ACTIVE"));
+
+                // 2. Inactive orders
+                var inactiveOrders = orders.Where(o => !o.Status.ToLower().Contains("submitted"));
+
+                if (!inactiveOrders.IsNullOrEmpty())
+                    Orders.Add(new GroupedOrdersList($"Inactive Orders ({inactiveOrders.Count()})", "INACTIVE", inactiveOrders));
+                else
+                    Orders.Add(new GroupedOrdersList("Inactive Orders (0)", "INACTIVE"));
             }
         }
     }
