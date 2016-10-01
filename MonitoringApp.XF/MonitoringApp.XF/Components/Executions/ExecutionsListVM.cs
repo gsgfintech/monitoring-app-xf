@@ -24,6 +24,20 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
+        private DateTime newDay;
+        public DateTime NewDay
+        {
+            get { return newDay; }
+            set
+            {
+                if (newDay != value)
+                {
+                    newDay = value;
+                    OnPropertyChanged(nameof(NewDay));
+                }
+            }
+        }
+
         public Command RefreshCommand { get; private set; }
 
         private bool isRefreshing;
@@ -40,20 +54,35 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
+        public Command ChangeDayCommand { get; private set; }
+
         public ExecutionsListVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+            ChangeDayCommand = new Command(ExecuteChangeDayCommand);
+
             Day = DateTime.Today;
+            NewDay = Day;
+        }
+
+        private async void ExecuteChangeDayCommand()
+        {
+            if (NewDay == Day)
+                return;
+
+            Day = NewDay;
+
+            await RefreshExecutions(false);
         }
 
         private async void ExecuteRefreshCommand()
         {
-            await RefreshTodaysExecutions(true);
+            await RefreshExecutions(true);
 
             IsRefreshing = false;
         }
 
-        public async Task RefreshTodaysExecutions(bool refresh)
+        public async Task RefreshExecutions(bool refresh)
         {
             try
             {
@@ -73,7 +102,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         private async Task LoadExecutions(bool refresh)
         {
-            var trades = await ExecutionManager.Instance.LoadTodaysExecutions(refresh);
+            var trades = await ExecutionManager.Instance.LoadExecutions(Day, refresh);
 
             TodaysTrades.Clear();
 

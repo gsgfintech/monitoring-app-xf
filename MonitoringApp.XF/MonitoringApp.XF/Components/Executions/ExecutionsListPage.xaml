@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Executions"
              xmlns:base="clr-namespace:MonitoringApp.XF"
              x:Class="MonitoringApp.XF.Components.Executions.ExecutionsListPage"
@@ -17,20 +18,42 @@
   </ContentPage.Resources>
 
   <ContentView.Content>
-    <ListView ItemsSource="{Binding TodaysTrades}" CachingStrategy="RecycleElement" HasUnevenRows="True"
-              IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
-              ItemSelected="OnItemSelected">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <ViewCell>
-            <StackLayout BackgroundColor="{Binding RealizedPnlUsd, Converter={StaticResource NumberToBackgroundColorConverter}}" Padding="10,10,10,10">
-              <Label Text="{Binding Header}" />
-              <Label Text="{Binding Details}" FontSize="10" />
-            </StackLayout>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="14*" />
+      </Grid.RowDefinitions>
+      <Label Text="Change Day:" VerticalTextAlignment="Center" Margin="10,0,0,0" />
+      <DatePicker VerticalOptions="CenterAndExpand" Date="{Binding NewDay, Mode=TwoWay}" MaximumDate="{x:Static sys:DateTime.Now}" Format="dd/MM/yyyy" Grid.Column="1">
+        <DatePicker.MinimumDate>
+          <sys:DateTime x:FactoryMethod="Parse">
+            <x:Arguments>
+              <x:String>Jan 1 2016</x:String>
+            </x:Arguments>
+          </sys:DateTime>
+        </DatePicker.MinimumDate>
+      </DatePicker>
+      <Button Text="Go" Command="{Binding ChangeDayCommand}" Grid.Column="2" />
+      <ListView ItemsSource="{Binding TodaysTrades}" CachingStrategy="RecycleElement" HasUnevenRows="True"
+                IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+                ItemSelected="OnItemSelected" Grid.Row="1" Grid.ColumnSpan="3">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout BackgroundColor="{Binding RealizedPnlUsd, Converter={StaticResource NumberToBackgroundColorConverter}}" Padding="10,10,10,10">
+                <Label Text="{Binding Header}" />
+                <Label Text="{Binding Details}" FontSize="10" />
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </Grid>
   </ContentView.Content>
-  
+
 </ContentPage>

@@ -25,7 +25,7 @@ namespace MonitoringApp.XF.Components.Executions
         {
             base.OnAppearing();
 
-            await vm?.RefreshTodaysExecutions(false);
+            await vm?.RefreshExecutions(false);
         }
     }
 }

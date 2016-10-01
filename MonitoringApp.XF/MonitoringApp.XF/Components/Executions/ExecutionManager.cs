@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
-        private List<ExecutionSlim> todaysExecutions;
+        private Dictionary<DateTime, List<ExecutionSlim>> executionsDict = new Dictionary<DateTime, List<ExecutionSlim>>();
         private Dictionary<string, ExecutionFull> detailedExecutions = new Dictionary<string, ExecutionFull>();
 
         private ExecutionManager()
@@ -36,30 +37,37 @@ namespace MonitoringApp.XF.Components.Executions
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<ExecutionSlim>> LoadTodaysExecutions(bool refresh)
+        public async Task<List<ExecutionSlim>> LoadExecutions(DateTime day, bool refresh)
         {
             try
             {
-                if (todaysExecutions == null || refresh)
+                if (!executionsDict.ContainsKey(day) || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    todaysExecutions = await client.InvokeApiAsync<List<ExecutionSlim>>(ExecutionsRoute, HttpMethod.Get, null, cts.Token);
+                    var executions = await client.InvokeApiAsync<List<ExecutionSlim>>(ExecutionsRoute, HttpMethod.Get, new Dictionary<string, string>() {
+                        { "day", day.ToString("yyyy-MM-dd") }
+                    }, cts.Token);
+
+                    if (!executions.IsNullOrEmpty())
+                        executionsDict[day] = executions;
+                    else
+                        executionsDict[day] = new List<ExecutionSlim>();
                 }
 
-                return todaysExecutions;
+                return executionsDict[day];
             }
             catch (OperationCanceledException)
             {
-                Debug.WriteLine("Not retrieving today's executions: operation cancelled");
+                Debug.WriteLine("Not retrieving executions: operation cancelled");
                 return null;
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
                 if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    Debug.WriteLine("Authentication necessary to load today's executions");
+                    Debug.WriteLine("Authentication necessary to load executions");
                     throw new AuthenticationRequiredException(typeof(ExecutionManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
                 }
 
@@ -68,7 +76,7 @@ namespace MonitoringApp.XF.Components.Executions
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Sync error: {e.Message}");
+                Debug.WriteLine($"Failed to load executions: {e.Message}");
                 return null;
             }
         }
