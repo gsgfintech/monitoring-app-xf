@@ -19,6 +19,8 @@ namespace MonitoringApp.XF.Components.Executions
                 await detailsView.ViewModel?.GetExecutionById(execution.Id);
                 await Navigation.PushAsync(detailsView);
             }
+
+            ((ListView)sender).SelectedItem = null;
         }
 
         protected override async void OnAppearing()

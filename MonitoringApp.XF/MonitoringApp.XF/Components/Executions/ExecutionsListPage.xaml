@@ -17,7 +17,7 @@
     </ResourceDictionary>
   </ContentPage.Resources>
 
-  <ContentView.Content>
+  <ContentPage.Content>
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition />
@@ -54,6 +54,6 @@
         </ListView.ItemTemplate>
       </ListView>
     </Grid>
-  </ContentView.Content>
+  </ContentPage.Content>
 
 </ContentPage>

@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.SystemsStatus"
+             x:Class="MonitoringApp.XF.Components.SystemsStatus.SystemStatusDetailsPage"
+             Title="{Binding SystemStatus.Name}">
+
+  <ContentPage.BindingContext>
+    <local:SystemStatusDetailsVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:IsAliveToStateConverter x:Key="IsAliveToStateConverter" />
+      <local:IsAliveToStateColorConverter x:Key="IsAliveToStateColorConverter" />
+      <local:OverallStatusToTextColorConverter x:Key="OverallStatusToTextColorConverter" />
+      <local:LevelToBackgroundColorConverter x:Key="LevelToBackgroundColorConverter" />
+      <local:AttributesCountToCellHeightConverter x:Key="AttributesCountToCellHeightConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <TableView Intent="Data" HasUnevenRows="True">
+      <TableRoot>
+        <TableSection Title="GENERAL">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="State" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding SystemStatus.IsAlive, Converter={StaticResource IsAliveToStateConverter}}" TextColor="{Binding SystemStatus.IsAlive, Converter={StaticResource IsAliveToStateColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Overall Status" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding SystemStatus.OverallStatus}" TextColor="{Binding SystemStatus.OverallStatus, Converter={StaticResource OverallStatusToTextColorConverter}}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Start Time" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding SystemStatus.StartTime, StringFormat='{0:dd/MM/yy HH:mm zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Last HB" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding SystemStatus.LastHeardFrom, StringFormat='{0:dd/MM/yy HH:mm zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="ATTRIBUTES">
+          <ViewCell x:Name="attributesViewCell">
+            <ListView ItemsSource="{Binding SystemStatus.Attributes}" HasUnevenRows="True" ItemSelected="OnAttributeSelected" Margin="20,0,0,0">
+              <ListView.ItemTemplate>
+                <DataTemplate>
+                  <ViewCell>
+                    <Grid Margin="0,0,20,0">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                      </Grid.ColumnDefinitions>
+                      <Label Text="{Binding Name}" />
+                      <ContentView BackgroundColor="{Binding Level, Converter={StaticResource LevelToBackgroundColorConverter}}" Padding="5,0,0,0" Grid.Column="1">
+                        <Label Text="{Binding Value}" />
+                      </ContentView>
+                    </Grid>
+                  </ViewCell>
+                </DataTemplate>
+              </ListView.ItemTemplate>
+            </ListView>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+
+</ContentPage>

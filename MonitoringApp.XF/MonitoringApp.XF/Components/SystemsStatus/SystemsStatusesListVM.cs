@@ -1,20 +1,70 @@
 ﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
 using Capital.GSG.FX.Utils.Portable;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Globalization;
 
 namespace MonitoringApp.XF.Components.SystemsStatus
 {
-    public class SystemsStatusesListVM
+    public class SystemsStatusesListVM : BaseViewModel
     {
-        public async Task<List<Tuple<string, string, Color>>> RefreshSystemsStatuses(bool refresh)
+        public ObservableCollection<SystemStatusSlim> Systems { get; set; } = new ObservableCollection<SystemStatusSlim>();
+
+        public Command RefreshCommand { get; private set; }
+
+        private bool isRefreshing;
+        public bool IsRefreshing
+        {
+            get { return isRefreshing; }
+            set
+            {
+                if (value != isRefreshing)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged(nameof(IsRefreshing));
+                }
+            }
+        }
+
+        public SystemsStatusesListVM()
+        {
+            RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
+        }
+
+        internal async Task<GenericActionResult> DoStartStop(string systemName)
+        {
+            SystemStatusSlim system = Systems.FirstOrDefault(s => s.Name == systemName);
+
+            if (system != null)
+            {
+                if (system.IsAlive) // will stop
+                    return await SystemStatusManager.Instance.StopSystem(systemName);
+                else // will start
+                    return await SystemStatusManager.Instance.StartSystem(systemName);
+            }
+            else
+                return new GenericActionResult()
+                {
+                    Message = $"Unknown system {systemName}",
+                    Success = false
+                };
+        }
+
+        private async void ExecuteRefreshCommand()
+        {
+            await RefreshSystemsStatuses(true);
+
+            IsRefreshing = false;
+        }
+
+        public async Task RefreshSystemsStatuses(bool refresh)
         {
             try
             {
-                return await LoadSystemsStatuses(refresh);
+                await LoadSystemsStatuses(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -25,63 +75,33 @@ namespace MonitoringApp.XF.Components.SystemsStatus
                     if (authenticated)
                         await LoadSystemsStatuses(refresh);
                 }
-
-                return null;
             }
         }
 
-        private async Task<List<Tuple<string, string, Color>>> LoadSystemsStatuses(bool refresh)
+        private async Task LoadSystemsStatuses(bool refresh)
         {
-            var statuses = await SystemStatusManager.Instance.LoadSystemsStatuses(refresh);
+            var systems = await SystemStatusManager.Instance.LoadSystemsStatuses(refresh);
 
-            if (statuses.IsNullOrEmpty())
-                return null;
-            else
-                return statuses.Select(e =>
-                {
-                    string status = e.IsAlive ? "Running" : "Stopped";
+            Systems.Clear();
 
-                    Color color;
-                    switch (e.OverallStatus)
-                    {
-                        case "GREEN":
-                            color = Color.Green;
-                            break;
-                        case "YELLOW":
-                            color = Color.Yellow;
-                            break;
-                        default:
-                            color = Color.Red;
-                            break;
-                    }
-
-                    return new Tuple<string, string, Color>(e.Name, status, color);
-                }).ToList();
-        }
-
-        public async Task<SystemStatusFull> GetSystemStatusByName(string name)
-        {
-            try
+            if (!systems.IsNullOrEmpty())
             {
-                return await LoadSystemStatusByName(name);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadSystemStatusByName(name);
-                }
-
-                return null;
+                foreach (var system in systems)
+                    Systems.Add(system);
             }
         }
+    }
 
-        private static async Task<SystemStatusFull> LoadSystemStatusByName(string name)
+    public class IsAliveToButtonTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return await SystemStatusManager.Instance.GetSystemStatusByName(name);
+            return ((value as bool?) == true) ? "STOP" : "START";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

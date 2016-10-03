@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.SystemsStatus"
+             x:Class="MonitoringApp.XF.Components.SystemsStatus.SystemsStatusesListPage"
+             Title="Systems Monitor">
+
+  <ContentPage.BindingContext>
+    <local:SystemsStatusesListVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <local:IsAliveToStateConverter x:Key="IsAliveToStateConverter" />
+      <local:LevelToBackgroundColorConverter x:Key="LevelToBackgroundColorConverter" />
+      <local:IsAliveToButtonTextConverter x:Key="IsAliveToButtonTextConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <ListView ItemsSource="{Binding Systems}" HasUnevenRows="True"
+              IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}" ItemSelected="OnItemSelected">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid BackgroundColor="{Binding OverallStatus, Converter={StaticResource LevelToBackgroundColorConverter}}" Padding="10,10,10,10">
+              <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Label Text="{Binding Name}" />
+              <Label Text="{Binding IsAlive, Converter={StaticResource IsAliveToStateConverter}}" FontSize="10" Grid.Row="1" />
+              <Button Text="{Binding IsAlive, Converter={StaticResource IsAliveToButtonTextConverter}}" CommandParameter="{Binding Name}" Clicked="OnStartStopButtonClicked" Margin="0,2,0,2" IsVisible="{Binding Restartable}" Grid.Column="1" Grid.RowSpan="2" />
+            </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </ContentPage.Content>
+
+</ContentPage>
