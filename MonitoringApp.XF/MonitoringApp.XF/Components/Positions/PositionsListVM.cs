@@ -3,8 +3,7 @@ using Capital.GSG.FX.Utils.Portable;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using System;
-using System.Globalization;
+using System.Linq;
 
 namespace MonitoringApp.XF.Components.Positions
 {
@@ -24,6 +23,20 @@ namespace MonitoringApp.XF.Components.Positions
                 {
                     isRefreshing = value;
                     OnPropertyChanged(nameof(IsRefreshing));
+                }
+            }
+        }
+
+        private double totalPnlUsd;
+        public double TotalPnlUsd
+        {
+            get { return totalPnlUsd; }
+            set
+            {
+                if (totalPnlUsd != value)
+                {
+                    totalPnlUsd = value;
+                    OnPropertyChanged(nameof(TotalPnlUsd));
                 }
             }
         }
@@ -68,6 +81,8 @@ namespace MonitoringApp.XF.Components.Positions
             {
                 foreach (var position in positions)
                     Positions.Add(position);
+
+                TotalPnlUsd = positions.Select(p => p.TotalPnlUsd).Sum() ?? 0;
             }
         }
     }

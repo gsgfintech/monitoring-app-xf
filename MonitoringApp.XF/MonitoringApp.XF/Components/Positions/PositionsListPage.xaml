@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
              x:Class="MonitoringApp.XF.Components.Positions.PositionsListPage"
-             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions">
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
+             Title="Current Positions">
 
   <ContentPage.BindingContext>
     <local:PositionsListVM x:Name="ViewModel" />
@@ -10,12 +12,20 @@
 
   <ContentPage.Resources>
     <ResourceDictionary>
-      <local:NumberToColorConverter x:Key="NumberToColorConverter" />
+      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
     </ResourceDictionary>
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected">
+    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected" Header="{Binding TotalPnlUsd}">
+      <ListView.HeaderTemplate>
+        <DataTemplate>
+          <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+            <Label Text="Total: " FontSize="20" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+            <Label Text="{Binding ., StringFormat='{0:N0} USD'}" TextColor="{Binding ., Converter={StaticResource NumberToColorConverter}}" FontSize="22" VerticalTextAlignment="Center" />
+          </StackLayout>
+        </DataTemplate>
+      </ListView.HeaderTemplate>
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
