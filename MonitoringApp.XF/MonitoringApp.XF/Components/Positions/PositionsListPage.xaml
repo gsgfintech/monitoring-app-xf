@@ -17,7 +17,7 @@
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected" Header="{Binding TotalPnlUsd}">
+    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected" Header="{Binding TotalPnlUsd}" IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
       <ListView.HeaderTemplate>
         <DataTemplate>
           <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
