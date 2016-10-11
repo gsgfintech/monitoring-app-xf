@@ -110,8 +110,8 @@
       <HintPath>..\..\packages\Microsoft.Azure.Mobile.Client.SQLiteStore.3.0.1\lib\portable-win+net45+wp8+wpa81+monotouch10+monoandroid10+xamarinios10\Microsoft.WindowsAzure.Mobile.SQLiteStore.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MonitoringAppDataTypes, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MonitoringAppDataTypes.1.5.2\lib\.NETPortable,Version=v4.5\MonitoringAppDataTypes.dll</HintPath>
+    <Reference Include="MonitoringAppDataTypes, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonitoringAppDataTypes.1.5.3\lib\.NETPortable,Version=v4.5\MonitoringAppDataTypes.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

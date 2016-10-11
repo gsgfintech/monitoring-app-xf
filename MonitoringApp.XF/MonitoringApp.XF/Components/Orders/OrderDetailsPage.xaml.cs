@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Orders
 {
@@ -9,6 +10,12 @@ namespace MonitoringApp.XF.Components.Orders
         public OrderDetailsPage()
         {
             InitializeComponent();
+
+            ViewModel.HistoryPointsCountChanged += (count) =>
+            {
+                historyViewCell.Height = Math.Max(40, 20 + 20 * count);
+                historyViewCell.ForceUpdateSize();
+            };
         }
 
         private void OnHistoryPointSelected(object sender, SelectedItemChangedEventArgs e)

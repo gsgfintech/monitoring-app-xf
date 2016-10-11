@@ -101,7 +101,7 @@
               <Label Text="{Binding Order.LastUpdateTime, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
             </StackLayout>
           </ViewCell>
-          <ViewCell Height="70">
+          <ViewCell x:Name="historyViewCell">
             <ListView ItemsSource="{Binding Order.History}" Header="Changes" SeparatorVisibility="None" HasUnevenRows="True" ItemSelected="OnHistoryPointSelected" Margin="20,0,0,0">
               <ListView.ItemTemplate>
                 <DataTemplate>
@@ -142,12 +142,6 @@
             </StackLayout>
           </ViewCell>
           <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Contract ID" VerticalTextAlignment="Center" />
-              <Label Text="{Binding Order.ContractId}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
             <StackLayout Margin="20,0,20,0">
               <Label Text="Reference" VerticalTextAlignment="Center" />
               <Label Text="{Binding Order.OurRef}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" LineBreakMode="TailTruncation" />
@@ -160,12 +154,6 @@
               <Label Text="Estimated Commission" VerticalTextAlignment="Center" />
               <Label Text="{Binding Order.EstimatedCommission, StringFormat='{0:N2} '}" HorizontalOptions="End" VerticalTextAlignment="Center" />
               <Label Text="{Binding Order.EstimatedCommissionCcy}}" HorizontalOptions="End" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Exit Profitability Level" VerticalTextAlignment="Center" />
-              <Label Text="{Binding Order.ExitProfitabilityLevel}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
             </StackLayout>
           </ViewCell>
         </TableSection>
@@ -193,13 +181,7 @@
           <ViewCell>
             <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
               <Label Text="Name" VerticalTextAlignment="Center" />
-              <Label Text="{Binding Order.Strategy.Name}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Version" VerticalTextAlignment="Center" />
-              <Label Text="{Binding Order.Strategy.Version}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Order.Strategy}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
             </StackLayout>
           </ViewCell>
         </TableSection>
