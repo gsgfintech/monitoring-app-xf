@@ -74,6 +74,11 @@
       <DependentUpon>OrdersListPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Orders\OrdersListVM.cs" />
+    <Compile Include="Components\Positions\AccountDetailsPage.xaml.cs">
+      <DependentUpon>AccountDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Positions\AccountDetailsVM.cs" />
+    <Compile Include="Components\Positions\AccountViewModel.cs" />
     <Compile Include="Components\Positions\PositionDetailsPage.xaml.cs">
       <DependentUpon>PositionDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -231,6 +236,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\SystemsStatus\SystemsStatusesListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Positions\AccountDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -9,6 +9,7 @@ namespace MonitoringApp.XF.Components.Positions
     public class PositionsListVM : BaseViewModel
     {
         public ObservableCollection<PositionViewModel> Positions { get; set; } = new ObservableCollection<PositionViewModel>();
+        public ObservableCollection<AccountViewModel> Accounts { get; set; } = new ObservableCollection<AccountViewModel>();
 
         public Command RefreshCommand { get; private set; }
 
@@ -47,16 +48,17 @@ namespace MonitoringApp.XF.Components.Positions
 
         private async void ExecuteRefreshCommand()
         {
-            await RefreshPositions(true);
+            await Refresh(true);
 
             IsRefreshing = false;
         }
 
-        public async Task RefreshPositions(bool refresh)
+        public async Task Refresh(bool refresh)
         {
             try
             {
                 await LoadPositions(refresh);
+                await LoadAccounts(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -65,7 +67,10 @@ namespace MonitoringApp.XF.Components.Positions
                     bool authenticated = await App.Authenticator.AuthenticateAsync();
 
                     if (authenticated)
+                    {
                         await LoadPositions(refresh);
+                        await LoadAccounts(refresh);
+                    }
                 }
             }
         }
@@ -82,6 +87,19 @@ namespace MonitoringApp.XF.Components.Positions
                     Positions.Add(position.ToPositionViewModel());
 
                 TotalPnlUsd = Positions.Select(p => p.TotalPnlUsd).Sum();
+            }
+        }
+
+        private async Task LoadAccounts(bool refresh)
+        {
+            var accounts = await PositionManager.Instance.LoadAccounts(refresh);
+
+            Accounts.Clear();
+
+            if (!accounts.IsNullOrEmpty())
+            {
+                foreach (var account in accounts)
+                    Accounts.Add(account.ToAccountViewModel());
             }
         }
     }

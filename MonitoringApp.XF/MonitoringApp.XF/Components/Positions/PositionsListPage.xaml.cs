@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Positions
 {
@@ -18,17 +17,31 @@ namespace MonitoringApp.XF.Components.Positions
         {
             base.OnAppearing();
 
-            await vm?.RefreshPositions(false);
+            await vm?.Refresh(false);
         }
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            Position position = ((ListView)sender).SelectedItem as Position;
+            PositionViewModel position = ((ListView)sender).SelectedItem as PositionViewModel;
 
             if (position != null)
             {
                 var detailsView = new PositionDetailsPage();
                 await detailsView.ViewModel?.GetPositionByCross(position.Cross);
+                await Navigation.PushAsync(detailsView);
+            }
+
+            ((ListView)sender).SelectedItem = null;
+        }
+
+        private async void OnAccountItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            AccountViewModel account = ((ListView)sender).SelectedItem as AccountViewModel;
+
+            if (account != null)
+            {
+                var detailsView = new AccountDetailsPage();
+                await detailsView.ViewModel?.GetAccount(account.Broker, account.Name);
                 await Navigation.PushAsync(detailsView);
             }
 

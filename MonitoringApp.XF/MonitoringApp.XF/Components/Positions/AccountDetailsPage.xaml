@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MonitoringApp.XF.Components.Positions.AccountDetailsPage"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
+             Title="{Binding Account.Header}">
+
+  <ContentPage.BindingContext>
+    <local:AccountDetailsVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Content>
+    <TableView Intent="Data" HasUnevenRows="True">
+      <TableRoot>
+        <TableSection Title="ACCOUNT">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Broker" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Account.Broker}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Account" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Account.Name}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Last Update" VerticalTextAlignment="Center" />
+              <Label Text="{Binding Account.LastUpdate, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="ATTRIBUTES">
+          <ViewCell x:Name="attributesViewCell">
+            <ListView ItemsSource="{Binding Account.Attributes}" SeparatorVisibility="None" HasUnevenRows="True" ItemSelected="OnAttributeSelected" Margin="20,0,0,0">
+              <ListView.ItemTemplate>
+                <DataTemplate>
+                  <ViewCell>
+                    <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                      <Label Text="{Binding Key}" VerticalTextAlignment="Center" />
+                      <Label Text="{Binding Value}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+                    </StackLayout>
+                  </ViewCell>
+                </DataTemplate>
+              </ListView.ItemTemplate>
+            </ListView>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+
+</ContentPage>

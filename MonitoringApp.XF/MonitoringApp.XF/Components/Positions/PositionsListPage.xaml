@@ -17,38 +17,54 @@
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected" Header="{Binding TotalPnlUsd}" IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-      <ListView.HeaderTemplate>
-        <DataTemplate>
-          <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-            <Label Text="Total: " FontSize="20" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
-            <Label Text="{Binding ., StringFormat='{0:N0} USD'}" TextColor="{Binding ., Converter={StaticResource NumberToColorConverter}}" FontSize="22" VerticalTextAlignment="Center" />
-          </StackLayout>
-        </DataTemplate>
-      </ListView.HeaderTemplate>
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <ViewCell>
-            <Grid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-              </Grid.ColumnDefinitions>
-              <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-              </Grid.RowDefinitions>
-              <Label Text="{Binding Header}" FontSize="20" Margin="20,0,0,0" />
-              <Label Text="{Binding PositionQuantity, StringFormat='{0:N0}'}" Grid.Row="1" Margin="20,0,0,0"
-                     TextColor="{Binding PositionQuantity, Converter={StaticResource NumberToColorConverter}}" />
-              <Label Text="{Binding TotalPnlUsd, StringFormat='{0:N0}'}" HorizontalTextAlignment="End"
-                     FontSize="18" VerticalTextAlignment="Center" Margin="0,0,20,0"
-                     TextColor="{Binding TotalPnlUsd, Converter={StaticResource NumberToColorConverter}}"
-                     Grid.Column="1" Grid.RowSpan="2" />
-            </Grid>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+    <StackLayout>
+      <ListView x:Name="listView" ItemsSource="{Binding Positions}" RowHeight="60" ItemSelected="OnItemSelected" Header="{Binding TotalPnlUsd}" IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" HasUnevenRows="True">
+        <ListView.HeaderTemplate>
+          <DataTemplate>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Total: " FontSize="20" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+              <Label Text="{Binding ., StringFormat='{0:N0} USD'}" TextColor="{Binding ., Converter={StaticResource NumberToColorConverter}}" FontSize="22" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </DataTemplate>
+        </ListView.HeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition />
+                  <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Text="{Binding Header}" FontSize="20" Margin="20,0,0,0" />
+                <Label Text="{Binding PositionQuantity, StringFormat='{0:N0}'}" Grid.Row="1" Margin="20,0,0,0"
+                       TextColor="{Binding PositionQuantity, Converter={StaticResource NumberToColorConverter}}" />
+                <Label Text="{Binding TotalPnlUsd, StringFormat='{0:N0}'}" HorizontalTextAlignment="End"
+                       FontSize="18" VerticalTextAlignment="Center" Margin="0,0,20,0"
+                       TextColor="{Binding TotalPnlUsd, Converter={StaticResource NumberToColorConverter}}"
+                       Grid.Column="1" Grid.RowSpan="2" />
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      <ListView ItemsSource="{Binding Accounts}" ItemSelected="OnAccountItemSelected" Header="Accounts" HasUnevenRows="True">
+        <ListView.HeaderTemplate>
+          <DataTemplate>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="{Binding .}" FontSize="20" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </DataTemplate>
+        </ListView.HeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <TextCell Text="{Binding Header}" />
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
   </ContentPage.Content>
 </ContentPage>
