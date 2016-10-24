@@ -1,7 +1,7 @@
-﻿using Capital.GSG.FX.Data.Core.ExecutionData;
-using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Portable;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -103,7 +103,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         private async Task LoadExecutions(bool refresh)
         {
-            var trades = await ExecutionManager.Instance.LoadExecutions(Day, refresh);
+            var trades = (await ExecutionManager.Instance.LoadExecutions(Day, refresh))?.AsEnumerable().OrderByDescending(t => t.ExecutionTime);
 
             TodaysTrades.Clear();
 

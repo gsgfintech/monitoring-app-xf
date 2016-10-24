@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using System.Globalization;
 using System.Collections.Generic;
 using Capital.GSG.FX.Data.Core.SystemData;
+using System.Linq;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
@@ -89,18 +90,18 @@ namespace MonitoringApp.XF.Components.Alerts
 
         private async Task LoadAlerts(bool refresh)
         {
-            var openAlerts = await AlertManager.Instance.LoadOpenAlerts(refresh);
-            var closedAlerts = await AlertManager.Instance.LoadAlertsClosedForDay(Day, refresh);
+            var openAlerts = (await AlertManager.Instance.LoadOpenAlerts(refresh))?.AsEnumerable().OrderByDescending(a => a.Timestamp);
+            var closedAlerts = (await AlertManager.Instance.LoadAlertsClosedToday(refresh))?.AsEnumerable().OrderByDescending(a => a.Timestamp);
 
             Alerts.Clear();
 
             if (!openAlerts.IsNullOrEmpty())
-                Alerts.Add(new GroupedAlertList($"Open Alerts ({openAlerts.Count})", "OPEN", true, openAlerts));
+                Alerts.Add(new GroupedAlertList($"Open Alerts ({openAlerts.Count()})", "OPEN", true, openAlerts));
             else
                 Alerts.Add(new GroupedAlertList("Open Alerts (0)", "OPEN", false));
 
             if (!closedAlerts.IsNullOrEmpty())
-                Alerts.Add(new GroupedAlertList($"Alerts Closed Today ({closedAlerts.Count})", "CLOSED", false, closedAlerts));
+                Alerts.Add(new GroupedAlertList($"Alerts Closed Today ({closedAlerts.Count()})", "CLOSED", false, closedAlerts));
             else
                 Alerts.Add(new GroupedAlertList("Alerts Closed Today (0)", "CLOSED", false));
         }

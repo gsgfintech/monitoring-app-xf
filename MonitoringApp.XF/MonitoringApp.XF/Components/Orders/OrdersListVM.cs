@@ -105,7 +105,7 @@ namespace MonitoringApp.XF.Components.Orders
 
         private async Task LoadOrders(bool refresh)
         {
-            var orders = await OrderManager.Instance.LoadOrders(Day, refresh);
+            var orders = (await OrderManager.Instance.LoadOrders(Day, refresh))?.AsEnumerable().OrderByDescending(o => o.PlacedTime);
 
             Orders.Clear();
 

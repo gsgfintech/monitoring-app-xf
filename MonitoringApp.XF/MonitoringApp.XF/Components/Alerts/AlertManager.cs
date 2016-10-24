@@ -34,7 +34,7 @@ namespace MonitoringApp.XF.Components.Alerts
         }
 
         private List<Alert> openAlerts;
-        private Dictionary<DateTime, List<Alert>> alertsClosedForDay = new Dictionary<DateTime, List<Alert>>();
+        private List<Alert> alertsClosedtoday = new List<Alert>();
         private Dictionary<string, Alert> detailedAlerts = new Dictionary<string, Alert>();
 
         private AlertManager()
@@ -79,26 +79,26 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
-        public async Task<List<Alert>> LoadAlertsClosedForDay(DateTime day, bool refresh)
+        public async Task<List<Alert>> LoadAlertsClosedToday(bool refresh)
         {
             try
             {
-                if (!alertsClosedForDay.ContainsKey(day) || alertsClosedForDay[day] == null || refresh)
+                if (alertsClosedtoday == null || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
                     var alerts = await client.InvokeApiAsync<List<Alert>>(AlertsClosedTodayRoute, HttpMethod.Get, new Dictionary<string, string>() {
-                        { "day", day.ToString("yyyy-MM-dd") }
+                        { "day", DateTime.Today.ToString("yyyy-MM-dd") }
                     }, cts.Token);
 
                     if (alerts != null)
-                        alertsClosedForDay[day] = alerts;
-                    else
-                        alertsClosedForDay[day] = new List<Alert>();
+                        alertsClosedtoday = alerts;
+                    else                  
+                        alertsClosedtoday = new List<Alert>();
                 }
 
-                return alertsClosedForDay[day];
+                return alertsClosedtoday;
             }
             catch (OperationCanceledException)
             {
@@ -226,10 +226,10 @@ namespace MonitoringApp.XF.Components.Alerts
             {
                 DateTime day = alert.Timestamp.Date;
 
-                if (!alertsClosedForDay.ContainsKey(day) || alertsClosedForDay[day] == null)
-                    alertsClosedForDay[day] = new List<Alert>();
+                if (alertsClosedtoday == null)
+                    alertsClosedtoday = new List<Alert>();
 
-                alertsClosedForDay[day].Add(alert);
+                alertsClosedtoday.Add(alert);
                 openAlerts.Remove(alert);
             }
 
