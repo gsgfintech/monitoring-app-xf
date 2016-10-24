@@ -1,27 +1,29 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.OrderData;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MonitoringApp.XF.Components.Orders
 {
-    public class OrderFullViewModel : OrderFull
+    public class OrderViewModel : Order
     {
         public string Header { get { return $"{Side} {Quantity / 1000:N0}K {Cross} ({Utils.ShortenOrderType(Type)})"; } }
+
+        public string Details { get; set; }
     }
 
-    public static class OrderFullViewModelExtensions
+    public static class OrderViewModelExtensions
     {
-        public static OrderFullViewModel ToOrderFullViewModel(this OrderFull order)
+        public static OrderViewModel ToOrderViewModel(this Order order)
         {
             if (order == null)
                 return null;
 
-            return new OrderFullViewModel()
+            return new OrderViewModel()
             {
-                ClientId = order.ClientId,
-                ContractId = order.ContractId,
                 Cross = order.Cross,
+                Details = $"{order.PlacedTime:dd/MM/yy HH:mm:ss zzz} | {order.Origin}",
                 EstimatedCommission = order.EstimatedCommission,
                 EstimatedCommissionCcy = order.EstimatedCommissionCcy,
-                ExitProfitabilityLevel = order.ExitProfitabilityLevel,
                 FillPrice = order.FillPrice,
                 History = order.History,
                 LastAsk = order.LastAsk,
@@ -29,11 +31,11 @@ namespace MonitoringApp.XF.Components.Orders
                 LastMid = order.LastMid,
                 LastUpdateTime = order.LastUpdateTime,
                 LimitPrice = order.LimitPrice,
-                OrderId = order.OrderId,
+                OrderID = order.OrderID,
                 Origin = order.Origin,
                 OurRef = order.OurRef,
-                ParentOrderId = order.ParentOrderId,
-                PermanentId = order.PermanentId,
+                ParentOrderID = order.ParentOrderID,
+                PermanentID = order.PermanentID,
                 PlacedTime = order.PlacedTime,
                 Quantity = order.Quantity,
                 Side = order.Side,
@@ -42,11 +44,14 @@ namespace MonitoringApp.XF.Components.Orders
                 Strategy = order.Strategy,
                 TimeInForce = order.TimeInForce,
                 TrailingAmount = order.TrailingAmount,
-                TransmitOrder = order.TransmitOrder,
                 Type = order.Type,
-                UsdQuantity = order.UsdQuantity,
-                WarningMessage = order.WarningMessage
+                UsdQuantity = order.UsdQuantity
             };
+        }
+
+        public static IEnumerable<OrderViewModel> ToOrderViewModels(this IEnumerable<Order> orders)
+        {
+            return orders?.Select(o => o.ToOrderViewModel());
         }
     }
 }

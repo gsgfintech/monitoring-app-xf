@@ -1,12 +1,11 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-
+﻿using Capital.GSG.FX.Data.Core.MarketData;
 using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.FXEvents
 {
     public class FXEventDetailsPage : ContentPage
     {
-        public FXEventDetailsPage(FXEventFull fxEvent)
+        public FXEventDetailsPage(FXEvent fxEvent)
         {
             Title = fxEvent.Title;
             Padding = new Thickness(20);
@@ -32,10 +31,10 @@ namespace MonitoringApp.XF.Components.FXEvents
             };
 
             grid.Children.Add(new Label() { Text = "Currency", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center });
-            grid.Children.Add(new Label() { Text = fxEvent.Currency, VerticalTextAlignment = TextAlignment.Center }, 1, 0);
+            grid.Children.Add(new Label() { Text = fxEvent.Currency.ToString(), VerticalTextAlignment = TextAlignment.Center }, 1, 0);
 
             grid.Children.Add(new Label() { Text = "Impact", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 1);
-            grid.Children.Add(new Label() { Text = fxEvent.Level, VerticalTextAlignment = TextAlignment.Center }, 1, 1);
+            grid.Children.Add(new Label() { Text = fxEvent.Level.ToString(), VerticalTextAlignment = TextAlignment.Center }, 1, 1);
 
             grid.Children.Add(new Label() { Text = "Time", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 2);
             grid.Children.Add(new Label() { Text = $"{fxEvent.Timestamp:dd/MM/yy HH:mm zzz}", VerticalTextAlignment = TextAlignment.Center }, 1, 2);
@@ -53,7 +52,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             grid.Children.Add(new Label() { Text = fxEvent.Explanation, VerticalTextAlignment = TextAlignment.Center }, 1, 6);
 
             grid.Children.Add(new Label() { Text = "ID", FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 0, 7);
-            grid.Children.Add(new Label() { Text = fxEvent.Id, VerticalTextAlignment = TextAlignment.Center }, 1, 7);
+            grid.Children.Add(new Label() { Text = fxEvent.EventId, VerticalTextAlignment = TextAlignment.Center }, 1, 7);
 
             Content = grid;
         }

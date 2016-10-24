@@ -11,7 +11,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ExecutionSlimViewModel execution = ((ListView)sender).SelectedItem as ExecutionSlimViewModel;
+            ExecutionViewModel execution = ((ListView)sender).SelectedItem as ExecutionViewModel;
 
             if (execution != null)
             {

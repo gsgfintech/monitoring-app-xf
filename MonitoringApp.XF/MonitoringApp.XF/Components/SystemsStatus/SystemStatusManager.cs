@@ -1,8 +1,10 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
+using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -16,8 +18,7 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         private readonly MobileServiceClient client;
 
-        private List<SystemStatusSlim> statuses;
-        private Dictionary<string, SystemStatusFull> detailedStatuses = new Dictionary<string, SystemStatusFull>();
+        private Dictionary<string, SystemStatus> statusDict;
 
         private static SystemStatusManager instance;
         public static SystemStatusManager Instance
@@ -36,21 +37,37 @@ namespace MonitoringApp.XF.Components.SystemsStatus
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<SystemStatusSlim>> LoadSystemsStatuses(bool refresh)
+        public async Task<List<SystemStatus>> LoadSystemsStatuses(bool refresh)
         {
             try
             {
-                if (statuses == null || refresh)
+                if (statusDict == null || refresh)
                 {
-                    detailedStatuses.Clear();
-
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    statuses = await client.InvokeApiAsync<List<SystemStatusSlim>>($"{SystemsRoute}", HttpMethod.Get, null, cts.Token);
+                    var statuses = await client.InvokeApiAsync<List<SystemStatus>>($"{SystemsRoute}", HttpMethod.Get, null, cts.Token);
+
+                    if (!statuses.IsNullOrEmpty())
+                    {
+                        foreach (var status in statuses)
+                        {
+                            if (!status.OverallStatus.HasValue)
+                            {
+                                if (!status.Attributes.IsNullOrEmpty())
+                                    status.OverallStatus = SystemStatusLevelUtils.CalculateWorstOf(status.Attributes.Select(a => a.Level));
+                                else
+                                    status.OverallStatus = SystemStatusLevel.RED;
+                            }
+                        }
+
+                        statusDict = statuses.ToDictionary(s => s.Name, s => s);
+                    }
+                    else
+                        statusDict = new Dictionary<string, SystemStatus>();
                 }
 
-                return statuses;
+                return statusDict.Values.ToList();
             }
             catch (OperationCanceledException)
             {
@@ -75,24 +92,29 @@ namespace MonitoringApp.XF.Components.SystemsStatus
             }
         }
 
-        public async Task<SystemStatusFull> GetSystemStatusByName(string name)
+        public async Task<SystemStatus> GetSystemStatusByName(string name)
         {
             try
             {
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentNullException(nameof(name));
 
-                if (detailedStatuses.ContainsKey(name) && detailedStatuses[name] != null)
-                    return detailedStatuses[name];
+                if (statusDict != null && statusDict.ContainsKey(name) && statusDict[name] != null)
+                    return statusDict[name];
                 else
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    SystemStatusFull status = await client.InvokeApiAsync<SystemStatusFull>($"{SystemsRoute}/{name}", HttpMethod.Get, null, cts.Token);
+                    SystemStatus status = await client.InvokeApiAsync<SystemStatus>($"{SystemsRoute}/{name}", HttpMethod.Get, null, cts.Token);
 
                     if (status != null)
-                        detailedStatuses[name] = status;
+                    {
+                        if (statusDict == null)
+                            statusDict = new Dictionary<string, SystemStatus>();
+
+                        statusDict[name] = status;
+                    }
 
                     return status;
                 }
@@ -125,84 +147,84 @@ namespace MonitoringApp.XF.Components.SystemsStatus
             }
         }
 
-        public async Task<GenericActionResult> StartSystem(string name)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new ArgumentNullException(nameof(name));
+        //public async Task<GenericActionResult> StartSystem(string name)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(name))
+        //            throw new ArgumentNullException(nameof(name));
 
-                CancellationTokenSource cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromMinutes(1));
+        //        CancellationTokenSource cts = new CancellationTokenSource();
+        //        cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/start", HttpMethod.Get, null, cts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine("Not starting system: operation cancelled");
-                return null;
-            }
-            catch (ArgumentNullException ex)
-            {
-                Debug.WriteLine($"Not starting system: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to start system");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
+        //        return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/start", HttpMethod.Get, null, cts.Token);
+        //    }
+        //    catch (OperationCanceledException)
+        //    {
+        //        Debug.WriteLine("Not starting system: operation cancelled");
+        //        return null;
+        //    }
+        //    catch (ArgumentNullException ex)
+        //    {
+        //        Debug.WriteLine($"Not starting system: missing or invalid parameter {ex.ParamName}");
+        //        return null;
+        //    }
+        //    catch (MobileServiceInvalidOperationException msioe)
+        //    {
+        //        if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+        //        {
+        //            Debug.WriteLine("Authentication necessary to start system");
+        //            throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+        //        }
 
-                Debug.WriteLine($"Failed to start system: {msioe.Message}");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Failed to start system: {e.Message}");
-                return null;
-            }
-        }
+        //        Debug.WriteLine($"Failed to start system: {msioe.Message}");
+        //        return null;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.WriteLine($"Failed to start system: {e.Message}");
+        //        return null;
+        //    }
+        //}
 
-        public async Task<GenericActionResult> StopSystem(string name)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new ArgumentNullException(nameof(name));
+        //public async Task<GenericActionResult> StopSystem(string name)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(name))
+        //            throw new ArgumentNullException(nameof(name));
 
-                CancellationTokenSource cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromMinutes(1));
+        //        CancellationTokenSource cts = new CancellationTokenSource();
+        //        cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/stop", HttpMethod.Get, null, cts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine("Not stopping system: operation cancelled");
-                return null;
-            }
-            catch (ArgumentNullException ex)
-            {
-                Debug.WriteLine($"Not stopping system: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to start system");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
+        //        return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/stop", HttpMethod.Get, null, cts.Token);
+        //    }
+        //    catch (OperationCanceledException)
+        //    {
+        //        Debug.WriteLine("Not stopping system: operation cancelled");
+        //        return null;
+        //    }
+        //    catch (ArgumentNullException ex)
+        //    {
+        //        Debug.WriteLine($"Not stopping system: missing or invalid parameter {ex.ParamName}");
+        //        return null;
+        //    }
+        //    catch (MobileServiceInvalidOperationException msioe)
+        //    {
+        //        if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
+        //        {
+        //            Debug.WriteLine("Authentication necessary to start system");
+        //            throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
+        //        }
 
-                Debug.WriteLine($"Failed to stop system: {msioe.Message}");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Failed to stop system: {e.Message}");
-                return null;
-            }
-        }
+        //        Debug.WriteLine($"Failed to stop system: {msioe.Message}");
+        //        return null;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Debug.WriteLine($"Failed to stop system: {e.Message}");
+        //        return null;
+        //    }
+        //}
     }
 }

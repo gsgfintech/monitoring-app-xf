@@ -18,12 +18,12 @@ namespace MonitoringApp.XF.Components.Orders
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            OrderSlimViewModel order = ((ListView)sender).SelectedItem as OrderSlimViewModel;
+            OrderViewModel order = ((ListView)sender).SelectedItem as OrderViewModel;
 
             if (order != null)
             {
                 var detailsView = new OrderDetailsPage();
-                await detailsView.ViewModel?.GetOrderByPermanentId(order.PermanentId);
+                await detailsView.ViewModel?.GetOrderByPermanentId(order.PermanentID);
                 await Navigation.PushAsync(detailsView);
             }
         }

@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,8 +13,8 @@ namespace MonitoringApp.XF.Components.SystemsStatus
     {
         public event Action<int> AttributesCountChanged;
 
-        private SystemStatusFull systemStatus;
-        public SystemStatusFull SystemStatus
+        private SystemStatus systemStatus;
+        public SystemStatus SystemStatus
         {
             get { return systemStatus; }
             set
@@ -89,16 +89,22 @@ namespace MonitoringApp.XF.Components.SystemsStatus
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            SystemStatusLevel? status = value as SystemStatusLevel?;
 
-            if (status == "GREEN")
-                return Color.Green;
-            else if (status == "YELLOW")
-                return CustomColors.LightSalmon;
-            else if (status == "RED")
-                return Color.Red;
-            else
+            if (!status.HasValue)
                 return Color.Default;
+
+            switch (status.Value)
+            {
+                case SystemStatusLevel.GREEN:
+                    return Color.Green;
+                case SystemStatusLevel.YELLOW:
+                    return CustomColors.LightSalmon;
+                case SystemStatusLevel.RED:
+                    return Color.Red;
+                default:
+                    return Color.Default;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -111,16 +117,22 @@ namespace MonitoringApp.XF.Components.SystemsStatus
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            SystemStatusLevel? status = value as SystemStatusLevel?;
 
-            if (status == "GREEN")
-                return CustomColors.LightGreen;
-            else if (status == "YELLOW")
-                return CustomColors.LightSalmon;
-            else if (status == "RED")
-                return CustomColors.LightPink;
-            else
+            if (!status.HasValue)
                 return Color.Transparent;
+
+            switch (status.Value)
+            {
+                case SystemStatusLevel.GREEN:
+                    return CustomColors.LightGreen;
+                case SystemStatusLevel.YELLOW:
+                    return CustomColors.LightSalmon;
+                case SystemStatusLevel.RED:
+                    return CustomColors.LightPink;
+                default:
+                    return Color.Transparent;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

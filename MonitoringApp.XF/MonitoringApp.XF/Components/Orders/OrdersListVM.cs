@@ -5,6 +5,7 @@ using Xamarin.Forms;
 using System;
 using System.Globalization;
 using System.Linq;
+using Capital.GSG.FX.Data.Core.OrderData;
 
 namespace MonitoringApp.XF.Components.Orders
 {
@@ -110,19 +111,21 @@ namespace MonitoringApp.XF.Components.Orders
 
             if (!orders.IsNullOrEmpty())
             {
+                OrderStatusCode[] activeStatus = new OrderStatusCode[] { OrderStatusCode.PendingCancel, OrderStatusCode.PendingSubmit, OrderStatusCode.PreSubmitted, OrderStatusCode.Submitted };
+
                 // 1. Active orders
-                var activeOrders = orders.Where(o => o.Status.ToLower().Contains("submit") || o.Status == "PendingCancel");
+                var activeOrders = orders.Where(o => activeStatus.Contains(o.Status));
 
                 if (!activeOrders.IsNullOrEmpty())
-                    Orders.Add(new GroupedOrdersList($"Active Orders ({activeOrders.Count()})", "ACTIVE", activeOrders));
+                    Orders.Add(new GroupedOrdersList($"Active Orders ({activeOrders.Count()})", "ACTIVE", activeOrders.ToOrderViewModels()));
                 else
                     Orders.Add(new GroupedOrdersList("Active Orders (0)", "ACTIVE"));
 
                 // 2. Inactive orders
-                var inactiveOrders = orders.Where(o => !o.Status.ToLower().Contains("submitted"));
+                var inactiveOrders = orders.Where(o => !activeStatus.Contains(o.Status));
 
                 if (!inactiveOrders.IsNullOrEmpty())
-                    Orders.Add(new GroupedOrdersList($"Inactive Orders ({inactiveOrders.Count()})", "INACTIVE", inactiveOrders));
+                    Orders.Add(new GroupedOrdersList($"Inactive Orders ({inactiveOrders.Count()})", "INACTIVE", inactiveOrders.ToOrderViewModels()));
                 else
                     Orders.Add(new GroupedOrdersList("Inactive Orders (0)", "INACTIVE"));
             }
@@ -167,7 +170,12 @@ namespace MonitoringApp.XF.Components.Orders
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Utils.ShortenOrderOrigin(value?.ToString());
+            OrderOrigin? origin = value as OrderOrigin?;
+
+            if (origin.HasValue)
+                return Utils.ShortenOrderOrigin(origin.Value);
+            else
+                return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -180,17 +188,18 @@ namespace MonitoringApp.XF.Components.Orders
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            OrderStatusCode? status = value as OrderStatusCode?;
 
-            if (string.IsNullOrEmpty(status))
+            if (!status.HasValue)
                 return Color.Transparent;
 
-            switch (status)
+            switch (status.Value)
             {
-                case "Filled":
-                    return CustomColors.LightGreen;
-                case "Cancelled":
+                case OrderStatusCode.ApiCanceled:
+                case OrderStatusCode.Cancelled:
                     return CustomColors.LightPink;
+                case OrderStatusCode.Filled:
+                    return CustomColors.LightGreen;
                 default:
                     return Color.Transparent;
             }
@@ -206,17 +215,18 @@ namespace MonitoringApp.XF.Components.Orders
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            OrderStatusCode? status = value as OrderStatusCode?;
 
-            if (string.IsNullOrEmpty(status))
+            if (!status.HasValue)
                 return Color.Default;
 
-            switch (status)
+            switch (status.Value)
             {
-                case "Filled":
-                    return Color.Green;
-                case "Cancelled":
+                case OrderStatusCode.ApiCanceled:
+                case OrderStatusCode.Cancelled:
                     return Color.Red;
+                case OrderStatusCode.Filled:
+                    return Color.Green;
                 default:
                     return Color.Default;
             }
@@ -232,7 +242,12 @@ namespace MonitoringApp.XF.Components.Orders
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Utils.ShortenOrderType(value?.ToString());
+            OrderType? orderType = value as OrderType?;
+
+            if (orderType.HasValue)
+                return Utils.ShortenOrderType(orderType.Value);
+            else
+                return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
 using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Positions
@@ -23,12 +23,12 @@ namespace MonitoringApp.XF.Components.Positions
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            PositionSecuritySlim security = ((ListView)sender).SelectedItem as PositionSecuritySlim;
+            Position position = ((ListView)sender).SelectedItem as Position;
 
-            if (security != null)
+            if (position != null)
             {
                 var detailsView = new PositionDetailsPage();
-                await detailsView.ViewModel?.GetPositionByCross(security.Cross);
+                await detailsView.ViewModel?.GetPositionByCross(position.Cross);
                 await Navigation.PushAsync(detailsView);
             }
 

@@ -1,4 +1,5 @@
-﻿using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Data.Core.ExecutionData;
+using Capital.GSG.FX.Utils.Portable;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace MonitoringApp.XF.Components.Executions
 {
     public class ExecutionsListVM : BaseViewModel
     {
-        public ObservableCollection<ExecutionSlimViewModel> TodaysTrades { get; set; } = new ObservableCollection<ExecutionSlimViewModel>();
+        public ObservableCollection<ExecutionViewModel> TodaysTrades { get; set; } = new ObservableCollection<ExecutionViewModel>();
 
         private DateTime day;
         public DateTime Day
@@ -109,7 +110,7 @@ namespace MonitoringApp.XF.Components.Executions
             if (!trades.IsNullOrEmpty())
             {
                 foreach (var trade in trades)
-                    TodaysTrades.Add(trade.ToExecutionSlimViewModel());
+                    TodaysTrades.Add(trade.ToExecutionViewModel());
             }
         }
     }

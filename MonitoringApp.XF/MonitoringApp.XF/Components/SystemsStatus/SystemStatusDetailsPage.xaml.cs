@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using System;
 using Xamarin.Forms;
 
@@ -21,7 +21,7 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         private void OnAttributeSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            SystemStatusFullAttribute attribute = ((ListView)sender).SelectedItem as SystemStatusFullAttribute;
+            SystemStatusAttribute attribute = ((ListView)sender).SelectedItem as SystemStatusAttribute;
 
             if (attribute != null)
                 DisplayAlert(attribute.Name, $"{attribute.Value} ({attribute.Level})", "OK");

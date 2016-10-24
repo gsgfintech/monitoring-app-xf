@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using System;
 using Xamarin.Forms;
 
@@ -18,12 +18,12 @@ namespace MonitoringApp.XF.Components.Alerts
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            AlertSlim alert = ((ListView)sender).SelectedItem as AlertSlim;
+            Alert alert = ((ListView)sender).SelectedItem as Alert;
 
             if (alert != null)
             {
                 var detailsView = new AlertDetailsPage();
-                await detailsView.ViewModel?.GetAlertById(alert.Id);
+                await detailsView.ViewModel?.GetAlertById(alert.AlertId);
                 await Navigation.PushAsync(detailsView);
             }
         }

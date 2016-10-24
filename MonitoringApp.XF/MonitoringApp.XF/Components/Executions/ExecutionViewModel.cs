@@ -1,22 +1,20 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Capital.GSG.FX.Utils.Portable;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Capital.GSG.FX.Data.Core.ExecutionData;
 using System.Text;
 
 namespace MonitoringApp.XF.Components.Executions
 {
-    public class ExecutionSlimViewModel : ExecutionSlim
+    public class ExecutionViewModel : Execution
     {
         public string Header { get { return $"{Side} {Quantity / 1000:N0}K {Cross} @ {Price}"; } }
 
         public string Details { get; set; }
+
+        public string FormattedCommission { get { return $"{Commission:N2} {CommissionCcy}"; } }
     }
 
-    public static class ExecutionSlimViewModelExtensions
+    public static class ExecutionViewModelExtensions
     {
-        public static ExecutionSlimViewModel ToExecutionSlimViewModel(this ExecutionSlim execution)
+        public static ExecutionViewModel ToExecutionViewModel(this Execution execution)
         {
             if (execution == null)
                 return null;
@@ -32,27 +30,31 @@ namespace MonitoringApp.XF.Components.Executions
             if (!string.IsNullOrEmpty(execution.TradeDuration))
                 details.Append($" | {execution.TradeDuration}");
 
-            return new ExecutionSlimViewModel()
+            return new ExecutionViewModel()
             {
+                AccountNumber = execution.AccountNumber,
+                ClientId = execution.ClientId,
+                ClientOrderRef = execution.ClientOrderRef,
+                Commission = execution.Commission,
+                CommissionCcy = execution.CommissionCcy,
+                CommissionUsd = execution.CommissionUsd,
                 Cross = execution.Cross,
                 Details = details.ToString(),
+                Exchange = execution.Exchange,
                 ExecutionTime = execution.ExecutionTime,
                 Id = execution.Id,
+                OrderId = execution.OrderId,
                 OrderOrigin = execution.OrderOrigin,
+                PermanentID = execution.PermanentID,
                 Price = execution.Price,
                 Quantity = execution.Quantity,
+                RealizedPnL = execution.RealizedPnL,
+                RealizedPnlPips = execution.RealizedPnlPips,
                 RealizedPnlUsd = execution.RealizedPnlUsd,
                 Side = execution.Side,
+                Strategy = execution.Strategy,
                 TradeDuration = execution.TradeDuration
             };
-        }
-
-        public static ObservableCollection<ExecutionSlimViewModel> ToExecutionSlimViewModels(this IEnumerable<ExecutionSlim> executions)
-        {
-            if (executions.IsNullOrEmpty())
-                return new ObservableCollection<ExecutionSlimViewModel>();
-            else
-                return new ObservableCollection<ExecutionSlimViewModel>(executions?.Select(e => e.ToExecutionSlimViewModel()));
         }
     }
 }

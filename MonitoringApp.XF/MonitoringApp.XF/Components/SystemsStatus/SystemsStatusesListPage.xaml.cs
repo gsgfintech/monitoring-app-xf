@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using System;
 using Xamarin.Forms;
 
@@ -15,7 +15,7 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var item = ((ListView)sender).SelectedItem as SystemStatusSlim;
+            var item = ((ListView)sender).SelectedItem as SystemStatus;
 
             if (item != null)
             {
@@ -36,35 +36,35 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         private async void OnStartStopButtonClicked(object sender, EventArgs e)
         {
-            string label = ((Button)sender).Text;
-            string name = ((Button)sender).CommandParameter?.ToString();
+            //    string label = ((Button)sender).Text;
+            //    string name = ((Button)sender).CommandParameter?.ToString();
 
-            if (string.IsNullOrEmpty(name))
-                return;
+            //    if (string.IsNullOrEmpty(name))
+            //        return;
 
-            if (isStartingOrStopping)
-                return;
+            //    if (isStartingOrStopping)
+            //        return;
 
-            isStartingOrStopping = true;
+            //    isStartingOrStopping = true;
 
-            if (await DisplayAlert(label, $"{label} system {name}?", "Go", "Cancel"))
-            {
-                GenericActionResult result = await vm?.DoStartStop(name);
+            //    if (await DisplayAlert(label, $"{label} system {name}?", "Go", "Cancel"))
+            //    {
+            //        GenericActionResult result = await vm?.DoStartStop(name);
 
-                if (result != null)
-                {
-                    string prefix;
+            //        if (result != null)
+            //        {
+            //            string prefix;
 
-                    if (result.Success)
-                        prefix = "Success";
-                    else
-                        prefix = "Failed";
+            //            if (result.Success)
+            //                prefix = "Success";
+            //            else
+            //                prefix = "Failed";
 
-                    await DisplayAlert($"System {label}", $"{prefix}: {result.Message}", "OK");
-                }
-            }
+            //            await DisplayAlert($"System {label}", $"{prefix}: {result.Message}", "OK");
+            //        }
+            //    }
 
-            isStartingOrStopping = false;
+            //    isStartingOrStopping = false;
         }
     }
 }

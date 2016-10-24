@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.MarketData;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
@@ -12,13 +12,15 @@ namespace MonitoringApp.XF.Components.FXEvents
 {
     public class FXEventManager
     {
-        private const string FXEventsRoute = "fxevents";
+        private const string FXEventsTodayHighImpactRoute = "fxevents/list/todayhigh";
+        private const string FXEventsCurrentWeekRoute = "fxevents/list/week";
+        private const string FXEventByIdRoute = "fxevents/id";
 
         private readonly MobileServiceClient client;
 
-        private List<FXEventSlim> todaysHighImpactFXEvents;
-        private List<FXEventSlim> currentWeeksFXEvents;
-        private Dictionary<string, FXEventFull> detailedFXEvents = new Dictionary<string, FXEventFull>();
+        private List<FXEvent> todaysHighImpactFXEvents;
+        private List<FXEvent> currentWeeksFXEvents;
+        private Dictionary<string, FXEvent> detailedFXEvents = new Dictionary<string, FXEvent>();
 
         private static FXEventManager instance;
         public static FXEventManager Instance
@@ -37,7 +39,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<FXEventSlim>> LoadTodaysHighImpactFXEvents(bool refresh)
+        public async Task<List<FXEvent>> LoadTodaysHighImpactFXEvents(bool refresh)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    todaysHighImpactFXEvents = await client.InvokeApiAsync<List<FXEventSlim>>($"{FXEventsRoute}/list/todayhigh", HttpMethod.Get, null, cts.Token);
+                    todaysHighImpactFXEvents = await client.InvokeApiAsync<List<FXEvent>>(FXEventsTodayHighImpactRoute, HttpMethod.Get, null, cts.Token);
                 }
 
                 return todaysHighImpactFXEvents;
@@ -74,7 +76,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             }
         }
 
-        public async Task<List<FXEventSlim>> LoadCurrentWeeksFXEvents(bool refresh)
+        public async Task<List<FXEvent>> LoadCurrentWeeksFXEvents(bool refresh)
         {
             try
             {
@@ -83,7 +85,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    currentWeeksFXEvents = await client.InvokeApiAsync<List<FXEventSlim>>($"{FXEventsRoute}/list/week", HttpMethod.Get, null, cts.Token);
+                    currentWeeksFXEvents = await client.InvokeApiAsync<List<FXEvent>>(FXEventsCurrentWeekRoute, HttpMethod.Get, null, cts.Token);
                 }
 
                 return currentWeeksFXEvents;
@@ -111,7 +113,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             }
         }
 
-        public async Task<FXEventFull> GetFXEventById(string id)
+        public async Task<FXEvent> GetFXEventById(string id)
         {
             try
             {
@@ -125,7 +127,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    FXEventFull fxEvent = await client.InvokeApiAsync<FXEventFull>($"{FXEventsRoute}/id/{id}", HttpMethod.Get, null, cts.Token);
+                    FXEvent fxEvent = await client.InvokeApiAsync<FXEvent>($"{FXEventByIdRoute}/{id}", HttpMethod.Get, null, cts.Token);
 
                     if (fxEvent != null)
                         detailedFXEvents[id] = fxEvent;

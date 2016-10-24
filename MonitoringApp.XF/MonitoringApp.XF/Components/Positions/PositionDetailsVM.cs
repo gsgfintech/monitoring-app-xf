@@ -1,12 +1,13 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
+using Capital.GSG.FX.Data.Core.ContractData;
 using System.Threading.Tasks;
 
 namespace MonitoringApp.XF.Components.Positions
 {
     public class PositionDetailsVM : BaseViewModel
     {
-        private PositionSecurityFull position;
-        public PositionSecurityFull Position
+        private PositionViewModel position;
+        public PositionViewModel Position
         {
             get { return position; }
             set
@@ -19,7 +20,7 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        public async Task GetPositionByCross(string cross)
+        public async Task GetPositionByCross(Cross cross)
         {
             try
             {
@@ -37,9 +38,9 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        private async Task LoadPositionByCross(string cross)
+        private async Task LoadPositionByCross(Cross cross)
         {
-            Position = await PositionManager.Instance.GetPositionByCross(cross);
+            Position = (await PositionManager.Instance.GetPositionByCross(cross)).ToPositionViewModel();
         }
     }
 }

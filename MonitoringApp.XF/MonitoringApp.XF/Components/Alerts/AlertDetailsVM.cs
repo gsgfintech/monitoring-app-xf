@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -8,8 +8,8 @@ namespace MonitoringApp.XF.Components.Alerts
 {
     public class AlertDetailsVM : BaseViewModel
     {
-        private AlertFull alert;
-        public AlertFull Alert
+        private Alert alert;
+        public Alert Alert
         {
             get { return alert; }
             set
@@ -81,7 +81,7 @@ namespace MonitoringApp.XF.Components.Alerts
             }
             else
             {
-                IsCloseButtonVisible = Alert.Status == "OPEN";
+                IsCloseButtonVisible = Alert.Status == AlertStatus.OPEN;
                 IsClosedTimestampVisible = !IsCloseButtonVisible;
             }
         }
@@ -90,7 +90,7 @@ namespace MonitoringApp.XF.Components.Alerts
         {
             isClosing = true;
 
-            await CloseAlertAuthenticated(Alert.Id);
+            await CloseAlertAuthenticated(Alert.AlertId);
 
             isClosing = false;
         }
@@ -124,20 +124,20 @@ namespace MonitoringApp.XF.Components.Alerts
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            AlertLevel? level = value as AlertLevel?;
 
-            if (string.IsNullOrEmpty(status))
+            if (!level.HasValue)
                 return Color.Default;
 
-            switch (status)
+            switch (level.Value)
             {
-                case "DEBUG":
-                case "INFO":
+                case AlertLevel.DEBUG:
+                case AlertLevel.INFO:
                     return Color.Green;
-                case "WARNING":
+                case AlertLevel.WARNING:
                     return CustomColors.Orange;
-                case "FATAL":
-                case "ERROR":
+                case AlertLevel.ERROR:
+                case AlertLevel.FATAL:
                     return Color.Red;
                 default:
                     return Color.Default;
@@ -154,17 +154,17 @@ namespace MonitoringApp.XF.Components.Alerts
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value?.ToString();
+            AlertStatus? status = value as AlertStatus?;
 
-            if (string.IsNullOrEmpty(status))
+            if (!status.HasValue)
                 return Color.Default;
 
-            switch (status)
+            switch (status.Value)
             {
-                case "CLOSED":
-                    return Color.Green;
-                case "OPEN":
+                case AlertStatus.OPEN:
                     return Color.Red;
+                case AlertStatus.CLOSED:
+                    return Color.Green;
                 default:
                     return Color.Default;
             }

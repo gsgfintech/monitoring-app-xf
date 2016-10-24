@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.ExecutionData;
 using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
@@ -29,31 +29,31 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
-        private Dictionary<DateTime, List<ExecutionSlim>> executionsDict = new Dictionary<DateTime, List<ExecutionSlim>>();
-        private Dictionary<string, ExecutionFull> detailedExecutions = new Dictionary<string, ExecutionFull>();
+        private Dictionary<DateTime, List<Execution>> executionsDict = new Dictionary<DateTime, List<Execution>>();
+        private Dictionary<string, Execution> detailedExecutions = new Dictionary<string, Execution>();
 
         private ExecutionManager()
         {
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<ExecutionSlim>> LoadExecutions(DateTime day, bool refresh)
+        public async Task<List<Execution>> LoadExecutions(DateTime day, bool refresh)
         {
             try
             {
-                if (!executionsDict.ContainsKey(day) || refresh)
+                if (!executionsDict.ContainsKey(day) || executionsDict[day] == null || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var executions = await client.InvokeApiAsync<List<ExecutionSlim>>(ExecutionsRoute, HttpMethod.Get, new Dictionary<string, string>() {
+                    var executions = await client.InvokeApiAsync<List<Execution>>(ExecutionsRoute, HttpMethod.Get, new Dictionary<string, string>() {
                         { "day", day.ToString("yyyy-MM-dd") }
                     }, cts.Token);
 
                     if (!executions.IsNullOrEmpty())
                         executionsDict[day] = executions;
                     else
-                        executionsDict[day] = new List<ExecutionSlim>();
+                        executionsDict[day] = new List<Execution>();
                 }
 
                 return executionsDict[day];
@@ -81,7 +81,7 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
-        public async Task<ExecutionFull> GetExecutionById(string id)
+        public async Task<Execution> GetExecutionById(string id)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace MonitoringApp.XF.Components.Executions
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    ExecutionFull execution = await client.InvokeApiAsync<ExecutionFull>($"{ExecutionsRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "executionId", id } }, cts.Token);
+                    Execution execution = await client.InvokeApiAsync<Execution>($"{ExecutionsRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "executionId", id } }, cts.Token);
 
                     if (execution != null)
                         detailedExecutions[id] = execution;

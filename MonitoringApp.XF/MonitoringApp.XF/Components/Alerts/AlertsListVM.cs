@@ -1,17 +1,45 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Portable;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Globalization;
 using System.Collections.Generic;
+using Capital.GSG.FX.Data.Core.SystemData;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
     public class AlertsListVM : BaseViewModel
     {
         public ObservableCollection<GroupedAlertList> Alerts { get; private set; } = new ObservableCollection<GroupedAlertList>();
+
+        private DateTime day;
+        public DateTime Day
+        {
+            get { return day; }
+            set
+            {
+                if (day != value)
+                {
+                    day = value;
+                    OnPropertyChanged(nameof(Day));
+                }
+            }
+        }
+
+        private DateTime newDay;
+        public DateTime NewDay
+        {
+            get { return newDay; }
+            set
+            {
+                if (newDay != value)
+                {
+                    newDay = value;
+                    OnPropertyChanged(nameof(NewDay));
+                }
+            }
+        }
 
         public Command RefreshCommand { get; private set; }
 
@@ -62,7 +90,7 @@ namespace MonitoringApp.XF.Components.Alerts
         private async Task LoadAlerts(bool refresh)
         {
             var openAlerts = await AlertManager.Instance.LoadOpenAlerts(refresh);
-            var alertsClosedToday = await AlertManager.Instance.LoadAlertsClosedToday(refresh);
+            var closedAlerts = await AlertManager.Instance.LoadAlertsClosedForDay(Day, refresh);
 
             Alerts.Clear();
 
@@ -71,8 +99,8 @@ namespace MonitoringApp.XF.Components.Alerts
             else
                 Alerts.Add(new GroupedAlertList("Open Alerts (0)", "OPEN", false));
 
-            if (!alertsClosedToday.IsNullOrEmpty())
-                Alerts.Add(new GroupedAlertList($"Alerts Closed Today ({alertsClosedToday.Count})", "CLOSED", false, alertsClosedToday));
+            if (!closedAlerts.IsNullOrEmpty())
+                Alerts.Add(new GroupedAlertList($"Alerts Closed Today ({closedAlerts.Count})", "CLOSED", false, closedAlerts));
             else
                 Alerts.Add(new GroupedAlertList("Alerts Closed Today (0)", "CLOSED", false));
         }
@@ -102,7 +130,7 @@ namespace MonitoringApp.XF.Components.Alerts
         }
     }
 
-    public class GroupedAlertList : ObservableCollection<AlertSlim>
+    public class GroupedAlertList : ObservableCollection<Alert>
     {
         public string LongDescription { get; private set; }
         public string ShortDescription { get; private set; }
@@ -115,7 +143,7 @@ namespace MonitoringApp.XF.Components.Alerts
             ShowCloseButton = showCloseButton;
         }
 
-        public GroupedAlertList(string longDescription, string shortDescription, bool showCloseButton, IEnumerable<AlertSlim> alerts)
+        public GroupedAlertList(string longDescription, string shortDescription, bool showCloseButton, IEnumerable<Alert> alerts)
             : base(alerts)
         {
             LongDescription = longDescription;
@@ -128,20 +156,23 @@ namespace MonitoringApp.XF.Components.Alerts
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string level = value as string;
+            AlertLevel? level = value as AlertLevel?;
 
-            if (string.IsNullOrEmpty(level))
+            if (!level.HasValue)
                 return Color.Transparent;
 
-            switch (level)
+            switch (level.Value)
             {
-                case "DEBUG":
-                case "INFO":
+                case AlertLevel.DEBUG:
+                case AlertLevel.INFO:
                     return CustomColors.LightSkyBlue;
-                case "WARNING":
+                case AlertLevel.WARNING:
                     return CustomColors.LightSalmon;
-                default:
+                case AlertLevel.ERROR:
+                case AlertLevel.FATAL:
                     return CustomColors.LightPink;
+                default:
+                    return Color.Transparent;
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
-using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Portable;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -9,7 +8,7 @@ namespace MonitoringApp.XF.Components.Positions
 {
     public class PositionsListVM : BaseViewModel
     {
-        public ObservableCollection<PositionSecuritySlim> Positions { get; set; } = new ObservableCollection<PositionSecuritySlim>();
+        public ObservableCollection<PositionViewModel> Positions { get; set; } = new ObservableCollection<PositionViewModel>();
 
         public Command RefreshCommand { get; private set; }
 
@@ -80,9 +79,9 @@ namespace MonitoringApp.XF.Components.Positions
             if (!positions.IsNullOrEmpty())
             {
                 foreach (var position in positions)
-                    Positions.Add(position);
+                    Positions.Add(position.ToPositionViewModel());
 
-                TotalPnlUsd = positions.Select(p => p.TotalPnlUsd).Sum() ?? 0;
+                TotalPnlUsd = Positions.Select(p => p.TotalPnlUsd).Sum();
             }
         }
     }

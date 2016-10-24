@@ -9,8 +9,8 @@ namespace MonitoringApp.XF.Components.Orders
     {
         public event Action<int> HistoryPointsCountChanged;
 
-        private OrderFullViewModel order;
-        public OrderFullViewModel Order
+        private OrderViewModel order;
+        public OrderViewModel Order
         {
             get { return order; }
             set
@@ -43,7 +43,7 @@ namespace MonitoringApp.XF.Components.Orders
 
         private async Task LoadOrderByPermanentId(int permanentId)
         {
-            Order = (await OrderManager.Instance.GetOrderByPermanentId(permanentId)).ToOrderFullViewModel();
+            Order = (await OrderManager.Instance.GetOrderByPermanentId(permanentId)).ToOrderViewModel();
 
             HistoryPointsCountChanged?.Invoke(Order?.History?.Count ?? 0);
         }

@@ -4,8 +4,8 @@ namespace MonitoringApp.XF.Components.Executions
 {
     public class ExecutionDetailsVM : BaseViewModel
     {
-        private ExecutionFullViewModel trade;
-        public ExecutionFullViewModel Trade
+        private ExecutionViewModel trade;
+        public ExecutionViewModel Trade
         {
             get { return trade; }
             set
@@ -38,7 +38,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         private async Task LoadExecutionById(string id)
         {
-            Trade = (await ExecutionManager.Instance.GetExecutionById(id)).ToExecutionFullViewModel();
+            Trade = (await ExecutionManager.Instance.GetExecutionById(id)).ToExecutionViewModel();
         }
     }
 }

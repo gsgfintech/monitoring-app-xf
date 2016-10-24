@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.MarketData;
 using Capital.GSG.FX.Utils.Portable;
 using System;
 using System.Collections.Generic;
@@ -63,7 +63,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             return FormatFXEventsList(fxEvents);
         }
 
-        private List<Tuple<string, string, string>> FormatFXEventsList(List<FXEventSlim> fxEvents)
+        private List<Tuple<string, string, string>> FormatFXEventsList(List<FXEvent> fxEvents)
         {
             if (fxEvents.IsNullOrEmpty())
                 return null;
@@ -72,11 +72,11 @@ namespace MonitoringApp.XF.Components.FXEvents
                 {
                     string details = $"{e.Level} | {e.Currency} | {e.Timestamp:dd/MM/yy HH:mm zzz}";
 
-                    return new Tuple<string, string, string>(e.Id, e.Title, details);
+                    return new Tuple<string, string, string>(e.EventId, e.Title, details);
                 }).ToList();
         }
 
-        public async Task<FXEventFull> GetFXEventById(string id)
+        public async Task<FXEvent> GetFXEventById(string id)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace MonitoringApp.XF.Components.FXEvents
             }
         }
 
-        private static async Task<FXEventFull> LoadFXEventById(string id)
+        private static async Task<FXEvent> LoadFXEventById(string id)
         {
             return await FXEventManager.Instance.GetFXEventById(id);
         }

@@ -4,7 +4,7 @@
              x:Class="MonitoringApp.XF.Components.Positions.PositionDetailsPage"
              xmlns:base="clr-namespace:MonitoringApp.XF"
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
-             Title="{Binding Position.Cross}">
+             Title="{Binding Position.Header}">
 
   <ContentPage.BindingContext>
     <local:PositionDetailsVM x:Name="vm" />
@@ -19,11 +19,23 @@
   <ContentPage.Content>
     <TableView Intent="Data">
       <TableRoot>
-        <TableSection Title="QUANTITIES">
+        <TableSection Title="DATA">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Broker" />
+              <Label Text="{Binding Position.Broker}" HorizontalOptions="EndAndExpand" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Cross" />
+              <Label Text="{Binding Position.Cross}" HorizontalOptions="EndAndExpand" />
+            </StackLayout>
+          </ViewCell>
           <ViewCell>
             <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
               <Label Text="Quantity" />
-              <Label Text="{Binding Position.Quantity}" HorizontalOptions="EndAndExpand" 
+              <Label Text="{Binding Position.PositionQuantity}" HorizontalOptions="EndAndExpand" 
                      TextColor="{Binding Position.Quantity, Converter={StaticResource NumberToColorConverter}}" />
             </StackLayout>
           </ViewCell>
@@ -75,6 +87,13 @@
               <Label Text="Unrealized PnL (USD)" />
               <Label Text="{Binding Position.UnrealizedPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
                      TextColor="{Binding Position.UnrealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}"/>
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Total PnL (USD)" />
+              <Label Text="{Binding Position.TotalPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
+                     TextColor="{Binding Position.TotalPnlUsd, Converter={StaticResource NumberToColorConverter}}"/>
             </StackLayout>
           </ViewCell>
         </TableSection>

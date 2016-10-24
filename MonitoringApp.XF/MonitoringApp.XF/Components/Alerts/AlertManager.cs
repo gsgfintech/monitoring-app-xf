@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.SystemData;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,10 @@ namespace MonitoringApp.XF.Components.Alerts
     public class AlertManager
     {
         private const string AlertsOpenRoute = "alerts/list/open";
-        private const string AlertsClosedTodayRoute = "alerts/list/closedtoday";
+        private const string AlertsClosedTodayRoute = "alerts/list/closed";
         private const string AlertByIdRoute = "alerts/id";
         private const string CloseAlertRoute = "alerts/close";
+        private const string CloseAllAlertsRoute = "alerts/closeall";
 
         private readonly MobileServiceClient client;
 
@@ -32,16 +33,16 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
-        private List<AlertSlim> openAlerts;
-        private List<AlertSlim> alertsClosedToday;
-        private Dictionary<string, AlertFull> detailedAlerts = new Dictionary<string, AlertFull>();
+        private List<Alert> openAlerts;
+        private Dictionary<DateTime, List<Alert>> alertsClosedForDay = new Dictionary<DateTime, List<Alert>>();
+        private Dictionary<string, Alert> detailedAlerts = new Dictionary<string, Alert>();
 
         private AlertManager()
         {
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<AlertSlim>> LoadOpenAlerts(bool refresh)
+        public async Task<List<Alert>> LoadOpenAlerts(bool refresh)
         {
             try
             {
@@ -50,7 +51,7 @@ namespace MonitoringApp.XF.Components.Alerts
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    openAlerts = await client.InvokeApiAsync<List<AlertSlim>>(AlertsOpenRoute, HttpMethod.Get, null, cts.Token);
+                    openAlerts = await client.InvokeApiAsync<List<Alert>>(AlertsOpenRoute, HttpMethod.Get, null, cts.Token);
                 }
 
                 return openAlerts;
@@ -78,30 +79,37 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
-        public async Task<List<AlertSlim>> LoadAlertsClosedToday(bool refresh)
+        public async Task<List<Alert>> LoadAlertsClosedForDay(DateTime day, bool refresh)
         {
             try
             {
-                if (alertsClosedToday == null || refresh)
+                if (!alertsClosedForDay.ContainsKey(day) || alertsClosedForDay[day] == null || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    alertsClosedToday = await client.InvokeApiAsync<List<AlertSlim>>(AlertsClosedTodayRoute, HttpMethod.Get, null, cts.Token);
+                    var alerts = await client.InvokeApiAsync<List<Alert>>(AlertsClosedTodayRoute, HttpMethod.Get, new Dictionary<string, string>() {
+                        { "day", day.ToString("yyyy-MM-dd") }
+                    }, cts.Token);
+
+                    if (alerts != null)
+                        alertsClosedForDay[day] = alerts;
+                    else
+                        alertsClosedForDay[day] = new List<Alert>();
                 }
 
-                return alertsClosedToday;
+                return alertsClosedForDay[day];
             }
             catch (OperationCanceledException)
             {
-                Debug.WriteLine("Not retrieving alerts closed today: operation cancelled");
+                Debug.WriteLine("Not retrieving alerts closed: operation cancelled");
                 return null;
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
                 if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    Debug.WriteLine("Authentication necessary to load alerts closed today");
+                    Debug.WriteLine("Authentication necessary to load alerts closed");
                     throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
                 }
 
@@ -115,7 +123,7 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
-        public async Task<AlertFull> GetAlertById(string id)
+        public async Task<Alert> GetAlertById(string id)
         {
             try
             {
@@ -129,7 +137,7 @@ namespace MonitoringApp.XF.Components.Alerts
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    AlertFull alert = await client.InvokeApiAsync<AlertFull>($"{AlertByIdRoute}/{id}", HttpMethod.Get, new Dictionary<string, string>() { { "executionId", id } }, cts.Token);
+                    Alert alert = await client.InvokeApiAsync<Alert>($"{AlertByIdRoute}/{id}", HttpMethod.Get, null, cts.Token);
 
                     if (alert != null)
                         detailedAlerts[id] = alert;
@@ -178,20 +186,7 @@ namespace MonitoringApp.XF.Components.Alerts
                 bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/{id}", HttpMethod.Get, null, cts.Token);
 
                 if (success)
-                {
-                    AlertSlim alert = openAlerts.FirstOrDefault(a => a.Id == id);
-
-                    if (alert != null)
-                    {
-                        if (alertsClosedToday == null)
-                            alertsClosedToday = new List<AlertSlim>();
-
-                        alertsClosedToday.Add(alert);
-                        openAlerts.Remove(alert);
-                    }
-
-                    detailedAlerts.Remove(id);
-                }
+                    HandleAlertClosure(id);
 
                 return success;
             }
@@ -223,6 +218,24 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
+        private void HandleAlertClosure(string id)
+        {
+            Alert alert = openAlerts.FirstOrDefault(a => a.AlertId == id);
+
+            if (alert != null)
+            {
+                DateTime day = alert.Timestamp.Date;
+
+                if (!alertsClosedForDay.ContainsKey(day) || alertsClosedForDay[day] == null)
+                    alertsClosedForDay[day] = new List<Alert>();
+
+                alertsClosedForDay[day].Add(alert);
+                openAlerts.Remove(alert);
+            }
+
+            detailedAlerts.Remove(id);
+        }
+
         public async Task<bool> CloseAllAlerts()
         {
             try
@@ -230,17 +243,12 @@ namespace MonitoringApp.XF.Components.Alerts
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/all", HttpMethod.Get, null, cts.Token);
+                bool success = await client.InvokeApiAsync<bool>(CloseAllAlertsRoute, HttpMethod.Get, null, cts.Token);
 
                 if (success)
                 {
-                    if (alertsClosedToday == null)
-                        alertsClosedToday = new List<AlertSlim>();
-
-                    alertsClosedToday.AddRange(openAlerts);
-
                     foreach (var alert in openAlerts)
-                        detailedAlerts.Remove(alert.Id);
+                        HandleAlertClosure(alert.AlertId);
 
                     openAlerts.Clear();
                 }

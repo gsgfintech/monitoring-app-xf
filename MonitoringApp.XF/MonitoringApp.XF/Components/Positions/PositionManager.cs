@@ -1,8 +1,11 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
+using Capital.GSG.FX.Data.Core.ContractData;
+using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -28,27 +31,31 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        private List<PositionSecuritySlim> positions;
-        private Dictionary<string, PositionSecurityFull> detailedPositions = new Dictionary<string, PositionSecurityFull>();
+        private Dictionary<Cross, Position> positionsDict = new Dictionary<Cross, Position>();
 
         private PositionManager()
         {
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<PositionSecuritySlim>> LoadPositions(bool refresh)
+        public async Task<List<Position>> LoadPositions(bool refresh)
         {
             try
             {
-                if (positions == null || refresh)
+                if (positionsDict == null || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    positions = await client.InvokeApiAsync<List<PositionSecuritySlim>>(PositionsRoute, HttpMethod.Get, null, cts.Token);
+                    var positions = await client.InvokeApiAsync<List<Position>>(PositionsRoute, HttpMethod.Get, null, cts.Token);
+
+                    if (!positions.IsNullOrEmpty())
+                        positionsDict = positions.ToDictionary(p => p.Cross, p => p);
+                    else
+                        positionsDict = new Dictionary<Cross, Position>();
                 }
 
-                return positions;
+                return positionsDict.Values.ToList();
             }
             catch (OperationCanceledException)
             {
@@ -73,24 +80,21 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        public async Task<PositionSecurityFull> GetPositionByCross(string cross)
+        public async Task<Position> GetPositionByCross(Cross cross)
         {
             try
             {
-                if (string.IsNullOrEmpty(cross))
-                    throw new ArgumentNullException(nameof(cross));
-
-                if (detailedPositions.ContainsKey(cross) && detailedPositions[cross] != null)
-                    return detailedPositions[cross];
+                if (positionsDict.ContainsKey(cross) && positionsDict[cross] != null)
+                    return positionsDict[cross];
                 else
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    PositionSecurityFull position = await client.InvokeApiAsync<PositionSecurityFull>($"{PositionsRoute}/{cross}", HttpMethod.Get, null, cts.Token);
+                    Position position = await client.InvokeApiAsync<Position>($"{PositionsRoute}/{(int)Broker.IB}/{(int)cross}", HttpMethod.Get, null, cts.Token);
 
                     if (position != null)
-                        detailedPositions[cross] = position;
+                        positionsDict[cross] = position;
 
                     return position;
                 }

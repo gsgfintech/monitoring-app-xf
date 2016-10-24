@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capital.GSG.FX.Data.Core.OrderData;
+using System;
 using System.Globalization;
 using Xamarin.Forms;
 
@@ -6,71 +7,63 @@ namespace MonitoringApp.XF
 {
     internal static class Utils
     {
-        public static string ShortenOrderOrigin(string orderOrigin)
+        public static string ShortenOrderOrigin(OrderOrigin orderOrigin)
         {
-            if (string.IsNullOrEmpty(orderOrigin))
-                return orderOrigin;
-
             switch (orderOrigin)
             {
-                case "PositionOpen":
+                case OrderOrigin.PositionOpen:
                     return "PO";
-                case "PositionDouble":
-                    return "PD";
-                case "PositionClose":
+                case OrderOrigin.PositionClose:
                     return "PC";
-                case "PositionClose_ContStop":
+                case OrderOrigin.PositionClose_ContStop:
                     return "PCS";
-                case "PositionClose_ContLimit":
+                case OrderOrigin.PositionClose_ContLimit:
                     return "PCL";
-                case "PositionClose_TE":
+                case OrderOrigin.PositionClose_TE:
                     return "PCT";
-                case "PositionClose_CircuitBreaker":
+                case OrderOrigin.PositionClose_CircuitBreaker:
                     return "PCB";
-                case "PositionReverse_Close":
+                case OrderOrigin.PositionReverse_Close:
                     return "PRC";
-                case "PositionReverse_Open":
+                case OrderOrigin.PositionReverse_Open:
                     return "PRO";
+                case OrderOrigin.PositionDouble:
+                    return "PD";
                 default:
-                    return orderOrigin;
+                    return orderOrigin.ToString();
             }
         }
 
-        public static string ShortenOrderType(string orderType)
+        public static string ShortenOrderType(OrderType orderType)
         {
-            if (string.IsNullOrEmpty(orderType))
-                return orderType;
-
             switch (orderType)
             {
-                case "MARKET":
-                    return "MKT";
-                case "STOP":
-                    return "STP";
-                case "LIMIT":
+                case OrderType.LIMIT:
                     return "LMT";
-                case "TRAILING_STOP":
+                case OrderType.MARKET:
+                    return "MKT";
+                case OrderType.STOP:
+                    return "STP";
+                case OrderType.TRAILING_STOP:
                     return "TRAIL";
                 default:
-                    return orderType;
+                    return orderType.ToString();
             }
         }
 
-        public static string ShortenOrderStatus(string orderStatus)
+        public static string ShortenOrderStatus(OrderStatusCode orderStatus)
         {
-            if (string.IsNullOrEmpty(orderStatus))
-                return orderStatus;
-
             switch (orderStatus)
             {
-                case "Submitted":
+                case OrderStatusCode.Submitted:
                     return "Sbtd";
-                case "Filled":
-                    return "Fld";
-                case "Cancelled":
+                case OrderStatusCode.ApiCanceled:
+                case OrderStatusCode.Cancelled:
                     return "Cxld";
+                case OrderStatusCode.Filled:
+                    return "Fld";
                 default:
-                    return orderStatus;
+                    return orderStatus.ToString();
             }
         }
     }

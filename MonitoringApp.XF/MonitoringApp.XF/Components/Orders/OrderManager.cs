@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Monitoring.AppDataTypes;
+﻿using Capital.GSG.FX.Data.Core.OrderData;
 using Capital.GSG.FX.Utils.Portable;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
@@ -29,31 +29,31 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
-        private Dictionary<DateTime, List<OrderSlim>> ordersDict = new Dictionary<DateTime, List<OrderSlim>>();
-        private Dictionary<int, OrderFull> detailedOrders = new Dictionary<int, OrderFull>();
+        private Dictionary<DateTime, List<Order>> ordersDict = new Dictionary<DateTime, List<Order>>();
+        private Dictionary<int, Order> detailedOrders = new Dictionary<int, Order>();
 
         private OrderManager()
         {
             client = App.MobileServiceClient;
         }
 
-        public async Task<List<OrderSlim>> LoadOrders(DateTime day, bool refresh)
+        public async Task<List<Order>> LoadOrders(DateTime day, bool refresh)
         {
             try
             {
-                if (!ordersDict.ContainsKey(day) || refresh)
+                if (!ordersDict.ContainsKey(day) || ordersDict[day] == null || refresh)
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var orders = await client.InvokeApiAsync<List<OrderSlim>>(OrdersRoute, HttpMethod.Get, new Dictionary<string, string>() {
+                    var orders = await client.InvokeApiAsync<List<Order>>(OrdersRoute, HttpMethod.Get, new Dictionary<string, string>() {
                         { "day", day.ToString("yyyy-MM-dd") }
                     }, cts.Token);
 
                     if (!orders.IsNullOrEmpty())
                         ordersDict[day] = orders;
                     else
-                        ordersDict[day] = new List<OrderSlim>();
+                        ordersDict[day] = new List<Order>();
                 }
 
                 return ordersDict[day];
@@ -81,7 +81,7 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
-        public async Task<OrderFull> GetOrderByPermanentId(int permanentId)
+        public async Task<Order> GetOrderByPermanentId(int permanentId)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace MonitoringApp.XF.Components.Orders
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    OrderFull order = await client.InvokeApiAsync<OrderFull>($"{OrdersRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "permanentId", permanentId.ToString() } }, cts.Token);
+                    Order order = await client.InvokeApiAsync<Order>($"{OrdersRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "permanentId", permanentId.ToString() } }, cts.Token);
 
                     if (order != null)
                         detailedOrders[permanentId] = order;
