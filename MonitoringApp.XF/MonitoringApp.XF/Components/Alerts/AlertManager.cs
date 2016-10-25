@@ -17,7 +17,6 @@ namespace MonitoringApp.XF.Components.Alerts
         private const string AlertsClosedTodayRoute = "alerts/list/closed";
         private const string AlertByIdRoute = "alerts/id";
         private const string CloseAlertRoute = "alerts/close";
-        private const string CloseAllAlertsRoute = "alerts/closeall";
 
         private readonly MobileServiceClient client;
 
@@ -243,7 +242,7 @@ namespace MonitoringApp.XF.Components.Alerts
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await client.InvokeApiAsync<bool>(CloseAllAlertsRoute, HttpMethod.Get, null, cts.Token);
+                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/all", HttpMethod.Get, null, cts.Token);
 
                 if (success)
                 {
