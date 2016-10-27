@@ -34,24 +34,24 @@ namespace MonitoringApp.XF.Components.SystemsStatus
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
         }
 
-        //internal async Task<GenericActionResult> DoStartStop(string systemName)
-        //{
-        //    SystemStatus system = Systems.FirstOrDefault(s => s.Name == systemName);
+        internal async Task<GenericActionResult> DoStartStop(string systemName)
+        {
+            SystemStatus system = Systems.FirstOrDefault(s => s.Name == systemName);
 
-        //    if (system != null)
-        //    {
-        //        if (system.IsAlive) // will stop
-        //            return await SystemStatusManager.Instance.StopSystem(systemName);
-        //        else // will start
-        //            return await SystemStatusManager.Instance.StartSystem(systemName);
-        //    }
-        //    else
-        //        return new GenericActionResult()
-        //        {
-        //            Message = $"Unknown system {systemName}",
-        //            Success = false
-        //        };
-        //}
+            if (system != null)
+            {
+                if (system.IsAlive) // will stop
+                    return await SystemStatusManager.Instance.StopSystem(systemName);
+                else // will start
+                    return await SystemStatusManager.Instance.StartSystem(systemName);
+            }
+            else
+                return new GenericActionResult()
+                {
+                    Message = $"Unknown system {systemName}",
+                    Success = false
+                };
+        }
 
         private async void ExecuteRefreshCommand()
         {

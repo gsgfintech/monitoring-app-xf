@@ -107,8 +107,8 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Capital.GSG.FX.Data.Portable, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Capital.GSG.FX.Data.Portable.1.4.0\lib\.NETPortable,Version=v4.5\Capital.GSG.FX.Data.Portable.dll</HintPath>
+    <Reference Include="Capital.GSG.FX.Data.Portable, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Capital.GSG.FX.Data.Portable.1.10.0\lib\.NETPortable,Version=v4.5\Capital.GSG.FX.Data.Portable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Mobile, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
