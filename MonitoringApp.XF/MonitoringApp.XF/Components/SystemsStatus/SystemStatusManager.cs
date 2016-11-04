@@ -52,12 +52,14 @@ namespace MonitoringApp.XF.Components.SystemsStatus
                     {
                         foreach (var status in statuses)
                         {
-                            if (!status.OverallStatus.HasValue)
+                            if (!status.IsAlive)
+                                status.OverallStatus = SystemStatusLevel.RED;
+                            else if (!status.OverallStatus.HasValue)
                             {
                                 if (!status.Attributes.IsNullOrEmpty())
                                     status.OverallStatus = SystemStatusLevelUtils.CalculateWorstOf(status.Attributes.Select(a => a.Level));
                                 else
-                                    status.OverallStatus = SystemStatusLevel.RED;
+                                    status.OverallStatus = SystemStatusLevel.GREEN;
                             }
                         }
 
