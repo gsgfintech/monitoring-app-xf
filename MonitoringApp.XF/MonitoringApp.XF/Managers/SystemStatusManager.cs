@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MonitoringApp.XF.Components.SystemsStatus
+namespace MonitoringApp.XF.Managers
 {
     public class SystemStatusManager
     {

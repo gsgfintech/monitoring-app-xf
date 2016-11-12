@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
+using MonitoringApp.XF.Managers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

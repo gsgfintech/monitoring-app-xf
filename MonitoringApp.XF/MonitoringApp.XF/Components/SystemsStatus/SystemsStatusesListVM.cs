@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Globalization;
 using Capital.GSG.FX.Data.Core.SystemData;
+using MonitoringApp.XF.Managers;
 
 namespace MonitoringApp.XF.Components.SystemsStatus
 {

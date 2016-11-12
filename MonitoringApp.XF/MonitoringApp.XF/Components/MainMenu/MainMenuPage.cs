@@ -1,6 +1,7 @@
 ﻿using MonitoringApp.XF.Components.Alerts;
 using MonitoringApp.XF.Components.Executions;
 using MonitoringApp.XF.Components.FXEvents;
+using MonitoringApp.XF.Components.Home;
 using MonitoringApp.XF.Components.Orders;
 using MonitoringApp.XF.Components.Positions;
 using MonitoringApp.XF.Components.SystemsStatus;
@@ -48,6 +49,13 @@ namespace MonitoringApp.XF.Components.MainMenu
         private List<MainMenuPageItem> PopulateMenu()
         {
             List<MainMenuPageItem> mainMenuPageItems = new List<MainMenuPageItem>();
+
+            mainMenuPageItems.Add(new MainMenuPageItem()
+            {
+                IconSource = "contacts.png",
+                TargetType = typeof(HomePage),
+                Title = "Overview"
+            });
 
             mainMenuPageItems.Add(new MainMenuPageItem()
             {

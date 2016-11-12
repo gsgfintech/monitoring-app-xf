@@ -110,6 +110,18 @@
       <HintPath>..\..\packages\Syncfusion.Xamarin.SfDataGrid.14.3.0.49\lib\MonoAndroid10\Syncfusion.SfDataGrid.XForms.Android.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Syncfusion.SfPullToRefresh.Android, Version=14.3451.0.52, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Syncfusion.Xamarin.SfPullToRefresh.14.3.0.52\lib\MonoAndroid10\Syncfusion.SfPullToRefresh.Android.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.SfPullToRefresh.XForms, Version=14.3451.0.52, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Syncfusion.Xamarin.SfPullToRefresh.14.3.0.52\lib\MonoAndroid10\Syncfusion.SfPullToRefresh.XForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.SfPullToRefresh.XForms.Android, Version=14.3451.0.52, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Syncfusion.Xamarin.SfPullToRefresh.14.3.0.52\lib\MonoAndroid10\Syncfusion.SfPullToRefresh.XForms.Android.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />

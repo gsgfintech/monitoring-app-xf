@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MonitoringApp.XF.Components.Orders
+namespace MonitoringApp.XF.ViewModels
 {
     public class OrderViewModel : Order
     {

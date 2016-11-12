@@ -1,17 +1,23 @@
-﻿using Capital.GSG.FX.Utils.Portable;
-using MonitoringApp.XF.Managers;
+﻿using MonitoringApp.XF.Managers;
 using MonitoringApp.XF.ViewModels;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace MonitoringApp.XF.Components.Executions
+namespace MonitoringApp.XF.Components.PnL
 {
-    public class ExecutionsListVM : BaseViewModel
+    public class PnLPageVM : BaseViewModel
     {
-        public ObservableCollection<ExecutionViewModel> TodaysTrades { get; set; } = new ObservableCollection<ExecutionViewModel>();
+        private PnLViewModel pnl;
+        public PnLViewModel PnL
+        {
+            get { return pnl; }
+            set
+            {
+                pnl = value;
+                OnPropertyChanged(nameof(PnL));
+            }
+        }
 
         private DateTime day;
         public DateTime Day
@@ -59,7 +65,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         public Command ChangeDayCommand { get; private set; }
 
-        public ExecutionsListVM()
+        public PnLPageVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
             ChangeDayCommand = new Command(ExecuteChangeDayCommand);
@@ -75,21 +81,21 @@ namespace MonitoringApp.XF.Components.Executions
 
             Day = NewDay;
 
-            await RefreshExecutions(false);
+            await RefreshPnL(false);
         }
 
         private async void ExecuteRefreshCommand()
         {
-            await RefreshExecutions(true);
+            await RefreshPnL(true);
 
             IsRefreshing = false;
         }
 
-        public async Task RefreshExecutions(bool refresh)
+        public async Task RefreshPnL(bool refresh)
         {
             try
             {
-                await LoadExecutions(refresh);
+                await LoadPnL(refresh);
             }
             catch (AuthenticationRequiredException)
             {
@@ -98,22 +104,14 @@ namespace MonitoringApp.XF.Components.Executions
                     bool authenticated = await App.Authenticator.AuthenticateAsync();
 
                     if (authenticated)
-                        await LoadExecutions(refresh);
+                        await LoadPnL(refresh);
                 }
             }
         }
 
-        private async Task LoadExecutions(bool refresh)
+        private async Task LoadPnL(bool refresh)
         {
-            var trades = (await ExecutionManager.Instance.LoadExecutions(Day, refresh))?.AsEnumerable().OrderByDescending(t => t.ExecutionTime);
-
-            TodaysTrades.Clear();
-
-            if (!trades.IsNullOrEmpty())
-            {
-                foreach (var trade in trades)
-                    TodaysTrades.Add(trade.ToExecutionViewModel());
-            }
+            PnL = (await PnLManager.Instance.LoadPnL(Day, refresh)).ToPnLViewModel();
         }
     }
 }

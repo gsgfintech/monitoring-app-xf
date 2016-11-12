@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.OrderData;
+using MonitoringApp.XF.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 

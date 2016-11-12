@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.PnL"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
+             x:Class="MonitoringApp.XF.Components.PnL.PnLPage"
+             Title="{Binding Day, StringFormat='PnL {0:dd/MM/yy}'}">
+
+  <ContentPage.BindingContext>
+    <local:PnLPageVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="14*" />
+      </Grid.RowDefinitions>
+      <Label Text="Change Day:" VerticalTextAlignment="Center" Margin="10,0,0,0" />
+      <DatePicker VerticalOptions="CenterAndExpand" Date="{Binding NewDay, Mode=TwoWay}" MaximumDate="{x:Static sys:DateTime.Now}" Format="dd/MM/yyyy" Grid.Column="1">
+        <DatePicker.MinimumDate>
+          <sys:DateTime x:FactoryMethod="Parse">
+            <x:Arguments>
+              <x:String>Jan 1 2016</x:String>
+            </x:Arguments>
+          </sys:DateTime>
+        </DatePicker.MinimumDate>
+      </DatePicker>
+      <Button Text="Go" Command="{Binding ChangeDayCommand}" Grid.Column="2" />
+      <TableView Intent="Data" HasUnevenRows="True" Grid.Row="1" Grid.ColumnSpan="3">
+        <TableRoot>
+          <TableSection Title="TOTAL">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Trades Count" />
+                <Label Text="{Binding PnL.TotalTradesCount, StringFormat='{0:N0}'}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Total Fees" />
+                <Label Text="{Binding PnL.TotalFees, StringFormat='USD {0:N0}'}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Gross Unrealized" />
+                <Label Text="{Binding PnL.TotalGrossUnrealized, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalGrossUnrealized, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Gross Realized" />
+                <Label Text="{Binding PnL.TotalGrossRealized, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalGrossRealized, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Net Realized" />
+                <Label Text="{Binding PnL.TotalNetRealized, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalNetRealized, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Last Update" />
+                <Label Text="{Binding PnL.LastUpdate, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="DETAILS">
+            <ViewCell x:Name="perCrossPnLViewCell">
+              <ListView ItemsSource="{Binding PnL.PerCrossPnLs}" HasUnevenRows="True" Margin="20,0,0,0">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <ViewCell>
+                      <Grid Margin="0,0,20,0">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition />
+                          <ColumnDefinition />
+                          <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                          <RowDefinition />
+                          <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Text="{Binding Cross}" FontAttributes="Bold" />
+                        <Label Text="{Binding TradesCount, StringFormat='Trades: {0:N0}'}" Grid.Column="1" />
+                        <Label Text="{Binding TotalFees, StringFormat='Fees: {0:N0}'}" Grid.Column="2" />
+                        <Label Text="{Binding GrossRealized, StringFormat='RG: {0:N2}'}" TextColor="{Binding GrossRealized, Converter={StaticResource NumberToColorConverter}}" Grid.Row="1" />
+                        <Label Text="{Binding NetRealized, StringFormat='RN: {0:N2}'}" TextColor="{Binding NetRealized, Converter={StaticResource NumberToColorConverter}}" Grid.Row="1" Grid.Column="1" />
+                        <Label Text="{Binding GrossUnrealized, StringFormat='UG: {0:N2}'}" TextColor="{Binding GrossUnrealized, Converter={StaticResource NumberToColorConverter}}" Grid.Row="1" Grid.Column="2" />
+                      </Grid>
+                    </ViewCell>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+              </ListView>
+            </ViewCell>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+    </Grid>
+  </ContentPage.Content>
+  
+</ContentPage>

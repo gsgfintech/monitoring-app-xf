@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MonitoringApp.XF.Components.Executions
+namespace MonitoringApp.XF.Managers
 {
     public class ExecutionManager
     {

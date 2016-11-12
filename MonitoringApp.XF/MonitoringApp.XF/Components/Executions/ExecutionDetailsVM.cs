@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using MonitoringApp.XF.Managers;
+using MonitoringApp.XF.ViewModels;
+using System.Threading.Tasks;
 
 namespace MonitoringApp.XF.Components.Executions
 {

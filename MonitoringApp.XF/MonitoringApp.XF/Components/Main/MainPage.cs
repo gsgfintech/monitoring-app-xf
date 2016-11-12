@@ -1,5 +1,5 @@
-﻿using MonitoringApp.XF.Components.MainMenu;
-using MonitoringApp.XF.Components.SystemsStatus;
+﻿using MonitoringApp.XF.Components.Home;
+using MonitoringApp.XF.Components.MainMenu;
 using System;
 
 using Xamarin.Forms;
@@ -14,7 +14,7 @@ namespace MonitoringApp.XF
         {
             mainMenuPage = new MainMenuPage();
             Master = mainMenuPage;
-            Detail = new NavigationPage(new SystemsStatusesListPage());
+            Detail = new NavigationPage(new HomePage());
 
             mainMenuPage.ListView.ItemSelected += OnItemSelected;
         }

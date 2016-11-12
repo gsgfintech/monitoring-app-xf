@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:MonitoringApp.XF"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.Home"
+             x:Class="MonitoringApp.XF.Components.Home.HomePage"
+             Title="Overview">
+
+  <ContentPage.BindingContext>
+    <local:HomePageVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.Content>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="9*" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <TableView Intent="Data" HasUnevenRows="True">
+        <TableRoot>
+          <TableSection Title="PNL">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Gross Unrealized" />
+                <Label Text="{Binding PnL.TotalGrossUnrealized, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalGrossUnrealized, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Net Realized" />
+                <Label Text="{Binding PnL.TotalNetRealized, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalNetRealized, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Last Update" />
+                <Label Text="{Binding PnL.LastUpdate, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Button Text="More" FontSize="10" HeightRequest="30" HorizontalOptions="EndAndExpand" Clicked="GotoPnL" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="ORDERS">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Count" />
+                <Label Text="{Binding OrdersCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Button Text="More" FontSize="10" HeightRequest="30" HorizontalOptions="EndAndExpand" Clicked="GotoOrders" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="TRADES">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Count" />
+                <Label Text="{Binding TradesCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Button Text="More" FontSize="10" HeightRequest="30" HorizontalOptions="EndAndExpand" Clicked="GotoTrades" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="ALERTS">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Open" />
+                <Label Text="{Binding AlertsCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Button Text="More" FontSize="10" HeightRequest="30" HorizontalOptions="EndAndExpand" Clicked="GotoAlerts" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="SYSTEMS">
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Green" />
+                <Label Text="{Binding SystemsGreenCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Yellow" />
+                <Label Text="{Binding SystemsYellowCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Red" />
+                <Label Text="{Binding SystemsRedCount}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Button Text="More" FontSize="10" HeightRequest="30" HorizontalOptions="EndAndExpand" Clicked="GotoSystems" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+      <Button Text="Refresh" Command="{Binding RefreshCommand}" HorizontalOptions="EndAndExpand" Grid.Row="1" />
+    </Grid>
+  </ContentPage.Content>
+</ContentPage>

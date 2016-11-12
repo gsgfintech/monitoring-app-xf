@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using MonitoringApp.XF.ViewModels;
+using Xamarin.Forms;
 
 namespace MonitoringApp.XF.Components.Orders
 {

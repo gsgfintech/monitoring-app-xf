@@ -1,7 +1,7 @@
 ﻿using Capital.GSG.FX.Data.Core.ExecutionData;
 using System.Text;
 
-namespace MonitoringApp.XF.Components.Executions
+namespace MonitoringApp.XF.ViewModels
 {
     public class ExecutionViewModel : Execution
     {

@@ -42,7 +42,7 @@
       <DependentUpon>AlertDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Alerts\AlertDetailsVM.cs" />
-    <Compile Include="Components\Alerts\AlertManager.cs" />
+    <Compile Include="Managers\AlertManager.cs" />
     <Compile Include="Components\Alerts\AlertsListPage.xaml.cs">
       <DependentUpon>AlertsListPage.xaml</DependentUpon>
     </Compile>
@@ -51,7 +51,7 @@
       <DependentUpon>ExecutionDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Executions\ExecutionDetailsVM.cs" />
-    <Compile Include="Components\Executions\ExecutionManager.cs" />
+    <Compile Include="Managers\ExecutionManager.cs" />
     <Compile Include="Components\Executions\ExecutionsListPage.xaml.cs">
       <DependentUpon>ExecutionsListPage.xaml</DependentUpon>
     </Compile>
@@ -60,6 +60,10 @@
     <Compile Include="Components\FXEvents\FXEventManager.cs" />
     <Compile Include="Components\FXEvents\FXEventsListPage.cs" />
     <Compile Include="Components\FXEvents\FXEventsListVM.cs" />
+    <Compile Include="Components\Home\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Home\HomePageVM.cs" />
     <Compile Include="Components\Login\LoginPage.cs" />
     <Compile Include="Components\MainMenu\MainMenuPage.cs" />
     <Compile Include="Components\MainMenu\MainMenuPageItem.cs" />
@@ -68,12 +72,16 @@
       <DependentUpon>OrderDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Orders\OrderDetailsVM.cs" />
-    <Compile Include="Components\Orders\OrderViewModel.cs" />
-    <Compile Include="Components\Orders\OrderManager.cs" />
+    <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="Managers\OrderManager.cs" />
     <Compile Include="Components\Orders\OrdersListPage.xaml.cs">
       <DependentUpon>OrdersListPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Orders\OrdersListVM.cs" />
+    <Compile Include="Components\PnL\PnLPage.xaml.cs">
+      <DependentUpon>PnLPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PnL\PnLPageVM.cs" />
     <Compile Include="Components\Positions\AccountDetailsPage.xaml.cs">
       <DependentUpon>AccountDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -97,18 +105,20 @@
       <DependentUpon>SystemStatusDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SystemsStatus\SystemStatusDetailsVM.cs" />
-    <Compile Include="Components\SystemsStatus\SystemStatusManager.cs" />
+    <Compile Include="Managers\SystemStatusManager.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="GenericActionResult.cs" />
     <Compile Include="IAuthenticate.cs" />
     <Compile Include="Components\Main\MainPage.cs" />
-    <Compile Include="Components\Executions\ExecutionViewModel.cs" />
+    <Compile Include="ViewModels\ExecutionViewModel.cs" />
+    <Compile Include="Managers\PnLManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ViewModels\PnLViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Capital.GSG.FX.Data.Portable, Version=1.10.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Capital.GSG.FX.Data.Portable.1.10.3\lib\.NETPortable,Version=v4.5\Capital.GSG.FX.Data.Portable.dll</HintPath>
+    <Reference Include="Capital.GSG.FX.Data.Portable, Version=1.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Capital.GSG.FX.Data.Portable.1.11.1\lib\.NETPortable,Version=v4.5\Capital.GSG.FX.Data.Portable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Mobile, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -145,6 +155,10 @@
     </Reference>
     <Reference Include="Syncfusion.SfDataGrid.XForms, Version=14.3451.0.49, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Syncfusion.Xamarin.SfDataGrid.14.3.0.49\lib\portable-win+net45+wp80+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Syncfusion.SfDataGrid.XForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Syncfusion.SfPullToRefresh.XForms, Version=14.3451.0.52, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Syncfusion.Xamarin.SfPullToRefresh.14.3.0.52\lib\portable-win+net45+wp80+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Syncfusion.SfPullToRefresh.XForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -242,6 +256,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\Positions\AccountDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Home\HomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\PnL\PnLPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -6,6 +6,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Capital.GSG.FX.Data.Core.OrderData;
+using MonitoringApp.XF.Managers;
+using MonitoringApp.XF.ViewModels;
 
 namespace MonitoringApp.XF.Components.Orders
 {

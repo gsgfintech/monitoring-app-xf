@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using Capital.GSG.FX.Data.Core.SystemData;
 using System.Linq;
+using MonitoringApp.XF.Managers;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
