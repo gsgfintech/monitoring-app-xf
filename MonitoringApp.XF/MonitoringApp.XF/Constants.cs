@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public static string ApplicationURL = @"https://stratedgeme-monitor-dev.azurewebsites.net";
+        public static string ApplicationURL = @"https://stratedgeme-monitor-mobile-backend.azurewebsites.net";
     }
 }
