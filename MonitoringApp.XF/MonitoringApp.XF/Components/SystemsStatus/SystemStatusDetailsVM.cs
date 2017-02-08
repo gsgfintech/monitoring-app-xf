@@ -30,20 +30,7 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         public async Task GetSystemStatusByName(string name)
         {
-            try
-            {
-                await LoadSystemStatusByName(name);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadSystemStatusByName(name);
-                }
-            }
+            await LoadSystemStatusByName(name);
         }
 
         private async Task LoadSystemStatusByName(string name)

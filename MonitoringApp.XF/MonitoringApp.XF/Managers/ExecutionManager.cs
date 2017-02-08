@@ -1,11 +1,9 @@
 ﻿using Capital.GSG.FX.Data.Core.ExecutionData;
-using Capital.GSG.FX.Utils.Portable;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Monitoring.Server.Connector;
+using Capital.GSG.FX.Utils.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,9 +11,7 @@ namespace MonitoringApp.XF.Managers
 {
     public class ExecutionManager
     {
-        private const string ExecutionsRoute = "executions";
-
-        private readonly MobileServiceClient client;
+        private readonly BackendExecutionsConnector executionsConnector;
 
         private static ExecutionManager instance;
         public static ExecutionManager Instance
@@ -34,7 +30,7 @@ namespace MonitoringApp.XF.Managers
 
         private ExecutionManager()
         {
-            client = App.MobileServiceClient;
+            executionsConnector = App.MonitoringServerConnector.ExecutionsConnector;
         }
 
         public async Task<List<Execution>> LoadExecutions(DateTime day, bool refresh)
@@ -46,9 +42,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var executions = await client.InvokeApiAsync<List<Execution>>(ExecutionsRoute, HttpMethod.Get, new Dictionary<string, string>() {
-                        { "day", day.ToString("yyyy-MM-dd") }
-                    }, cts.Token);
+                    var executions = await executionsConnector.GetForDay(day, cts.Token);
 
                     if (!executions.IsNullOrEmpty())
                         executionsDict[day] = executions;
@@ -61,17 +55,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving executions: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load executions");
-                    throw new AuthenticationRequiredException(typeof(ExecutionManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -95,7 +78,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Execution execution = await client.InvokeApiAsync<Execution>($"{ExecutionsRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "executionId", id } }, cts.Token);
+                    Execution execution = await executionsConnector.GetById(id, cts.Token);
 
                     if (execution != null)
                         detailedExecutions[id] = execution;
@@ -111,17 +94,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not retrieving execution's details: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load execution");
-                    throw new AuthenticationRequiredException(typeof(ExecutionManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)

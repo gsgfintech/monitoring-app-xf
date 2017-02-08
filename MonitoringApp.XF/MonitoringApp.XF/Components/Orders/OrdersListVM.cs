@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Utils.Portable;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System;
@@ -8,6 +7,7 @@ using System.Linq;
 using Capital.GSG.FX.Data.Core.OrderData;
 using MonitoringApp.XF.Managers;
 using MonitoringApp.XF.ViewModels;
+using Capital.GSG.FX.Utils.Core;
 
 namespace MonitoringApp.XF.Components.Orders
 {
@@ -89,20 +89,7 @@ namespace MonitoringApp.XF.Components.Orders
 
         public async Task RefreshOrders(bool refresh)
         {
-            try
-            {
-                await LoadOrders(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadOrders(refresh);
-                }
-            }
+            await LoadOrders(refresh);
         }
 
         private async Task LoadOrders(bool refresh)

@@ -22,20 +22,7 @@ namespace MonitoringApp.XF.Components.Positions
 
         public async Task GetPositionByCross(Cross cross)
         {
-            try
-            {
-                await LoadPositionByCross(cross);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadPositionByCross(cross);
-                }
-            }
+            await LoadPositionByCross(cross);
         }
 
         private async Task LoadPositionByCross(Cross cross)

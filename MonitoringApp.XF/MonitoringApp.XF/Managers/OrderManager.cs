@@ -1,11 +1,9 @@
 ﻿using Capital.GSG.FX.Data.Core.OrderData;
-using Capital.GSG.FX.Utils.Portable;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Monitoring.Server.Connector;
+using Capital.GSG.FX.Utils.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +13,7 @@ namespace MonitoringApp.XF.Managers
     {
         private const string OrdersRoute = "orders";
 
-        private readonly MobileServiceClient client;
+        private readonly BackendOrdersConnector ordersConnector;
 
         private static OrderManager instance;
         public static OrderManager Instance
@@ -34,7 +32,7 @@ namespace MonitoringApp.XF.Managers
 
         private OrderManager()
         {
-            client = App.MobileServiceClient;
+            ordersConnector = App.MonitoringServerConnector.OrdersConnector;
         }
 
         public async Task<List<Order>> LoadOrders(DateTime day, bool refresh)
@@ -46,9 +44,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var orders = await client.InvokeApiAsync<List<Order>>(OrdersRoute, HttpMethod.Get, new Dictionary<string, string>() {
-                        { "day", day.ToString("yyyy-MM-dd") }
-                    }, cts.Token);
+                    var orders = await ordersConnector.GetOrdersForDay(day, cts.Token);
 
                     if (!orders.IsNullOrEmpty())
                         ordersDict[day] = orders;
@@ -61,17 +57,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving orders: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load orders");
-                    throw new AuthenticationRequiredException(typeof(OrderManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -95,7 +80,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Order order = await client.InvokeApiAsync<Order>($"{OrdersRoute}", HttpMethod.Get, new Dictionary<string, string>() { { "permanentId", permanentId.ToString() } }, cts.Token);
+                    Order order = await ordersConnector.GetOrderByPermanentId(permanentId, cts.Token);
 
                     if (order != null)
                         detailedOrders[permanentId] = order;
@@ -111,17 +96,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not retrieving order's details: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load order");
-                    throw new AuthenticationRequiredException(typeof(OrderManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)

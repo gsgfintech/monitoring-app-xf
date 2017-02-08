@@ -1,11 +1,9 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Monitoring.Server.Connector;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,12 +11,7 @@ namespace MonitoringApp.XF.Managers
 {
     public class AlertManager
     {
-        private const string AlertsOpenRoute = "alerts/list/open";
-        private const string AlertsClosedTodayRoute = "alerts/list/closed";
-        private const string AlertByIdRoute = "alerts/id";
-        private const string CloseAlertRoute = "alerts/close";
-
-        private readonly MobileServiceClient client;
+        private readonly BackendAlertsConnector alertsConnector;
 
         private static AlertManager instance;
         public static AlertManager Instance
@@ -38,7 +31,7 @@ namespace MonitoringApp.XF.Managers
 
         private AlertManager()
         {
-            client = App.MobileServiceClient;
+            alertsConnector = App.MonitoringServerConnector.AlertsConnector;
         }
 
         public async Task<List<Alert>> LoadOpenAlerts(bool refresh)
@@ -50,7 +43,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    openAlerts = await client.InvokeApiAsync<List<Alert>>(AlertsOpenRoute, HttpMethod.Get, null, cts.Token);
+                    openAlerts = await alertsConnector.GetByStatus(AlertStatus.OPEN, cts.Token);
                 }
 
                 return openAlerts;
@@ -58,17 +51,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving open alerts: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load open alerts");
-                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -87,13 +69,12 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var alerts = await client.InvokeApiAsync<List<Alert>>(AlertsClosedTodayRoute, HttpMethod.Get, new Dictionary<string, string>() {
-                        { "day", DateTime.Today.ToString("yyyy-MM-dd") }
-                    }, cts.Token);
+                    var alerts = await alertsConnector.GetForDay(DateTime.Today, cts.Token);
+                    alerts = alerts?.Where(a => a.Status == AlertStatus.CLOSED).ToList();
 
                     if (alerts != null)
                         alertsClosedtoday = alerts;
-                    else                  
+                    else
                         alertsClosedtoday = new List<Alert>();
                 }
 
@@ -102,17 +83,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving alerts closed: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load alerts closed");
-                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -136,7 +106,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Alert alert = await client.InvokeApiAsync<Alert>($"{AlertByIdRoute}/{id}", HttpMethod.Get, null, cts.Token);
+                    Alert alert = await alertsConnector.GetById(id, cts.Token);
 
                     if (alert != null)
                         detailedAlerts[id] = alert;
@@ -152,17 +122,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not retrieving alert's details: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load alert");
-                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -182,7 +141,7 @@ namespace MonitoringApp.XF.Managers
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/{id}", HttpMethod.Get, null, cts.Token);
+                bool success = await alertsConnector.Close(id, cts.Token);
 
                 if (success)
                     HandleAlertClosure(id);
@@ -197,17 +156,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not closing alert: missing or invalid parameter {ex.ParamName}");
-                return false;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to close alert");
-                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Failed to close alert: {msioe.Message}");
                 return false;
             }
             catch (Exception e)
@@ -242,7 +190,7 @@ namespace MonitoringApp.XF.Managers
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await client.InvokeApiAsync<bool>($"{CloseAlertRoute}/all", HttpMethod.Get, null, cts.Token);
+                bool success = await alertsConnector.CloseAll(cts.Token);
 
                 if (success)
                 {
@@ -257,17 +205,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not closing all alerts: operation cancelled");
-                return false;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to close all alerts");
-                    throw new AuthenticationRequiredException(typeof(AlertManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Failed to close all alerts: {msioe.Message}");
                 return false;
             }
             catch (Exception e)

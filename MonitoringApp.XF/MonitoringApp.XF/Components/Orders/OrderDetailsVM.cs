@@ -27,20 +27,7 @@ namespace MonitoringApp.XF.Components.Orders
 
         public async Task GetOrderByPermanentId(int permanentId)
         {
-            try
-            {
-                await LoadOrderByPermanentId(permanentId);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadOrderByPermanentId(permanentId);
-                }
-            }
+            await LoadOrderByPermanentId(permanentId);
         }
 
         private async Task LoadOrderByPermanentId(int permanentId)

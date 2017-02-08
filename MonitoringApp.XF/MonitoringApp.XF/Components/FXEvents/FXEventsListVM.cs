@@ -1,5 +1,6 @@
 ﻿using Capital.GSG.FX.Data.Core.MarketData;
-using Capital.GSG.FX.Utils.Portable;
+using Capital.GSG.FX.Utils.Core;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,7 @@ namespace MonitoringApp.XF.Components.FXEvents
     {
         public async Task<List<Tuple<string, string, string>>> RefreshTodaysHighImpactFXEvents(bool refresh)
         {
-            try
-            {
-                return await LoadTodaysHighImpactFXEvents(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadTodaysHighImpactFXEvents(refresh);
-                }
-
-                return null;
-            }
+            return await LoadTodaysHighImpactFXEvents(refresh);
         }
 
         private async Task<List<Tuple<string, string, string>>> LoadTodaysHighImpactFXEvents(bool refresh)
@@ -38,22 +24,7 @@ namespace MonitoringApp.XF.Components.FXEvents
 
         public async Task<List<Tuple<string, string, string>>> RefreshCurrentWeeksFXEvents(bool refresh)
         {
-            try
-            {
-                return await LoadCurrentWeeksFXEvents(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadCurrentWeeksFXEvents(refresh);
-                }
-
-                return null;
-            }
+            return await LoadCurrentWeeksFXEvents(refresh);
         }
 
         private async Task<List<Tuple<string, string, string>>> LoadCurrentWeeksFXEvents(bool refresh)
@@ -78,22 +49,7 @@ namespace MonitoringApp.XF.Components.FXEvents
 
         public async Task<FXEvent> GetFXEventById(string id)
         {
-            try
-            {
-                return await LoadFXEventById(id);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadFXEventById(id);
-                }
-
-                return null;
-            }
+            return await LoadFXEventById(id);
         }
 
         private static async Task<FXEvent> LoadFXEventById(string id)

@@ -93,20 +93,7 @@ namespace MonitoringApp.XF.Components.PnL
 
         public async Task RefreshPnL(bool refresh)
         {
-            try
-            {
-                await LoadPnL(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadPnL(refresh);
-                }
-            }
+            await LoadPnL(refresh);
         }
 
         private async Task LoadPnL(bool refresh)

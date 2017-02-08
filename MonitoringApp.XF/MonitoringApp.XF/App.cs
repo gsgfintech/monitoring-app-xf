@@ -1,32 +1,20 @@
-﻿using Microsoft.WindowsAzure.MobileServices;
-using MonitoringApp.XF.Components.Login;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Capital.GSG.FX.Monitoring.Server.Connector;
 using Xamarin.Forms;
 
 namespace MonitoringApp.XF
 {
     public class App : Application
     {
-        public static IAuthenticate Authenticator { get; private set; }
-
-        public static MobileServiceClient MobileServiceClient { get; private set; }
+        public static MonitoringServerConnector MonitoringServerConnector { get; private set; }
 
         public App()
         {
-            MobileServiceClient = new MobileServiceClient(Constants.ApplicationURL);
+            AccessTokenProvider accessTokenProvider = new AccessTokenProvider();
+            MonitoringServerConnector = new MonitoringServerConnector(Constants.MonitoringBackendAddress, accessTokenProvider);
 
             // The root page of your application
             //MainPage = new LoginPage();
             MainPage = new MainPage();
-        }
-
-        public static void Init(IAuthenticate authenticator)
-        {
-            Authenticator = authenticator;
         }
 
         protected override void OnStart()

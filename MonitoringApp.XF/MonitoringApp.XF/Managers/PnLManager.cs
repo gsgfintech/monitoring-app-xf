@@ -1,10 +1,8 @@
 ﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Monitoring.Server.Connector;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +12,7 @@ namespace MonitoringApp.XF.Managers
     {
         private const string PnLRoute = "pnl";
 
-        private readonly MobileServiceClient client;
+        private readonly BackendPnLsConnector pnlsConnector;
 
         private static PnLManager instance;
         public static PnLManager Instance
@@ -32,7 +30,7 @@ namespace MonitoringApp.XF.Managers
 
         private PnLManager()
         {
-            client = App.MobileServiceClient;
+            pnlsConnector = App.MonitoringServerConnector.PnLsConnector;
         }
 
         public async Task<PnL> LoadPnL(DateTime day, bool refresh)
@@ -44,9 +42,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var pnl = await client.InvokeApiAsync<PnL>(PnLRoute, HttpMethod.Get, new Dictionary<string, string>() {
-                        { "day", day.ToString("yyyy-MM-dd") }
-                    }, cts.Token);
+                    var pnl = await pnlsConnector.GetForDay(day, cts.Token);
 
                     if (pnl != null)
                         pnlDict[day] = pnl;
@@ -59,17 +55,6 @@ namespace MonitoringApp.XF.Managers
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving pnl: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load pnl");
-                    throw new AuthenticationRequiredException(typeof(PnLManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)

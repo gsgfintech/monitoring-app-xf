@@ -1,8 +1,8 @@
-﻿using Capital.GSG.FX.Utils.Portable;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Linq;
+using Capital.GSG.FX.Utils.Core;
 
 namespace MonitoringApp.XF.Components.Positions
 {
@@ -55,24 +55,8 @@ namespace MonitoringApp.XF.Components.Positions
 
         public async Task Refresh(bool refresh)
         {
-            try
-            {
-                await LoadPositions(refresh);
-                await LoadAccounts(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                    {
-                        await LoadPositions(refresh);
-                        await LoadAccounts(refresh);
-                    }
-                }
-            }
+            await LoadPositions(refresh);
+            await LoadAccounts(refresh);
         }
 
         private async Task LoadPositions(bool refresh)

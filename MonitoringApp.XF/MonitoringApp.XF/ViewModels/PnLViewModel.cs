@@ -1,6 +1,6 @@
 ﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
 using Capital.GSG.FX.Data.Core.ContractData;
-using Capital.GSG.FX.Utils.Portable;
+using Capital.GSG.FX.Utils.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

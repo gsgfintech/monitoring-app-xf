@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Utils.Portable;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using Capital.GSG.FX.Data.Core.SystemData;
 using System.Linq;
 using MonitoringApp.XF.Managers;
+using Capital.GSG.FX.Utils.Core;
 
 namespace MonitoringApp.XF.Components.Alerts
 {
@@ -73,20 +73,7 @@ namespace MonitoringApp.XF.Components.Alerts
 
         public async Task RefreshAlerts(bool refresh)
         {
-            try
-            {
-                await LoadAlerts(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadAlerts(refresh);
-                }
-            }
+            await LoadAlerts(refresh);
         }
 
         private async Task LoadAlerts(bool refresh)
@@ -109,20 +96,7 @@ namespace MonitoringApp.XF.Components.Alerts
 
         public async Task CloseAllAlertsAuthenticated()
         {
-            try
-            {
-                await CloseAllAlerts();
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await CloseAllAlerts();
-                }
-            }
+            await CloseAllAlerts();
         }
 
         private async Task CloseAllAlerts()

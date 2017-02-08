@@ -24,20 +24,7 @@ namespace MonitoringApp.XF.Components.Positions
 
         public async Task GetAccount(Broker broker, string accountName)
         {
-            try
-            {
-                await LoadAccount(broker, accountName);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadAccount(broker, accountName);
-                }
-            }
+            await LoadAccount(broker, accountName);
         }
 
         private async Task LoadAccount(Broker broker, string accountName)

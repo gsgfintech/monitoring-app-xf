@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
+using Capital.GSG.FX.Data.Core.WebApi;
 using System;
 using Xamarin.Forms;
 

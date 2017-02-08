@@ -1,12 +1,11 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
-using Capital.GSG.FX.Utils.Portable;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Data.Core.WebApi;
+using Capital.GSG.FX.Monitoring.Server.Connector;
+using Capital.GSG.FX.Utils.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,9 +13,8 @@ namespace MonitoringApp.XF.Managers
 {
     public class SystemStatusManager
     {
-        private const string SystemsRoute = "systems";
-
-        private readonly MobileServiceClient client;
+        private readonly BackendSystemServicesConnector systemServicesConnector;
+        private readonly BackendSystemStatusesConnector systemStatusesConnector;
 
         private Dictionary<string, SystemStatus> statusDict;
 
@@ -34,7 +32,8 @@ namespace MonitoringApp.XF.Managers
 
         private SystemStatusManager()
         {
-            client = App.MobileServiceClient;
+            systemServicesConnector = App.MonitoringServerConnector.SystemServicesConnector;
+            systemStatusesConnector = App.MonitoringServerConnector.SystemStatusesConnector;
         }
 
         public async Task<List<SystemStatus>> LoadSystemsStatuses(bool refresh)
@@ -46,7 +45,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var statuses = await client.InvokeApiAsync<List<SystemStatus>>($"{SystemsRoute}", HttpMethod.Get, null, cts.Token);
+                    var statuses = await systemStatusesConnector.GetAll(cts.Token);
 
                     if (!statuses.IsNullOrEmpty())
                     {
@@ -76,17 +75,6 @@ namespace MonitoringApp.XF.Managers
                 Debug.WriteLine("Not retrieving systems statuses: operation cancelled");
                 return null;
             }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load systems statuses");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
-                return null;
-            }
             catch (Exception e)
             {
                 Debug.WriteLine($"Sync error: {e.Message}");
@@ -108,7 +96,7 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    SystemStatus status = await client.InvokeApiAsync<SystemStatus>($"{SystemsRoute}/{name}", HttpMethod.Get, null, cts.Token);
+                    SystemStatus status = await systemStatusesConnector.Get(name, cts.Token);
 
                     if (status != null)
                     {
@@ -131,17 +119,6 @@ namespace MonitoringApp.XF.Managers
                 Debug.WriteLine($"Not retrieving system status: missing or invalid parameter {ex.ParamName}");
                 return null;
             }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to system status");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
-                return null;
-            }
             catch (Exception e)
             {
                 Debug.WriteLine($"Sync error: {e.Message}");
@@ -159,7 +136,7 @@ namespace MonitoringApp.XF.Managers
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/start", HttpMethod.Get, null, cts.Token);
+                return await systemServicesConnector.StartService(name, cts.Token);
             }
             catch (OperationCanceledException)
             {
@@ -169,17 +146,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not starting system: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to start system");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Failed to start system: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -199,7 +165,7 @@ namespace MonitoringApp.XF.Managers
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                return await client.InvokeApiAsync<GenericActionResult>($"{SystemsRoute}/{name}/stop", HttpMethod.Get, null, cts.Token);
+                return await systemServicesConnector.StopService(name, cts.Token);
             }
             catch (OperationCanceledException)
             {
@@ -209,17 +175,6 @@ namespace MonitoringApp.XF.Managers
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not stopping system: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to start system");
-                    throw new AuthenticationRequiredException(typeof(SystemStatusManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Failed to stop system: {msioe.Message}");
                 return null;
             }
             catch (Exception e)

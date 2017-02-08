@@ -1,4 +1,4 @@
-﻿using Capital.GSG.FX.Utils.Portable;
+﻿using Capital.GSG.FX.Utils.Core;
 using MonitoringApp.XF.Managers;
 using MonitoringApp.XF.ViewModels;
 using System;
@@ -87,20 +87,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         public async Task RefreshExecutions(bool refresh)
         {
-            try
-            {
-                await LoadExecutions(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadExecutions(refresh);
-                }
-            }
+            await LoadExecutions(refresh);
         }
 
         private async Task LoadExecutions(bool refresh)

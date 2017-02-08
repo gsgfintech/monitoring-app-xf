@@ -1,5 +1,4 @@
-﻿using Capital.GSG.FX.Utils.Portable;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +6,8 @@ using Xamarin.Forms;
 using System.Globalization;
 using Capital.GSG.FX.Data.Core.SystemData;
 using MonitoringApp.XF.Managers;
+using Capital.GSG.FX.Utils.Core;
+using Capital.GSG.FX.Data.Core.WebApi;
 
 namespace MonitoringApp.XF.Components.SystemsStatus
 {
@@ -63,20 +64,7 @@ namespace MonitoringApp.XF.Components.SystemsStatus
 
         public async Task RefreshSystemsStatuses(bool refresh)
         {
-            try
-            {
-                await LoadSystemsStatuses(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadSystemsStatuses(refresh);
-                }
-            }
+            await LoadSystemsStatuses(refresh);
         }
 
         private async Task LoadSystemsStatuses(bool refresh)

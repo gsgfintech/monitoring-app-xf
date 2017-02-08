@@ -1,10 +1,8 @@
 ﻿using Capital.GSG.FX.Data.Core.MarketData;
-using Microsoft.WindowsAzure.MobileServices;
+using Capital.GSG.FX.Monitoring.Server.Connector;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,11 +10,7 @@ namespace MonitoringApp.XF.Components.FXEvents
 {
     public class FXEventManager
     {
-        private const string FXEventsTodayHighImpactRoute = "fxevents/list/todayhigh";
-        private const string FXEventsCurrentWeekRoute = "fxevents/list/week";
-        private const string FXEventByIdRoute = "fxevents/id";
-
-        private readonly MobileServiceClient client;
+        private readonly BackendFXEventsConnector fxEventsConnector;
 
         private List<FXEvent> todaysHighImpactFXEvents;
         private List<FXEvent> currentWeeksFXEvents;
@@ -36,7 +30,7 @@ namespace MonitoringApp.XF.Components.FXEvents
 
         private FXEventManager()
         {
-            client = App.MobileServiceClient;
+            fxEventsConnector = App.MonitoringServerConnector.FXEventsConnector;
         }
 
         public async Task<List<FXEvent>> LoadTodaysHighImpactFXEvents(bool refresh)
@@ -48,7 +42,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    todaysHighImpactFXEvents = await client.InvokeApiAsync<List<FXEvent>>(FXEventsTodayHighImpactRoute, HttpMethod.Get, null, cts.Token);
+                    todaysHighImpactFXEvents = await fxEventsConnector.GetHighImpactForToday(cts.Token);
                 }
 
                 return todaysHighImpactFXEvents;
@@ -56,17 +50,6 @@ namespace MonitoringApp.XF.Components.FXEvents
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving today's high impact FX events: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load today's high impact FX events");
-                    throw new AuthenticationRequiredException(typeof(FXEventManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -85,7 +68,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    currentWeeksFXEvents = await client.InvokeApiAsync<List<FXEvent>>(FXEventsCurrentWeekRoute, HttpMethod.Get, null, cts.Token);
+                    currentWeeksFXEvents = await fxEventsConnector.GetForCurrentWeek(cts.Token);
                 }
 
                 return currentWeeksFXEvents;
@@ -93,17 +76,6 @@ namespace MonitoringApp.XF.Components.FXEvents
             catch (OperationCanceledException)
             {
                 Debug.WriteLine("Not retrieving current week's FX events: operation cancelled");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to current week's FX events");
-                    throw new AuthenticationRequiredException(typeof(FXEventManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)
@@ -127,7 +99,7 @@ namespace MonitoringApp.XF.Components.FXEvents
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    FXEvent fxEvent = await client.InvokeApiAsync<FXEvent>($"{FXEventByIdRoute}/{id}", HttpMethod.Get, null, cts.Token);
+                    FXEvent fxEvent = await fxEventsConnector.GetById(id, cts.Token);
 
                     if (fxEvent != null)
                         detailedFXEvents[id] = fxEvent;
@@ -143,17 +115,6 @@ namespace MonitoringApp.XF.Components.FXEvents
             catch (ArgumentNullException ex)
             {
                 Debug.WriteLine($"Not retrieving execution's details: missing or invalid parameter {ex.ParamName}");
-                return null;
-            }
-            catch (MobileServiceInvalidOperationException msioe)
-            {
-                if (msioe.Response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    Debug.WriteLine("Authentication necessary to load FX event");
-                    throw new AuthenticationRequiredException(typeof(FXEventManager)); // Re-throw the unauthorized exception and catch it in the VM to redirect to the login page
-                }
-
-                Debug.WriteLine($"Invalid sync operation: {msioe.Message}");
                 return null;
             }
             catch (Exception e)

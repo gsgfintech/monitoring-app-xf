@@ -26,6 +26,11 @@ namespace MonitoringApp.XF.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::Microsoft.IdentityModel.Clients.ActiveDirectory.Resource.Id.agentWebView = global::MonitoringApp.XF.Droid.Resource.Id.agentWebView;
+			global::Microsoft.IdentityModel.Clients.ActiveDirectory.Resource.Layout.WebAuthenticationBroker = global::MonitoringApp.XF.Droid.Resource.Layout.WebAuthenticationBroker;
+			global::Microsoft.IdentityModel.Clients.ActiveDirectory.Resource.String.ApplicationName = global::MonitoringApp.XF.Droid.Resource.String.ApplicationName;
+			global::PCLStorage.Resource.String.ApplicationName = global::MonitoringApp.XF.Droid.Resource.String.ApplicationName;
+			global::PCLStorage.Resource.String.Hello = global::MonitoringApp.XF.Droid.Resource.String.Hello;
 			global::Syncfusion.SfDataGrid.XForms.Droid.Resource.Animation.abc_fade_in = global::MonitoringApp.XF.Droid.Resource.Animation.abc_fade_in;
 			global::Syncfusion.SfDataGrid.XForms.Droid.Resource.Animation.abc_fade_out = global::MonitoringApp.XF.Droid.Resource.Animation.abc_fade_out;
 			global::Syncfusion.SfDataGrid.XForms.Droid.Resource.Animation.abc_grow_fade_in_from_bottom = global::MonitoringApp.XF.Droid.Resource.Animation.abc_grow_fade_in_from_bottom;
@@ -4050,6 +4055,9 @@ namespace MonitoringApp.XF.Droid
 			// aapt resource value: 0x7f07003d
 			public const int activity_chooser_view_content = 2131165245;
 			
+			// aapt resource value: 0x7f07009a
+			public const int agentWebView = 2131165338;
+			
 			// aapt resource value: 0x7f070049
 			public const int alertTitle = 2131165257;
 			
@@ -4716,6 +4724,9 @@ namespace MonitoringApp.XF.Droid
 			// aapt resource value: 0x7f03003a
 			public const int Toolbar = 2130903098;
 			
+			// aapt resource value: 0x7f03003b
+			public const int WebAuthenticationBroker = 2130903099;
+			
 			static Layout()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -4728,6 +4739,12 @@ namespace MonitoringApp.XF.Droid
 		
 		public partial class String
 		{
+			
+			// aapt resource value: 0x7f080028
+			public const int ApplicationName = 2131230760;
+			
+			// aapt resource value: 0x7f080027
+			public const int Hello = 2131230759;
 			
 			// aapt resource value: 0x7f08000f
 			public const int abc_action_bar_home_description = 2131230735;

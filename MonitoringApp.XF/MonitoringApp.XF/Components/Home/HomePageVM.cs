@@ -1,5 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
-using Capital.GSG.FX.Utils.Portable;
+using Capital.GSG.FX.Utils.Core;
 using MonitoringApp.XF.Managers;
 using MonitoringApp.XF.ViewModels;
 using System;
@@ -145,20 +145,7 @@ namespace MonitoringApp.XF.Components.Home
 
         private async Task RefreshPnL(bool refresh)
         {
-            try
-            {
-                await LoadPnL(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadPnL(refresh);
-                }
-            }
+            await LoadPnL(refresh);
         }
 
         private async Task LoadPnL(bool refresh)
@@ -168,20 +155,7 @@ namespace MonitoringApp.XF.Components.Home
 
         private async Task RefreshTradesCount(bool refresh)
         {
-            try
-            {
-                await LoadTradesCount(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadTradesCount(refresh);
-                }
-            }
+            await LoadTradesCount(refresh);
         }
 
         private async Task LoadTradesCount(bool refresh)
@@ -191,20 +165,7 @@ namespace MonitoringApp.XF.Components.Home
 
         private async Task RefreshOrdersCount(bool refresh)
         {
-            try
-            {
-                await LoadOrdersCount(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadOrdersCount(refresh);
-                }
-            }
+            await LoadOrdersCount(refresh);
         }
 
         private async Task LoadOrdersCount(bool refresh)
@@ -214,20 +175,7 @@ namespace MonitoringApp.XF.Components.Home
 
         private async Task RefreshAlertsCount(bool refresh)
         {
-            try
-            {
-                await LoadAlertsCount(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadAlertsCount(refresh);
-                }
-            }
+            await LoadAlertsCount(refresh);
         }
 
         private async Task LoadAlertsCount(bool refresh)
@@ -237,20 +185,7 @@ namespace MonitoringApp.XF.Components.Home
 
         private async Task RefreshSystemsStatusesCounts(bool refresh)
         {
-            try
-            {
-                await LoadSystemsStatusesCounts(refresh);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadSystemsStatusesCounts(refresh);
-                }
-            }
+            await LoadSystemsStatusesCounts(refresh);
         }
 
         private async Task LoadSystemsStatusesCounts(bool refresh)

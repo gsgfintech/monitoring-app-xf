@@ -55,20 +55,7 @@ namespace MonitoringApp.XF.Components.Alerts
 
         public async Task GetAlertById(string id)
         {
-            try
-            {
-                await LoadAlertById(id);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadAlertById(id);
-                }
-            }
+            await LoadAlertById(id);
         }
 
         private async Task LoadAlertById(string id)
@@ -98,20 +85,7 @@ namespace MonitoringApp.XF.Components.Alerts
 
         private async Task CloseAlertAuthenticated(string id)
         {
-            try
-            {
-                await CloseAlert(id);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await CloseAlert(id);
-                }
-            }
+            await CloseAlert(id);
         }
 
         private async Task CloseAlert(string id)

@@ -12,8 +12,6 @@ namespace MonitoringApp.XF.Components.Login
     {
         private ContentPage sender;
 
-        private bool authenticated = false;
-
         private Label messageLabel;
 
         public LoginPage(ContentPage sender)
@@ -36,21 +34,15 @@ namespace MonitoringApp.XF.Components.Login
 
             try
             {
-                if (App.Authenticator != null)
-                    authenticated = await App.Authenticator.AuthenticateAsync();
-
-                if (authenticated)
+                if (sender != null)
+                    await Navigation.PopAsync();
+                //await Navigation.PushAsync(sender);
+                else
                 {
-                    if (sender != null)
-                        await Navigation.PopAsync();
-                    //await Navigation.PushAsync(sender);
-                    else
-                    {
-                        if (Device.OS == TargetPlatform.iOS)
-                            await Navigation.PopToRootAsync();
+                    if (Device.OS == TargetPlatform.iOS)
+                        await Navigation.PopToRootAsync();
 
-                        Application.Current.MainPage = new MainPage();
-                    }
+                    Application.Current.MainPage = new MainPage();
                 }
             }
             catch (InvalidOperationException ex)

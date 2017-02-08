@@ -22,20 +22,7 @@ namespace MonitoringApp.XF.Components.Executions
 
         public async Task GetExecutionById(string id)
         {
-            try
-            {
-                await LoadExecutionById(id);
-            }
-            catch (AuthenticationRequiredException)
-            {
-                if (App.Authenticator != null)
-                {
-                    bool authenticated = await App.Authenticator.AuthenticateAsync();
-
-                    if (authenticated)
-                        await LoadExecutionById(id);
-                }
-            }
+            await LoadExecutionById(id);
         }
 
         private async Task LoadExecutionById(string id)

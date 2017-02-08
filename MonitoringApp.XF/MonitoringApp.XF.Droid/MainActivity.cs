@@ -1,23 +1,21 @@
-﻿using System;
-
+﻿
 using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.MobileServices;
+using Android.Content;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Capital.GSG.FX.Utils.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace MonitoringApp.XF.Droid
 {
     [Activity(Label = "MonitoringApp.XF", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IAuthenticate
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        private MobileServiceUser user;
-
         protected override void OnCreate(Bundle bundle)
         {
+            GSGLoggerFactory.Instance.AddDebug();
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -25,27 +23,7 @@ namespace MonitoringApp.XF.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-            CurrentPlatform.Init();
-
-            App.Init(this);
-
             LoadApplication(new App());
-        }
-
-        public async Task<bool> AuthenticateAsync()
-        {
-            try
-            {
-                if (user == null)
-                    user = await App.MobileServiceClient?.LoginAsync(this, MobileServiceAuthenticationProvider.WindowsAzureActiveDirectory);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                CreateAndShowDialog(ex.Message, "Authentication failed");
-                return false;
-            }
         }
 
         private void CreateAndShowDialog(string message, string title)
@@ -57,6 +35,13 @@ namespace MonitoringApp.XF.Droid
             builder.SetNeutralButton("OK", (sender, args) => { });
 
             builder.Create().Show();
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
         }
     }
 }
