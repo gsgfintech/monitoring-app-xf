@@ -43,6 +43,9 @@
       <DependentUpon>AlertDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Alerts\AlertDetailsVM.cs" />
+    <Compile Include="Components\TradeEngines\TradeEngineManager.cs" />
+    <Compile Include="Components\TradeEngines\TradeEnginesListVM.cs" />
+    <Compile Include="Components\TradeEngines\TradeEngineVM.cs" />
     <Compile Include="IAuthenticator.cs" />
     <Compile Include="Managers\AlertManager.cs" />
     <Compile Include="Components\Alerts\AlertsListPage.xaml.cs">

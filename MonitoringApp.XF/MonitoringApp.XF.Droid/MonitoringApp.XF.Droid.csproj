@@ -104,8 +104,8 @@
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\portable-net45+win8+wpa81\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Monitoring.Server.Connector, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Monitoring.Server.Connector.2.4.0\lib\netstandard1.5\Monitoring.Server.Connector.dll</HintPath>
+    <Reference Include="Monitoring.Server.Connector, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Monitoring.Server.Connector.2.5.0\lib\netstandard1.5\Monitoring.Server.Connector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
