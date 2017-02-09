@@ -1,10 +1,6 @@
-﻿using Capital.GSG.FX.Data.Core.SystemData;
-using Capital.GSG.FX.Utils.Core;
-using System;
-using System.Collections.Generic;
+﻿using Capital.GSG.FX.Utils.Core;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -32,17 +28,17 @@ namespace MonitoringApp.XF.Components.TradeEngines
 
         public TradeEnginesListVM()
         {
-            //RefreshCommand = new Command(ExecuteRefreshCommand, !IsRefreshing);
+            RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
         }
 
-        private async void ExecuteRefreshCommand(object obj)
+        private async void ExecuteRefreshCommand()
         {
             await RefreshTradeEngines(true);
 
             IsRefreshing = false;
         }
 
-        private async Task RefreshTradeEngines(bool refresh)
+        internal async Task RefreshTradeEngines(bool refresh)
         {
             var tradeEngines = (await TradeEngineManager.Instance.LoadTradeEngineTradingStatuses(refresh))?.AsEnumerable().OrderBy(te => te.EngineName);
 
@@ -50,8 +46,8 @@ namespace MonitoringApp.XF.Components.TradeEngines
 
             if (!tradeEngines.IsNullOrEmpty())
             {
-                //foreach (var tradeEngine in tradeEngines)
-                //    TradeEngines.Add(tradeEngine);
+                foreach (var tradeEngine in tradeEngines)
+                    TradeEngines.Add(tradeEngine.ToTradeEngineVM());
             }
         }
     }

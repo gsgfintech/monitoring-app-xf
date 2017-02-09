@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.TradeEngines"
+             x:Class="MonitoringApp.XF.Components.TradeEngines.TradeEngineDetailsPage"
+             Title="{Binding TradeEngine.EngineName}">
+
+  <ContentPage.BindingContext>
+    <local:TradeEngineDetailsVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Content>
+    <TableView Intent="Settings" HasUnevenRows="True">
+      <TableRoot>
+        <TableSection Title="CROSSES">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.TradingCrossesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Non-Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.NonTradingCrossesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+        <TableSection Title="STRATEGIES">
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Active Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.ActiveStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Inactive Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.InactiveStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.TradingStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+          <ViewCell>
+            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+              <Label Text="Non-Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+              <Label Text="{Binding TradeEngine.NonTradingStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+            </StackLayout>
+          </ViewCell>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+  
+</ContentPage>

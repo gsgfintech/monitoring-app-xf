@@ -18,7 +18,7 @@ namespace MonitoringApp.XF.ViewModels
                 if (lastUpdate != value)
                 {
                     lastUpdate = value;
-                    OnPropertyChanged(nameof(lastUpdate));
+                    OnPropertyChanged(nameof(LastUpdate));
                 }
             }
         }

@@ -99,6 +99,13 @@ namespace MonitoringApp.XF.Components.MainMenu
                 Title = "FX Events"
             });
 
+            mainMenuPageItems.Add(new MainMenuPageItem()
+            {
+                IconSource = "contacts.png",
+                TargetType = typeof(TradeEngines.TradeEnginesListPage),
+                Title = "Trade Engines"
+            });
+
             return mainMenuPageItems;
         }
     }

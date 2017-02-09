@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MonitoringApp.XF.Components.TradeEngines"
+             x:Class="MonitoringApp.XF.Components.TradeEngines.TradeEnginesListPage"
+             Title="Trade Engines">
+
+  <ContentPage.BindingContext>
+    <local:TradeEnginesListVM x:Name="vm" />
+  </ContentPage.BindingContext>
+
+  <ContentPage.Content>
+    <ListView ItemsSource="{Binding TradeEngines}" HasUnevenRows="True"
+              IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+              ItemSelected="OnItemSelected" Grid.Row="1" Grid.ColumnSpan="3">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <TextCell Text="{Binding EngineName}" Detail="{Binding Strats.Count, StringFormat='{0:N0} Strats'}" />
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </ContentPage.Content>
+  
+</ContentPage>
