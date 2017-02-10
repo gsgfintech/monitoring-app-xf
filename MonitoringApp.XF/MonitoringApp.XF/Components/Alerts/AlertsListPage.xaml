@@ -16,43 +16,52 @@
   </ContentPage.Resources>
 
   <ContentPage.Content>
-    <ListView ItemsSource="{Binding Alerts}" CachingStrategy="RecycleElement" HasUnevenRows="True"
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+      <ListView ItemsSource="{Binding Alerts}" CachingStrategy="RecycleElement" HasUnevenRows="True"
               IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
               ItemSelected="OnItemSelected"
               IsGroupingEnabled="True" GroupDisplayBinding="{Binding LongDescription}" GroupShortNameBinding="{Binding ShortDescription}">
-      <ListView.GroupHeaderTemplate>
-        <DataTemplate>
-          <ViewCell>
-            <Grid Margin="5,5,0,5">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-              <Label Text="{Binding LongDescription}" FontSize="20" VerticalTextAlignment="Center" />
-              <Button Text="Close All" Clicked="CloseAllButtonClicked" IsVisible="{Binding ShowCloseButton}" Grid.Column="1" />
-            </Grid>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.GroupHeaderTemplate>
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <ViewCell>
-            <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}" Padding="10,0,10,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-              </Grid.ColumnDefinitions>
-              <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-              </Grid.RowDefinitions>
-              <Label Text="{Binding Subject}" Grid.ColumnSpan="2"></Label>
-              <Label Text="{Binding Source}" FontSize="10" Grid.Row="1" />
-              <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" FontSize="10" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" Grid.Row="1" Grid.Column="1" />
-            </Grid>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+        <ListView.GroupHeaderTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid Margin="5,5,0,5">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="{Binding LongDescription}" FontSize="20" VerticalTextAlignment="Center" />
+                <Button Text="Close All" Clicked="CloseAllButtonClicked" IsVisible="{Binding ShowCloseButton}" Grid.Column="1" />
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.GroupHeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid BackgroundColor="{Binding Level, Converter={StaticResource LevelToColorConverter}}" Padding="10,0,10,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition />
+                  <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Text="{Binding Subject}" Grid.ColumnSpan="2"></Label>
+                <Label Text="{Binding Source}" FontSize="10" Grid.Row="1" />
+                <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" FontSize="10" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" Grid.Row="1" Grid.Column="1" />
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      <!--<ContentView x:Name="bgLayer" BackgroundColor="#000000" IsVisible="{Binding IsBusy}" Opacity="0.2" />
+      <Frame x:Name="frameLayer" BackgroundColor="#FFFFFF" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsBusy}" VerticalOptions="CenterAndExpand">
+        <StackLayout>
+          <ActivityIndicator x:Name="indicatorLoader" BackgroundColor="Transparent" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="CenterAndExpand" />
+          <Label HorizontalTextAlignment="Center" Text="Performing Action..." TextColor="#000000" XAlign="Center" />
+        </StackLayout>
+      </Frame>-->
+    </Grid>
   </ContentPage.Content>
 </ContentPage>

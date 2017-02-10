@@ -13,7 +13,7 @@ namespace MonitoringApp.XF.Components.Alerts
 
         private async void CloseAllButtonClicked(object sender, EventArgs e)
         {
-            await vm?.CloseAllAlertsAuthenticated();
+            await vm?.CloseAllAlerts();
         }
 
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

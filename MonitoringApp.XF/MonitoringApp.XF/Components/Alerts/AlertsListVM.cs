@@ -59,6 +59,20 @@ namespace MonitoringApp.XF.Components.Alerts
             }
         }
 
+        private bool isBusy;
+        public bool IsBusy
+        {
+            get { return isBusy; }
+            set
+            {
+                if (isBusy != value)
+                {
+                    isBusy = value;
+                    OnPropertyChanged(nameof(IsBusy));
+                }
+            }
+        }
+
         public AlertsListVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
@@ -72,11 +86,6 @@ namespace MonitoringApp.XF.Components.Alerts
         }
 
         public async Task RefreshAlerts(bool refresh)
-        {
-            await LoadAlerts(refresh);
-        }
-
-        private async Task LoadAlerts(bool refresh)
         {
             var openAlerts = (await AlertManager.Instance.LoadOpenAlerts(refresh))?.AsEnumerable().OrderByDescending(a => a.Timestamp);
             var closedAlerts = (await AlertManager.Instance.LoadAlertsClosedToday(refresh))?.AsEnumerable().OrderByDescending(a => a.Timestamp);
@@ -94,15 +103,17 @@ namespace MonitoringApp.XF.Components.Alerts
                 Alerts.Add(new GroupedAlertList("Alerts Closed Today (0)", "CLOSED", false));
         }
 
-        public async Task CloseAllAlertsAuthenticated()
+        public async Task CloseAllAlerts()
         {
-            await CloseAllAlerts();
-        }
+            if (IsBusy)
+                return;
 
-        private async Task CloseAllAlerts()
-        {
+            IsBusy = true;
+
             if (await AlertManager.Instance.CloseAllAlerts())
-                await RefreshAlerts(false);
+                await RefreshAlerts(true);
+
+            IsBusy = false;
         }
     }
 

@@ -5,7 +5,7 @@
     "Capital.GSG.FX.Utils.Core": "1.2.0",
     "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.8",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "Monitoring.Server.Connector": "2.5.0",
+    "Monitoring.Server.Connector": "2.5.1",
     "NETStandard.Library": "1.6.1",
     "Xamarin.Forms": "2.3.3.180"
   },

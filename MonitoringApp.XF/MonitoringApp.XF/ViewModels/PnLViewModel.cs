@@ -81,6 +81,8 @@ namespace MonitoringApp.XF.ViewModels
             }
         }
 
+        public double TotalPnl { get { return TotalGrossUnrealized + TotalNetRealized; } }
+
         private double totalTradesCount;
         public double TotalTradesCount
         {

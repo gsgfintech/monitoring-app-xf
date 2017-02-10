@@ -10,50 +10,107 @@
   </ContentPage.BindingContext>
 
   <ContentPage.Content>
-    <TableView Intent="Settings" HasUnevenRows="True">
-      <TableRoot>
-        <TableSection Title="CROSSES">
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.TradingCrossesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Non-Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.NonTradingCrossesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-        <TableSection Title="STRATEGIES">
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Active Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.ActiveStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Inactive Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.InactiveStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.TradingStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Non-Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding TradeEngine.NonTradingStrategiesStr}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-      </TableRoot>
-    </TableView>
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+      <TableView Intent="Settings" HasUnevenRows="True">
+        <TableRoot>
+          <TableSection Title="MAIN">
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Picker x:Name="closePositionsPicker" Title="CLOSE POSITIONS" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" />
+                <Picker x:Name="cancelOrdersPicker" Title="CANCEL ORDERS" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="1" />
+              </Grid>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="CROSSES">
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.TradingCrossesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="stopTradingCrossesPicker" Title="STOP TRADING" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Non-Trading Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.NonTradingCrossesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="startTradingCrossesPicker" Title="START TRADING" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+          </TableSection>
+          <TableSection Title="STRATEGIES">
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Active Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.ActiveStrategiesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="deactivateStratsPicker" Title="DEACTIVATE" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Inactive Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.InactiveStrategiesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="activateStratsPicker" Title="ACTIVATE" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.TradingStrategiesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="stopTradingStratsPicker" Title="STOP TRADING" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Non-Trading Strats" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding TradeEngine.NonTradingStrategiesStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="startTradingStratsPicker" Title="START TRADING" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+      <!--<ContentView x:Name="bgLayer" BackgroundColor="#000000" IsVisible="{Binding IsBusy}" Opacity="0.2" />
+      <Frame x:Name="frameLayer" BackgroundColor="#FFFFFF" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsBusy}" VerticalOptions="CenterAndExpand">
+        <StackLayout>
+          <ActivityIndicator x:Name="indicatorLoader" BackgroundColor="Transparent" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" VerticalOptions="CenterAndExpand" />
+          <Label HorizontalTextAlignment="Center" Text="Performing Action..." TextColor="#000000" XAlign="Center" />
+        </StackLayout>
+      </Frame>-->
+    </Grid>
   </ContentPage.Content>
-  
+
 </ContentPage>

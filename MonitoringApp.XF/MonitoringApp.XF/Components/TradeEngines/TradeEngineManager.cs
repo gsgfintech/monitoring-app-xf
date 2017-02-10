@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
+using Capital.GSG.FX.Data.Core.WebApi;
 using Capital.GSG.FX.Monitoring.Server.Connector;
 using Capital.GSG.FX.Utils.Core;
 using System;
@@ -85,6 +86,190 @@ namespace MonitoringApp.XF.Components.TradeEngines
             {
                 Debug.WriteLine($"Failed to retrieve trade engine trading status: {e.Message}");
                 return null;
+            }
+        }
+
+        public async Task<GenericActionResult> StopTradingCross(string engineName, string cross)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.StopTrading(engineName, cross, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to stop trading cross: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to stop trading cross: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> StartTradingCross(string engineName, string cross)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.StartTrading(engineName, cross, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to start trading cross: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to start trading cross: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> StopTradingStrategy(string engineName, string stratName, string stratVersion)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.StopTradingStrategy(engineName, stratName, stratVersion, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to stop trading strategy: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to stop trading strategy: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> StartTradingStrategy(string engineName, string stratName, string stratVersion)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.StartTradingStrategy(engineName, stratName, stratVersion, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to start trading strategy: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to start trading strategy: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> DeactivateStrategy(string engineName, string stratName, string stratVersion)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.DeactivateStrategy(engineName, stratName, stratVersion, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to deactivate strategy: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to deactivate strategy: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> ActivateStrategy(string engineName, string stratName, string stratVersion)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.ActivateStrategy(engineName, stratName, stratVersion, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to activate strategy: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to activate strategy: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> ClosePosition(string engineName, string cross)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.ClosePosition(engineName, cross, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to close position: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to close position: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+        }
+
+        public async Task<GenericActionResult> CancelOrders(string engineName, string cross)
+        {
+            try
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMinutes(1));
+
+                return await tradeEngineConnector.CancelOrders(engineName, cross, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                string err = "Not requesting to cancel orders: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
+            }
+            catch (Exception ex)
+            {
+                string err = $"Failed to request to cancel orders: {ex.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
         }
     }

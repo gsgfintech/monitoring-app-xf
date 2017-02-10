@@ -39,6 +39,12 @@
             </ViewCell>
             <ViewCell>
               <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                <Label Text="Total" />
+                <Label Text="{Binding PnL.TotalPnl, StringFormat='USD {0:N2}'}" TextColor="{Binding PnL.TotalPnl, Converter={StaticResource NumberToColorConverter}}" HorizontalOptions="EndAndExpand" />
+              </StackLayout>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
                 <Label Text="Last Update" />
                 <Label Text="{Binding PnL.LastUpdate, StringFormat='{0:dd/MM/yy HH:mm:ss zzz}'}" HorizontalOptions="EndAndExpand" />
               </StackLayout>
