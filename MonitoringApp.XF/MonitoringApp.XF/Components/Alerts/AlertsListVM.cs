@@ -110,8 +110,15 @@ namespace MonitoringApp.XF.Components.Alerts
 
             IsBusy = true;
 
-            if (await AlertManager.Instance.CloseAllAlerts())
+            var result = await AlertManager.Instance.CloseAllAlerts();
+
+            if (result.Success)
+            {
                 await RefreshAlerts(true);
+                await Utils.ShowToastNotification("Success", "Successfuly closed all alerts");
+            }
+            else
+                await Utils.ShowToastNotification("Failed", result.Message);
 
             IsBusy = false;
         }

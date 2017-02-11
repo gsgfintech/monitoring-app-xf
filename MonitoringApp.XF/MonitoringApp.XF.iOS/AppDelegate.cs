@@ -5,6 +5,9 @@ using System.Linq;
 using Foundation;
 using UIKit;
 using Syncfusion.SfDataGrid.XForms.iOS;
+using Xamarin.Forms;
+using Plugin.Toasts;
+using UserNotifications;
 
 namespace MonitoringApp.XF.iOS
 {
@@ -26,6 +29,26 @@ namespace MonitoringApp.XF.iOS
             global::Xamarin.Forms.Forms.Init();
 
             SfDataGridRenderer.Init();
+
+            DependencyService.Register<ToastNotification>();
+            ToastNotification.Init();
+
+            // Request Permissions
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                // Request Permissions
+                UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound, (granted, error) =>
+                {
+                    // Do something if needed
+                });
+            }
+            else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+            {
+                var notificationSettings = UIUserNotificationSettings.GetSettingsForTypes(
+                UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, null);
+
+                app.RegisterUserNotificationSettings(notificationSettings);
+            }
 
             LoadApplication(new App());
 

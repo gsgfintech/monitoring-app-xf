@@ -6,6 +6,8 @@ using Android.Content;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Capital.GSG.FX.Utils.Core.Logging;
 using Microsoft.Extensions.Logging;
+using Xamarin.Forms;
+using Plugin.Toasts;
 
 namespace MonitoringApp.XF.Droid
 {
@@ -22,6 +24,9 @@ namespace MonitoringApp.XF.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            DependencyService.Register<ToastNotification>();
+            ToastNotification.Init(this);
 
             LoadApplication(new App());
         }

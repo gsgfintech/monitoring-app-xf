@@ -1,12 +1,32 @@
 ﻿using Capital.GSG.FX.Data.Core.OrderData;
+using Plugin.Toasts;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MonitoringApp.XF
 {
     internal static class Utils
     {
+        public static async Task<INotificationResult> ShowToastNotification(string title, string description, bool isClickable = false)
+        {
+            var notificator = DependencyService.Get<IToastNotificator>();
+
+            var options = new NotificationOptions()
+            {
+                Title = title,
+                Description = description,
+                IsClickable = isClickable,
+                //AndroidOptions = new AndroidOptions()
+                //{
+                //    SmallDrawableIcon = 2130837649
+                //}
+            };
+
+            return await notificator.Notify(options);
+        }
+
         public static string ShortenOrderOrigin(OrderOrigin orderOrigin)
         {
             switch (orderOrigin)

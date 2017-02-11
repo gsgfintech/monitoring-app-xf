@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
+using Capital.GSG.FX.Data.Core.WebApi;
 using Capital.GSG.FX.Monitoring.Server.Connector;
 using System;
 using System.Collections.Generic;
@@ -131,7 +132,7 @@ namespace MonitoringApp.XF.Managers
             }
         }
 
-        public async Task<bool> CloseAlert(string id)
+        public async Task<GenericActionResult> CloseAlert(string id)
         {
             try
             {
@@ -141,27 +142,30 @@ namespace MonitoringApp.XF.Managers
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await alertsConnector.Close(id, cts.Token);
+                GenericActionResult result = await alertsConnector.Close(id, cts.Token);
 
-                if (success)
+                if (result.Success)
                     HandleAlertClosure(id);
 
-                return success;
+                return result;
             }
             catch (OperationCanceledException)
             {
-                Debug.WriteLine("Not closing alert: operation cancelled");
-                return false;
+                string err = "Not closing alert: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
             catch (ArgumentNullException ex)
             {
-                Debug.WriteLine($"Not closing alert: missing or invalid parameter {ex.ParamName}");
-                return false;
+                string err = $"Not closing alert: missing or invalid parameter {ex.ParamName}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Failed to close alert: {e.Message}");
-                return false;
+                string err = $"Failed to close alert: {e.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
         }
 
@@ -173,9 +177,6 @@ namespace MonitoringApp.XF.Managers
             {
                 DateTime day = alert.Timestamp.Date;
 
-                if (alertsClosedtoday == null)
-                    alertsClosedtoday = new List<Alert>();
-
                 alertsClosedtoday.Add(alert);
                 openAlerts.Remove(alert);
             }
@@ -183,34 +184,38 @@ namespace MonitoringApp.XF.Managers
             detailedAlerts.Remove(id);
         }
 
-        public async Task<bool> CloseAllAlerts()
+        public async Task<GenericActionResult> CloseAllAlerts()
         {
             try
             {
                 CancellationTokenSource cts = new CancellationTokenSource();
                 cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                bool success = await alertsConnector.CloseAll(cts.Token);
+                GenericActionResult result = await alertsConnector.CloseAll(cts.Token);
 
-                if (success)
+                if (result.Success)
                 {
                     foreach (var alert in openAlerts)
-                        HandleAlertClosure(alert.AlertId);
+                        detailedAlerts.Remove(alert.AlertId);
+
+                    alertsClosedtoday.AddRange(openAlerts);
 
                     openAlerts.Clear();
                 }
 
-                return success;
+                return result;
             }
             catch (OperationCanceledException)
             {
-                Debug.WriteLine("Not closing all alerts: operation cancelled");
-                return false;
+                string err = "Not closing all alerts: operation cancelled";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"Failed to close all alerts: {e.Message}");
-                return false;
+                string err = $"Failed to close all alerts: {e.Message}";
+                Debug.WriteLine(err);
+                return new GenericActionResult(false, err);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Capital.GSG.FX.Data.Core.SystemData;
+using Capital.GSG.FX.Data.Core.WebApi;
 using MonitoringApp.XF.Managers;
 using System;
 using System.Globalization;
@@ -78,20 +79,22 @@ namespace MonitoringApp.XF.Components.Alerts
         {
             isClosing = true;
 
-            await CloseAlertAuthenticated(Alert.AlertId);
+            await CloseAlert(Alert.AlertId);
 
             isClosing = false;
         }
 
-        private async Task CloseAlertAuthenticated(string id)
-        {
-            await CloseAlert(id);
-        }
-
         private async Task CloseAlert(string id)
         {
-            if (await AlertManager.Instance.CloseAlert(id))
+            var result = await AlertManager.Instance.CloseAlert(id);
+
+            if (result.Success)
+            {
                 await GetAlertById(id);
+                await Utils.ShowToastNotification("Success", $"Successfuly closed alert {id}");
+            }
+            else
+                await Utils.ShowToastNotification("Failed", $"Failed to close alert {id}: {result.Message}");
         }
     }
 
