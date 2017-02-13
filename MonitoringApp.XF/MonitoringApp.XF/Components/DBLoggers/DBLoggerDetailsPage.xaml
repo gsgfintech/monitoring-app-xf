@@ -10,29 +10,32 @@
   </ContentPage.BindingContext>
 
   <ContentPage.Content>
-    <TableView Intent="Settings" HasUnevenRows="True">
-      <TableRoot>
-        <TableSection Title="CROSSES">
-          <ViewCell>
-            <Grid Margin="20,0,20,0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-              </Grid.ColumnDefinitions>
-              <Label Text="Subscribed Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
-              <Label Text="{Binding DBLogger.SubscribedPairsStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
-              <Picker x:Name="unsubscribeCrossesPicker" Title="UNSUBSCRIBE" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
-            </Grid>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Margin="20,0,20,0">
-              <Picker x:Name="subscribeCrossesPicker" Title="SUBSCRIBE" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" />
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-      </TableRoot>
-    </TableView>
+    <Grid>
+      <TableView Intent="Settings" HasUnevenRows="True">
+        <TableRoot>
+          <TableSection Title="CROSSES">
+            <ViewCell>
+              <Grid Margin="20,0,20,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Subscribed Crosses" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                <Label Text="{Binding DBLogger.SubscribedPairsStr}" HorizontalOptions="CenterAndExpand" VerticalTextAlignment="Center" Grid.Column="1" />
+                <Picker x:Name="unsubscribeCrossesPicker" Title="UNSUBSCRIBE" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
+              </Grid>
+            </ViewCell>
+            <ViewCell>
+              <StackLayout Margin="20,0,20,0">
+                <Picker x:Name="subscribeCrossesPicker" Title="SUBSCRIBE" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" />
+              </StackLayout>
+            </ViewCell>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+      <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+    </Grid>
   </ContentPage.Content>
-  
+
 </ContentPage>

@@ -83,8 +83,6 @@ namespace MonitoringApp.XF.Components.DBLoggers
             if (ViewModel.IsBusy)
                 return;
 
-            ViewModel.IsBusy = true;
-
             if (unsubscribeCrossesPicker.SelectedIndex > -1)
             {
                 string dbLoggerName = ViewModel.DBLogger.DBLoggerName;
@@ -92,29 +90,34 @@ namespace MonitoringApp.XF.Components.DBLoggers
 
                 if (await DisplayAlert("UNSUBSCRIBE", $"Unsubscribe {cross} on {dbLoggerName}?", "YES", "NO"))
                 {
+                    ViewModel.IsBusy = true;
+
                     var result = await ViewModel.UnsubscribePair(dbLoggerName, cross);
 
                     if (result.Success)
                     {
                         await Refresh();
+
+                        unsubscribeCrossesPicker.SelectedIndex = -1;
+                        ViewModel.IsBusy = false;
+
                         await Utils.ShowToastNotification("UNSUBSCRIBE: SUCCESS", $"Unsubscribed {cross} on {dbLoggerName}");
                     }
                     else
+                    {
+                        unsubscribeCrossesPicker.SelectedIndex = -1;
+                        ViewModel.IsBusy = false;
+
                         await Utils.ShowToastNotification("UNSUBSCRIBE: FAILED", result.Message);
+                    }
                 }
             }
-
-            unsubscribeCrossesPicker.SelectedIndex = -1;
-
-            ViewModel.IsBusy = false;
         }
 
         private async void OnSubscribeCrossesPickerSelectedIndexChanged(object sender, EventArgs e)
         {
             if (ViewModel.IsBusy)
                 return;
-
-            ViewModel.IsBusy = true;
 
             if (subscribeCrossesPicker.SelectedIndex > -1)
             {
@@ -123,21 +126,28 @@ namespace MonitoringApp.XF.Components.DBLoggers
 
                 if (await DisplayAlert("SUBSCRIBE", $"Subscribe {cross} on {dbLoggerName}?", "YES", "NO"))
                 {
+                    ViewModel.IsBusy = true;
+
                     var result = await ViewModel.SubscribePair(dbLoggerName, cross);
 
                     if (result.Success)
                     {
                         await Refresh();
+
+                        subscribeCrossesPicker.SelectedIndex = -1;
+                        ViewModel.IsBusy = false;
+
                         await Utils.ShowToastNotification("SUBSCRIBE: SUCCESS", $"Subscribed {cross} on {dbLoggerName}");
                     }
                     else
+                    {
+                        subscribeCrossesPicker.SelectedIndex = -1;
+                        ViewModel.IsBusy = false;
+
                         await Utils.ShowToastNotification("SUBSCRIBE: FAILED", result.Message);
+                    }
                 }
             }
-
-            subscribeCrossesPicker.SelectedIndex = -1;
-
-            ViewModel.IsBusy = false;
         }
     }
 }
