@@ -43,6 +43,16 @@
       <DependentUpon>AlertDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Alerts\AlertDetailsVM.cs" />
+    <Compile Include="Components\DBLoggers\DBLoggerDetailsPage.xaml.cs">
+      <DependentUpon>DBLoggerDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\DBLoggers\DBLoggerDetailsVM.cs" />
+    <Compile Include="Components\DBLoggers\DBLoggerManager.cs" />
+    <Compile Include="Components\DBLoggers\DBLoggersListPage.xaml.cs">
+      <DependentUpon>DBLoggersListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\DBLoggers\DBLoggersListVM.cs" />
+    <Compile Include="Components\DBLoggers\DBLoggerVM.cs" />
     <Compile Include="Components\TradeEngines\TradeEngineDetailsPage.xaml.cs">
       <DependentUpon>TradeEngineDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -215,6 +225,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\TradeEngines\TradeEngineDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\DBLoggers\DBLoggersListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\DBLoggers\DBLoggerDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

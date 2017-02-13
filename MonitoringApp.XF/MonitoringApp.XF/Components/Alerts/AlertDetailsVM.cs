@@ -91,7 +91,7 @@ namespace MonitoringApp.XF.Components.Alerts
             if (result.Success)
             {
                 await GetAlertById(id);
-                await Utils.ShowToastNotification("Success", $"Successfuly closed alert {id}");
+                await Utils.ShowToastNotification("Success", $"Successfully closed alert {id}");
             }
             else
                 await Utils.ShowToastNotification("Failed", $"Failed to close alert {id}: {result.Message}");

@@ -44,7 +44,7 @@ namespace MonitoringApp.XF.Components.TradeEngines
 
             await TradeEngineManager.Instance.LoadTradeEngineTradingStatuses(true);
 
-            TradeEngine = TradeEngineManager.Instance.GetTradeEngineTradingStatus(engineName).ToTradeEngineVM();
+            GetTradeEngineByName(engineName);
         }
 
         public async Task<GenericActionResult> StopTradingCross(string engineName, string cross)

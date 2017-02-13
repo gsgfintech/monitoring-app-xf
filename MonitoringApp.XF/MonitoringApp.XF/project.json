@@ -1,13 +1,13 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Capital.GSG.FX.Data.Core": "1.15.2",
+    "Capital.GSG.FX.Data.Core": "1.16.0",
     "Capital.GSG.FX.Utils.Core": "1.2.0",
     "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.8",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "Monitoring.Server.Connector": "3.0.0",
+    "Monitoring.Server.Connector": "3.1.1",
     "NETStandard.Library": "1.6.1",
-    "Toasts.Forms.Plugin": "3.1.2",
+    "Toasts.Forms.Plugin": "3.1.4",
     "Xamarin.Forms": "2.3.3.180"
   },
   "frameworks": {

@@ -106,6 +106,13 @@ namespace MonitoringApp.XF.Components.MainMenu
                 Title = "Trade Engines"
             });
 
+            mainMenuPageItems.Add(new MainMenuPageItem()
+            {
+                IconSource = "contacts.png",
+                TargetType = typeof(DBLoggers.DBLoggersListPage),
+                Title = "DB Loggers"
+            });
+
             return mainMenuPageItems;
         }
     }
