@@ -1,4 +1,5 @@
-﻿using Capital.GSG.FX.Utils.Core;
+﻿using Capital.GSG.FX.Data.Core.ContractData;
+using Capital.GSG.FX.Utils.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,22 @@ namespace MonitoringApp.XF.Components.DBLoggers
     public class DBLoggersListVM : BaseViewModel
     {
         public ObservableCollection<DBLoggerVM> DBLoggers { get; set; } = new ObservableCollection<DBLoggerVM>();
+
+        public List<Cross> UnsubscribedPairs { get; private set; }
+
+        private string unsubscribedPairsStr;
+        public string UnsubscribedPairsStr
+        {
+            get { return unsubscribedPairsStr; }
+            set
+            {
+                if (unsubscribedPairsStr != value)
+                {
+                    unsubscribedPairsStr = value;
+                    OnPropertyChanged(nameof(UnsubscribedPairsStr));
+                }
+            }
+        }
 
         public Command RefreshCommand { get; private set; }
 
@@ -47,11 +64,20 @@ namespace MonitoringApp.XF.Components.DBLoggers
 
             DBLoggers.Clear();
 
+            List<Cross> allSubscribedPairs = new List<Cross>();
+
             if (!dbLoggers.IsNullOrEmpty())
             {
                 foreach (var dbLogger in dbLoggers)
+                {
                     DBLoggers.Add(dbLogger.ToDBLoggerVM());
+                    allSubscribedPairs.AddRange(dbLogger.SubscribedPairs);
+                }
             }
+
+            UnsubscribedPairs = new List<Cross>(CrossUtils.AllCrosses.Except(allSubscribedPairs));
+
+            UnsubscribedPairsStr = string.Join(", ", UnsubscribedPairs);
         }
     }
 }

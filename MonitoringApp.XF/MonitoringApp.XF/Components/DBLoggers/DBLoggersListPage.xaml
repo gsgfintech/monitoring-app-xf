@@ -10,15 +10,26 @@
   </ContentPage.BindingContext>
 
   <ContentPage.Content>
-    <ListView ItemsSource="{Binding DBLoggers}" HasUnevenRows="True"
-              IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
-              ItemSelected="OnItemSelected" Grid.Row="1" Grid.ColumnSpan="3">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <TextCell Text="{Binding DBLoggerName}" Detail="{Binding SubscribedPairs.Count, StringFormat='{0:N0} Pairs Subscribed'}" />
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <StackLayout Margin="15,0,15,0">
+        <Label Text="UNSUBSCRIBED PAIRS" FontAttributes="Bold" />
+        <Label Text="{Binding UnsubscribedPairsStr}" />
+        <Label Text="DB LOGGERS" FontAttributes="Bold" />
+      </StackLayout>
+      <ListView ItemsSource="{Binding DBLoggers}" HasUnevenRows="True"
+                IsPullToRefreshEnabled="True" RefreshCommand="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+                ItemSelected="OnItemSelected" Grid.Row="1">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <TextCell Text="{Binding DBLoggerName}" Detail="{Binding SubscribedPairs.Count, StringFormat='{0:N0} Pairs Subscribed'}" />
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </Grid>
   </ContentPage.Content>
-  
+
 </ContentPage>
