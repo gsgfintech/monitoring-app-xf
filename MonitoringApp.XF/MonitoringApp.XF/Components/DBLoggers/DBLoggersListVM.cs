@@ -14,8 +14,6 @@ namespace MonitoringApp.XF.Components.DBLoggers
     {
         public ObservableCollection<DBLoggerVM> DBLoggers { get; set; } = new ObservableCollection<DBLoggerVM>();
 
-        public List<Cross> UnsubscribedPairs { get; private set; }
-
         private string unsubscribedPairsStr;
         public string UnsubscribedPairsStr
         {
@@ -64,20 +62,13 @@ namespace MonitoringApp.XF.Components.DBLoggers
 
             DBLoggers.Clear();
 
-            List<Cross> allSubscribedPairs = new List<Cross>();
-
             if (!dbLoggers.IsNullOrEmpty())
             {
                 foreach (var dbLogger in dbLoggers)
-                {
                     DBLoggers.Add(dbLogger.ToDBLoggerVM());
-                    allSubscribedPairs.AddRange(dbLogger.SubscribedPairs);
-                }
             }
 
-            UnsubscribedPairs = new List<Cross>(CrossUtils.AllCrosses.Except(allSubscribedPairs));
-
-            UnsubscribedPairsStr = string.Join(", ", UnsubscribedPairs);
+            UnsubscribedPairsStr = string.Join(", ", DBLoggerManager.Instance.GetUnsubscribedPairs());
         }
     }
 }

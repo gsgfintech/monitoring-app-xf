@@ -14,12 +14,14 @@ namespace MonitoringApp.XF.Components.DBLoggers
         public DBLoggerDetailsVM ViewModel { get { return vm; } }
 
         private List<string> subscribedCrosses = new List<string>();
+        private List<string> unsubscribedCrosses = new List<string>();
 
         public DBLoggerDetailsPage()
         {
             InitializeComponent();
 
             unsubscribeCrossesPicker.SelectedIndexChanged += OnUnsubscribeCrossesPickerSelectedIndexChanged;
+            subscribeCrossesPicker.SelectedIndexChanged += OnSubscribeCrossesPickerSelectedIndexChanged;
         }
 
         protected override void OnAppearing()
@@ -39,6 +41,7 @@ namespace MonitoringApp.XF.Components.DBLoggers
         private void PopulateAll()
         {
             PopulateUnsubscribeCrossesPicker();
+            PopulateSubscribeCrossesPicker();
         }
 
         private void PopulateUnsubscribeCrossesPicker()
@@ -56,6 +59,23 @@ namespace MonitoringApp.XF.Components.DBLoggers
             }
             else
                 unsubscribeCrossesPicker.IsEnabled = false;
+        }
+
+        private void PopulateSubscribeCrossesPicker()
+        {
+            subscribeCrossesPicker.Items.Clear();
+
+            unsubscribedCrosses = ViewModel.UnsubscribedPairs;
+
+            if (!unsubscribedCrosses.IsNullOrEmpty())
+            {
+                foreach (var item in unsubscribedCrosses)
+                    subscribeCrossesPicker.Items.Add(item);
+
+                subscribeCrossesPicker.IsEnabled = true;
+            }
+            else
+                subscribeCrossesPicker.IsEnabled = false;
         }
 
         private async void OnUnsubscribeCrossesPickerSelectedIndexChanged(object sender, EventArgs e)
@@ -85,6 +105,37 @@ namespace MonitoringApp.XF.Components.DBLoggers
             }
 
             unsubscribeCrossesPicker.SelectedIndex = -1;
+
+            ViewModel.IsBusy = false;
+        }
+
+        private async void OnSubscribeCrossesPickerSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ViewModel.IsBusy)
+                return;
+
+            ViewModel.IsBusy = true;
+
+            if (subscribeCrossesPicker.SelectedIndex > -1)
+            {
+                string dbLoggerName = ViewModel.DBLogger.DBLoggerName;
+                string cross = unsubscribedCrosses[subscribeCrossesPicker.SelectedIndex];
+
+                if (await DisplayAlert("SUBSCRIBE", $"Subscribe {cross} on {dbLoggerName}?", "YES", "NO"))
+                {
+                    var result = await ViewModel.SubscribePair(dbLoggerName, cross);
+
+                    if (result.Success)
+                    {
+                        await Refresh();
+                        await Utils.ShowToastNotification("SUBSCRIBE: SUCCESS", $"Subscribed {cross} on {dbLoggerName}");
+                    }
+                    else
+                        await Utils.ShowToastNotification("SUBSCRIBE: FAILED", result.Message);
+                }
+            }
+
+            subscribeCrossesPicker.SelectedIndex = -1;
 
             ViewModel.IsBusy = false;
         }

@@ -90,6 +90,16 @@ namespace MonitoringApp.XF.Components.DBLoggers
             }
         }
 
+        public List<string> GetUnsubscribedPairs()
+        {
+            if (dbLoggersSubscriptionsStatuses.IsNullOrEmpty())
+                return new List<string>();
+
+            var subscribedPairs = dbLoggersSubscriptionsStatuses.Values.Select(s => s.SubscribedPairs).Aggregate((cur, next) => cur.Concat(next).ToList()).Distinct();
+
+            return CrossUtils.AllCrosses.Except(subscribedPairs).Select(c => c.ToString()).ToList();
+        }
+
         public async Task<GenericActionResult> SubscribePair(string dbLoggerName, Cross pair)
         {
             try

@@ -11,7 +11,7 @@ namespace MonitoringApp.XF.Components.DBLoggers
 {
     public class DBLoggerDetailsVM : BaseViewModel
     {
-        private Dictionary<string, Cross> subscribedPairs = new Dictionary<string, Cross>();
+        public List<string> UnsubscribedPairs { get; set; } = DBLoggerManager.Instance.GetUnsubscribedPairs();
 
         private DBLoggerVM dbLogger;
         public DBLoggerVM DBLogger
@@ -44,9 +44,6 @@ namespace MonitoringApp.XF.Components.DBLoggers
         public void GetDBLoggerByName(string dbLoggerName)
         {
             DBLogger = DBLoggerManager.Instance.GetDBLoggerSubscriptionStatus(dbLoggerName).ToDBLoggerVM();
-
-            if (!DBLogger.SubscribedPairs.IsNullOrEmpty())
-                subscribedPairs = DBLogger.SubscribedPairs.ToDictionary(c => c.ToString(), c => c);
         }
 
         public async Task Refresh()
@@ -55,17 +52,19 @@ namespace MonitoringApp.XF.Components.DBLoggers
 
             await DBLoggerManager.Instance.LoadDBLoggerSubscriptionStatuses(true);
 
+            UnsubscribedPairs = DBLoggerManager.Instance.GetUnsubscribedPairs();
+
             GetDBLoggerByName(dbLoggerName);
         }
 
         public async Task<GenericActionResult> SubscribePair(string dbLoggerName, string pair)
         {
-            return await DBLoggerManager.Instance.SubscribePair(dbLoggerName, subscribedPairs[pair]);
+            return await DBLoggerManager.Instance.SubscribePair(dbLoggerName, CrossUtils.GetFromStr(pair));
         }
 
         public async Task<GenericActionResult> UnsubscribePair(string dbLoggerName, string pair)
         {
-            return await DBLoggerManager.Instance.UnsubscribePair(dbLoggerName, subscribedPairs[pair]);
+            return await DBLoggerManager.Instance.UnsubscribePair(dbLoggerName, CrossUtils.GetFromStr(pair));
         }
     }
 }

@@ -25,6 +25,11 @@
               <Picker x:Name="unsubscribeCrossesPicker" Title="UNSUBSCRIBE" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand" Grid.Column="2" />
             </Grid>
           </ViewCell>
+          <ViewCell>
+            <StackLayout Margin="20,0,20,0">
+              <Picker x:Name="subscribeCrossesPicker" Title="SUBSCRIBE" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" />
+            </StackLayout>
+          </ViewCell>
         </TableSection>
       </TableRoot>
     </TableView>

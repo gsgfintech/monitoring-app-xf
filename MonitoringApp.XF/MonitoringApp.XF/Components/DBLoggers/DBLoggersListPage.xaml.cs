@@ -22,7 +22,7 @@ namespace MonitoringApp.XF.Components.DBLoggers
             if (dbLogger != null)
             {
                 var detailsView = new DBLoggerDetailsPage();
-                detailsView.ViewModel?.GetDBLoggerByName(dbLogger.DBLoggerName);
+                detailsView.ViewModel.GetDBLoggerByName(dbLogger.DBLoggerName);
                 await Navigation.PushAsync(detailsView);
             }
 
