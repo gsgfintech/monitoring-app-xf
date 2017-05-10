@@ -132,19 +132,19 @@
                     <ViewCell>
                         <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
                             <Label Text="Order ID" VerticalTextAlignment="Center" />
-                            <Label Text="{Binding Order.OrderId}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Order.OrderID}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
                         </StackLayout>
                     </ViewCell>
                     <ViewCell>
                         <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
                             <Label Text="Parent Order ID" VerticalTextAlignment="Center" />
-                            <Label Text="{Binding Order.ParentOrderId}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Order.ParentOrderID}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
                         </StackLayout>
                     </ViewCell>
                     <ViewCell>
                         <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
                             <Label Text="Permanent ID" VerticalTextAlignment="Center" />
-                            <Label Text="{Binding Order.PermanentId}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Order.PermanentID}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" />
                         </StackLayout>
                     </ViewCell>
                     <ViewCell>

@@ -1,6 +1,9 @@
-﻿using Capital.GSG.FX.Data.Core.OrderData;
+﻿using Capital.GSG.FX.Data.Core.FinancialAdvisorsData;
+using Capital.GSG.FX.Data.Core.OrderData;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace MonitoringApp.XF.ViewModels
 {
@@ -56,6 +59,48 @@ namespace MonitoringApp.XF.ViewModels
         public static IEnumerable<OrderViewModel> ToOrderViewModels(this IEnumerable<Order> orders)
         {
             return orders?.Select(o => o.ToOrderViewModel());
+        }
+
+        private static string ComputeAllocationInfo(Order order)
+        {
+            if (string.IsNullOrEmpty(order.AllocationInfo))
+                return "Unknown";
+
+            // 1. Try parse allocation profile
+            FAAllocationProfile allocationProfile = null;
+            try { allocationProfile = JsonConvert.DeserializeObject<FAAllocationProfile>(order.AllocationInfo); } catch { }
+
+            if (allocationProfile != null)
+            {
+                StringBuilder sb = new StringBuilder("Allocation Profile:");
+                sb.AppendLine($"Name: {allocationProfile.Name}");
+                sb.AppendLine($"Type: {allocationProfile.Type}");
+
+                sb.AppendLine("Accounts:");
+                foreach (var allocation in allocationProfile.Allocations)
+                    sb.AppendLine($"{allocation.Account}:\t{allocation.Amount:N0}");
+
+                return sb.ToString();
+            }
+
+            // 2. Try parse FA Group
+            FAGroup group = null;
+            try { group = JsonConvert.DeserializeObject<FAGroup>(order.AllocationInfo); } catch { }
+
+            if (group != null)
+            {
+                StringBuilder sb = new StringBuilder("FA Group:");
+                sb.AppendLine($"Name: {group.Name}");
+                sb.AppendLine($"Method: {group.DefaultMethod}");
+
+                sb.AppendLine("Accounts:");
+                foreach (var account in group.Accounts)
+                    sb.AppendLine(account);
+
+                return sb.ToString();
+            }
+
+            return order.AllocationInfo;
         }
     }
 }
