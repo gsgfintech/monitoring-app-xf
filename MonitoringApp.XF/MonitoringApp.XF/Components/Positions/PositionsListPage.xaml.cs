@@ -27,7 +27,7 @@ namespace MonitoringApp.XF.Components.Positions
             if (position != null)
             {
                 var detailsView = new PositionDetailsPage();
-                await detailsView.ViewModel?.GetPositionByCross(position.Cross);
+                await detailsView.ViewModel?.GetPositionByCross(position.Broker, position.Account, position.Cross);
                 await Navigation.PushAsync(detailsView);
             }
 

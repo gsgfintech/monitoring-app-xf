@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using MonitoringApp.XF.ViewModels;
 using MonitoringApp.XF.Managers;
+using Capital.GSG.FX.Data.Core.AccountPortfolio;
 
 namespace MonitoringApp.XF.Components.Orders
 {
@@ -25,14 +26,14 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
-        public async Task GetOrderByPermanentId(int permanentId)
+        public async Task GetOrderByPermanentId(Broker broker, int permanentId)
         {
-            await LoadOrderByPermanentId(permanentId);
+            await LoadOrderByPermanentId(broker, permanentId);
         }
 
-        private async Task LoadOrderByPermanentId(int permanentId)
+        private async Task LoadOrderByPermanentId(Broker broker, int permanentId)
         {
-            Order = (await OrderManager.Instance.GetOrderByPermanentId(permanentId)).ToOrderViewModel();
+            Order = (await OrderManager.Instance.GetOrderByPermanentId(broker, permanentId)).ToOrderViewModel();
 
             HistoryPointsCountChanged?.Invoke(Order?.History?.Count ?? 0);
         }

@@ -20,14 +20,14 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        public async Task GetPositionByCross(Cross cross)
+        public async Task GetPositionByCross(Broker broker, string account, Cross cross)
         {
-            await LoadPositionByCross(cross);
+            await LoadPositionByCross(broker, account, cross);
         }
 
-        private async Task LoadPositionByCross(Cross cross)
+        private async Task LoadPositionByCross(Broker broker, string account, Cross cross)
         {
-            Position = (await PositionManager.Instance.GetPositionByCross(cross)).ToPositionViewModel();
+            Position = (await PositionManager.Instance.GetPositionByCross(broker, account, cross)).ToPositionViewModel();
         }
     }
 }

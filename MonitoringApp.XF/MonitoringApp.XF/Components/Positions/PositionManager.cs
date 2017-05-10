@@ -32,7 +32,7 @@ namespace MonitoringApp.XF.Components.Positions
         }
 
         private Dictionary<Tuple<Broker, string>, Account> accountsDict;
-        private Dictionary<Cross, Position> positionsDict;
+        private Dictionary<(Broker Broker, string Account, Cross Cross), Position> positionsDict;
 
         private PositionManager()
         {
@@ -49,12 +49,12 @@ namespace MonitoringApp.XF.Components.Positions
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var positions = await positionsConnector.GetAll(cts.Token);
+                    var positionsResult = await positionsConnector.GetAll(cts.Token);
 
-                    if (!positions.IsNullOrEmpty())
-                        positionsDict = positions.ToDictionary(p => p.Cross, p => p);
+                    if (positionsResult.Success && !positionsResult.Positions.IsNullOrEmpty())
+                        positionsDict = positionsResult.Positions.ToDictionary(p => (p.Broker, p.Account, p.Cross), p => p);
                     else
-                        positionsDict = new Dictionary<Cross, Position>();
+                        positionsDict = new Dictionary<(Broker Broker, string Account, Cross Cross), Position>();
                 }
 
                 return positionsDict.Values.ToList();
@@ -80,10 +80,10 @@ namespace MonitoringApp.XF.Components.Positions
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var accounts = await accountsConnector.GetAll(cts.Token);
+                    var result = await accountsConnector.GetAll(cts.Token);
 
-                    if (!accounts.IsNullOrEmpty())
-                        accountsDict = accounts.ToDictionary(a => new Tuple<Broker, string>(a.Broker, a.Name), a => a);
+                    if (result.Success && !result.Accounts.IsNullOrEmpty())
+                        accountsDict = result.Accounts.ToDictionary(a => new Tuple<Broker, string>(a.Broker, a.Name), a => a);
                     else
                         accountsDict = new Dictionary<Tuple<Broker, string>, Account>();
                 }
@@ -102,23 +102,23 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        public async Task<Position> GetPositionByCross(Cross cross)
+        public async Task<Position> GetPositionByCross(Broker broker, string account, Cross cross)
         {
             try
             {
-                if (positionsDict.ContainsKey(cross) && positionsDict[cross] != null)
-                    return positionsDict[cross];
+                if (positionsDict.ContainsKey((broker, account, cross)) && positionsDict[(broker, account, cross)] != null)
+                    return positionsDict[(broker, account, cross)];
                 else
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Position position = await positionsConnector.Get(Broker.IB, cross, cts.Token);
+                    var result = await positionsConnector.Get(broker, account, cross, cts.Token);
 
-                    if (position != null)
-                        positionsDict[cross] = position;
+                    if (result.Success && result.Position != null)
+                        positionsDict[(broker, account, cross)] = result.Position;
 
-                    return position;
+                    return result.Position;
                 }
             }
             catch (OperationCanceledException)
@@ -151,12 +151,12 @@ namespace MonitoringApp.XF.Components.Positions
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Account account = await accountsConnector.Get(broker, accountName, cts.Token);
+                    var result = await accountsConnector.Get(broker, accountName, cts.Token);
 
-                    if (account != null)
-                        accountsDict[key] = account;
+                    if (result.Success && result.Account != null)
+                        accountsDict[key] = result.Account;
 
-                    return account;
+                    return result.Account;
                 }
             }
             catch (OperationCanceledException)

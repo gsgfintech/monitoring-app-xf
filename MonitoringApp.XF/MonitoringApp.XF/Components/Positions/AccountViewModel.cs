@@ -24,22 +24,22 @@ namespace MonitoringApp.XF.Components.Positions
 
     public static class AccountViewModelExtensions
     {
-        private static AccountAttributeViewModel ToAccountAttributeViewModel(this AccountAttribute attribute)
-        {
-            if (attribute == null)
-                return null;
+        //private static AccountAttributeViewModel ToAccountAttributeViewModel(this AccountAttribute attribute)
+        //{
+        //    if (attribute == null)
+        //        return null;
 
-            return new AccountAttributeViewModel()
-            {
-                Key = attribute.Key,
-                Value = attribute.Value + (attribute.Currency != Currency.UNKNOWN ? $" {attribute.Currency}" : "")
-            };
-        }
+        //    return new AccountAttributeViewModel()
+        //    {
+        //        Key = attribute.Key,
+        //        Value = attribute.Value + (attribute.Currency != Currency.UNKNOWN ? $" {attribute.Currency}" : "")
+        //    };
+        //}
 
-        private static List<AccountAttributeViewModel> ToAccountAttributeViewModels(this IEnumerable<AccountAttribute> attributes)
-        {
-            return attributes?.Select(a => a.ToAccountAttributeViewModel()).ToList();
-        }
+        //private static List<AccountAttributeViewModel> ToAccountAttributeViewModels(this IEnumerable<AccountAttribute> attributes)
+        //{
+        //    return attributes?.Select(a => a.ToAccountAttributeViewModel()).ToList();
+        //}
 
         public static AccountViewModel ToAccountViewModel(this Account account)
         {
@@ -48,7 +48,7 @@ namespace MonitoringApp.XF.Components.Positions
 
             return new AccountViewModel()
             {
-                Attributes = account.Attributes.ToAccountAttributeViewModels(),
+                //Attributes = account.Attributes.ToAccountAttributeViewModels(),
                 Broker = account.Broker,
                 LastUpdate = account.LastUpdate,
                 Name = account.Name

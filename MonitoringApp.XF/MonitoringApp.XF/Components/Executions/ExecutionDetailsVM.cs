@@ -1,4 +1,5 @@
-﻿using MonitoringApp.XF.Managers;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
+using MonitoringApp.XF.Managers;
 using MonitoringApp.XF.ViewModels;
 using System.Threading.Tasks;
 
@@ -20,14 +21,14 @@ namespace MonitoringApp.XF.Components.Executions
             }
         }
 
-        public async Task GetExecutionById(string id)
+        public async Task GetExecutionById(Broker broker, string id)
         {
-            await LoadExecutionById(id);
+            await LoadExecutionById(broker, id);
         }
 
-        private async Task LoadExecutionById(string id)
+        private async Task LoadExecutionById(Broker broker, string id)
         {
-            Trade = (await ExecutionManager.Instance.GetExecutionById(id)).ToExecutionViewModel();
+            Trade = (await ExecutionManager.Instance.GetExecutionById(broker, id)).ToExecutionViewModel();
         }
     }
 }

@@ -6,99 +6,56 @@
              xmlns:local="clr-namespace:MonitoringApp.XF.Components.Positions"
              Title="{Binding Position.Header}">
 
-  <ContentPage.BindingContext>
-    <local:PositionDetailsVM x:Name="vm" />
-  </ContentPage.BindingContext>
+    <ContentPage.BindingContext>
+        <local:PositionDetailsVM x:Name="vm" />
+    </ContentPage.BindingContext>
 
-  <ContentPage.Resources>
-    <ResourceDictionary>
-      <base:NumberToColorConverter x:Key="NumberToColorConverter" />
-    </ResourceDictionary>
-  </ContentPage.Resources>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <base:NumberToColorConverter x:Key="NumberToColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-  <ContentPage.Content>
-    <TableView Intent="Data">
-      <TableRoot>
-        <TableSection Title="DATA">
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Broker" />
-              <Label Text="{Binding Position.Broker}" HorizontalOptions="EndAndExpand" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Cross" />
-              <Label Text="{Binding Position.Cross}" HorizontalOptions="EndAndExpand" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Quantity" />
-              <Label Text="{Binding Position.PositionQuantity}" HorizontalOptions="EndAndExpand" 
+    <ContentPage.Content>
+        <TableView Intent="Data">
+            <TableRoot>
+                <TableSection Title="DATA">
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                            <Label Text="Broker" />
+                            <Label Text="{Binding Position.Broker}" HorizontalOptions="EndAndExpand" />
+                        </StackLayout>
+                    </ViewCell>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                            <Label Text="Account" />
+                            <Label Text="{Binding Position.Account}" HorizontalOptions="EndAndExpand" />
+                        </StackLayout>
+                    </ViewCell>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                            <Label Text="Cross" />
+                            <Label Text="{Binding Position.Cross}" HorizontalOptions="EndAndExpand" />
+                        </StackLayout>
+                    </ViewCell>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                            <Label Text="Quantity" />
+                            <Label Text="{Binding Position.PositionQuantity}" HorizontalOptions="EndAndExpand" 
                      TextColor="{Binding Position.Quantity, Converter={StaticResource NumberToColorConverter}}" />
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-        <TableSection Title="VALUES">
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Average Cost" />
-              <Label Text="{Binding Position.AverageCost}" HorizontalOptions="EndAndExpand" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Market Price" />
-              <Label Text="{Binding Position.MarketPrice}" HorizontalOptions="EndAndExpand" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Market Value" />
-              <Label Text="{Binding Position.MarketValue}" HorizontalOptions="EndAndExpand" />
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-        <TableSection Title="PNL">
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Realized PnL" />
-              <Label Text="{Binding Position.RealizedPnl, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
-                     TextColor="{Binding Position.RealizedPnl, Converter={StaticResource NumberToColorConverter}}"/>
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Realized PnL (USD)" />
-              <Label Text="{Binding Position.RealizedPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand" 
-                     TextColor="{Binding Position.RealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}" />
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Unrealized PnL" />
-              <Label Text="{Binding Position.UnealizedPnl, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
-                     TextColor="{Binding Position.UnealizedPnl, Converter={StaticResource NumberToColorConverter}}"/>
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Unrealized PnL (USD)" />
-              <Label Text="{Binding Position.UnrealizedPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
-                     TextColor="{Binding Position.UnrealizedPnlUsd, Converter={StaticResource NumberToColorConverter}}"/>
-            </StackLayout>
-          </ViewCell>
-          <ViewCell>
-            <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
-              <Label Text="Total PnL (USD)" />
-              <Label Text="{Binding Position.TotalPnlUsd, StringFormat='{0:N2}'}" HorizontalOptions="EndAndExpand"
-                     TextColor="{Binding Position.TotalPnlUsd, Converter={StaticResource NumberToColorConverter}}"/>
-            </StackLayout>
-          </ViewCell>
-        </TableSection>
-      </TableRoot>
-    </TableView>
-  </ContentPage.Content>
-  
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
+                <TableSection Title="VALUES">
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20,0,20,0">
+                            <Label Text="Average Cost" />
+                            <Label Text="{Binding Position.AverageCost}" HorizontalOptions="EndAndExpand" />
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
+            </TableRoot>
+        </TableView>
+    </ContentPage.Content>
+
 </ContentPage>

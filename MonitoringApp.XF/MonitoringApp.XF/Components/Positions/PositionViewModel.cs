@@ -7,8 +7,6 @@ namespace MonitoringApp.XF.Components.Positions
     public class PositionViewModel : Position
     {
         public string Header { get { return $"{Cross} ({Broker})"; } }
-
-        public double TotalPnlUsd { get { return RealizedPnlUsd ?? 0 + UnrealizedPnlUsd ?? 0; } }
     }
 
     public static class PositionViewModelExtensions
@@ -20,17 +18,12 @@ namespace MonitoringApp.XF.Components.Positions
 
             return new PositionViewModel()
             {
+                Account = position.Account,
                 AverageCost = position.AverageCost,
                 Broker = position.Broker,
                 Cross = position.Cross,
                 LastUpdate = position.LastUpdate,
-                MarketPrice = position.MarketPrice,
-                MarketValue = position.MarketValue,
-                PositionQuantity = position.PositionQuantity,
-                RealizedPnL = position.RealizedPnL,
-                RealizedPnlUsd = position.RealizedPnlUsd,
-                UnrealizedPnL = position.UnrealizedPnL,
-                UnrealizedPnlUsd = position.UnrealizedPnlUsd
+                PositionQuantity = position.PositionQuantity
             };
         }
 

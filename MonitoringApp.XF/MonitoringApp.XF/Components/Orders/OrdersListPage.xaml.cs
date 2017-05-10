@@ -24,7 +24,7 @@ namespace MonitoringApp.XF.Components.Orders
             if (order != null)
             {
                 var detailsView = new OrderDetailsPage();
-                await detailsView.ViewModel?.GetOrderByPermanentId(order.PermanentID);
+                await detailsView.ViewModel?.GetOrderByPermanentId(order.Broker, order.PermanentID);
                 await Navigation.PushAsync(detailsView);
             }
         }

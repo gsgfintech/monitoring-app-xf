@@ -1,4 +1,5 @@
-﻿using Capital.GSG.FX.Data.Core.ExecutionData;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
+using Capital.GSG.FX.Data.Core.ExecutionData;
 using Capital.GSG.FX.Monitoring.Server.Connector;
 using Capital.GSG.FX.Utils.Core;
 using System;
@@ -26,7 +27,7 @@ namespace MonitoringApp.XF.Managers
         }
 
         private Dictionary<DateTime, List<Execution>> executionsDict = new Dictionary<DateTime, List<Execution>>();
-        private Dictionary<string, Execution> detailedExecutions = new Dictionary<string, Execution>();
+        private Dictionary<(Broker Broker, string Id), Execution> detailedExecutions = new Dictionary<(Broker Broker, string Id), Execution>();
 
         private ExecutionManager()
         {
@@ -42,10 +43,10 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var executions = await executionsConnector.GetForDay(day, cts.Token);
+                    var executionsResult = await executionsConnector.GetForDay(Broker.IB, day, cts.Token);
 
-                    if (!executions.IsNullOrEmpty())
-                        executionsDict[day] = executions;
+                    if (executionsResult.Success && !executionsResult.Trades.IsNullOrEmpty())
+                        executionsDict[day] = executionsResult.Trades;
                     else
                         executionsDict[day] = new List<Execution>();
                 }
@@ -64,26 +65,26 @@ namespace MonitoringApp.XF.Managers
             }
         }
 
-        public async Task<Execution> GetExecutionById(string id)
+        public async Task<Execution> GetExecutionById(Broker broker, string id)
         {
             try
             {
                 if (string.IsNullOrEmpty(id))
                     throw new ArgumentNullException(nameof(id));
 
-                if (detailedExecutions.ContainsKey(id) && detailedExecutions[id] != null)
-                    return detailedExecutions[id];
+                if (detailedExecutions.ContainsKey((broker, id)) && detailedExecutions[(broker, id)] != null)
+                    return detailedExecutions[(broker, id)];
                 else
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Execution execution = await executionsConnector.GetById(id, cts.Token);
+                    var result = await executionsConnector.GetById(broker, id, cts.Token);
 
-                    if (execution != null)
-                        detailedExecutions[id] = execution;
+                    if (result.Success && result.Trade != null)
+                        detailedExecutions[(broker, id)] = result.Trade;
 
-                    return execution;
+                    return result.Trade;
                 }
             }
             catch (OperationCanceledException)

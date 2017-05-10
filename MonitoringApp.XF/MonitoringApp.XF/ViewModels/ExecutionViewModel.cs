@@ -33,6 +33,7 @@ namespace MonitoringApp.XF.ViewModels
             return new ExecutionViewModel()
             {
                 AccountNumber = execution.AccountNumber,
+                Broker = execution.Broker,
                 ClientId = execution.ClientId,
                 ClientOrderRef = execution.ClientOrderRef,
                 Commission = execution.Commission,
@@ -43,6 +44,7 @@ namespace MonitoringApp.XF.ViewModels
                 Exchange = execution.Exchange,
                 ExecutionTime = execution.ExecutionTime,
                 Id = execution.Id,
+                OrderGroupId = execution.OrderGroupId,
                 OrderId = execution.OrderId,
                 OrderOrigin = execution.OrderOrigin,
                 PermanentID = execution.PermanentID,

@@ -17,7 +17,7 @@ namespace MonitoringApp.XF.Components.Executions
             if (execution != null)
             {
                 var detailsView = new ExecutionDetailsPage();
-                await detailsView.ViewModel?.GetExecutionById(execution.Id);
+                await detailsView.ViewModel?.GetExecutionById(execution.Broker, execution.Id);
                 await Navigation.PushAsync(detailsView);
             }
 

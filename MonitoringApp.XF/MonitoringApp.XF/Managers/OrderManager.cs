@@ -1,4 +1,5 @@
-﻿using Capital.GSG.FX.Data.Core.OrderData;
+﻿using Capital.GSG.FX.Data.Core.AccountPortfolio;
+using Capital.GSG.FX.Data.Core.OrderData;
 using Capital.GSG.FX.Monitoring.Server.Connector;
 using Capital.GSG.FX.Utils.Core;
 using System;
@@ -28,7 +29,7 @@ namespace MonitoringApp.XF.Managers
         }
 
         private Dictionary<DateTime, List<Order>> ordersDict = new Dictionary<DateTime, List<Order>>();
-        private Dictionary<int, Order> detailedOrders = new Dictionary<int, Order>();
+        private Dictionary<(Broker Broker, int PermanentId), Order> detailedOrders = new Dictionary<(Broker Broker, int PermanentId), Order>();
 
         private OrderManager()
         {
@@ -44,10 +45,10 @@ namespace MonitoringApp.XF.Managers
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    var orders = await ordersConnector.GetOrdersForDay(day, cts.Token);
+                    var result = await ordersConnector.GetOrdersForDay(day, cts.Token);
 
-                    if (!orders.IsNullOrEmpty())
-                        ordersDict[day] = orders;
+                    if (result.Success && !result.Orders.IsNullOrEmpty())
+                        ordersDict[day] = result.Orders;
                     else
                         ordersDict[day] = new List<Order>();
                 }
@@ -66,26 +67,26 @@ namespace MonitoringApp.XF.Managers
             }
         }
 
-        public async Task<Order> GetOrderByPermanentId(int permanentId)
+        public async Task<Order> GetOrderByPermanentId(Broker broker, int permanentId)
         {
             try
             {
                 if (permanentId <= 0)
                     throw new ArgumentNullException(nameof(permanentId));
 
-                if (detailedOrders.ContainsKey(permanentId) && detailedOrders[permanentId] != null)
-                    return detailedOrders[permanentId];
+                if (detailedOrders.ContainsKey((broker, permanentId)) && detailedOrders[(broker, permanentId)] != null)
+                    return detailedOrders[(broker, permanentId)];
                 else
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     cts.CancelAfter(TimeSpan.FromMinutes(1));
 
-                    Order order = await ordersConnector.GetOrderByPermanentId(permanentId, cts.Token);
+                    var result = await ordersConnector.Get(broker, permanentId, cts.Token);
 
-                    if (order != null)
-                        detailedOrders[permanentId] = order;
+                    if (result.Success && result.Order != null)
+                        detailedOrders[(broker, permanentId)] = result.Order;
 
-                    return order;
+                    return result.Order;
                 }
             }
             catch (OperationCanceledException)

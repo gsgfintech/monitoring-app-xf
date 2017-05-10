@@ -20,11 +20,15 @@ namespace MonitoringApp.XF.ViewModels
 
             return new OrderViewModel()
             {
+                Account = order.Account,
+                AllocationInfo = order.AllocationInfo,
+                Broker = order.Broker,
                 Cross = order.Cross,
                 Details = $"{order.PlacedTime:dd/MM/yy HH:mm:ss zzz} | {order.Origin}",
                 EstimatedCommission = order.EstimatedCommission,
                 EstimatedCommissionCcy = order.EstimatedCommissionCcy,
                 FillPrice = order.FillPrice,
+                GroupId = order.GroupId,
                 History = order.History,
                 LastAsk = order.LastAsk,
                 LastBid = order.LastBid,

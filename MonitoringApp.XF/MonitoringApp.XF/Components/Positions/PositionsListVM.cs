@@ -27,20 +27,6 @@ namespace MonitoringApp.XF.Components.Positions
             }
         }
 
-        private double totalPnlUsd;
-        public double TotalPnlUsd
-        {
-            get { return totalPnlUsd; }
-            set
-            {
-                if (totalPnlUsd != value)
-                {
-                    totalPnlUsd = value;
-                    OnPropertyChanged(nameof(TotalPnlUsd));
-                }
-            }
-        }
-
         public PositionsListVM()
         {
             RefreshCommand = new Command(ExecuteRefreshCommand, () => !IsRefreshing);
@@ -69,8 +55,6 @@ namespace MonitoringApp.XF.Components.Positions
             {
                 foreach (var position in positions)
                     Positions.Add(position.ToPositionViewModel());
-
-                TotalPnlUsd = Positions.Select(p => p.TotalPnlUsd).Sum();
             }
         }
 
