@@ -118,11 +118,11 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Capital.GSG.FX.Data.Core, Version=1.24.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Capital.GSG.FX.Data.Core.1.24.1\lib\netstandard1.1\Capital.GSG.FX.Data.Core.dll</HintPath>
+    <Reference Include="Capital.GSG.FX.Data.Core, Version=1.25.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Capital.GSG.FX.Data.Core.1.25.0\lib\netstandard1.1\Capital.GSG.FX.Data.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Capital.GSG.FX.Utils.Core, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Capital.GSG.FX.Utils.Core.1.4.1\lib\netstandard1.5\Capital.GSG.FX.Utils.Core.dll</HintPath>
+    <Reference Include="Capital.GSG.FX.Utils.Core, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Capital.GSG.FX.Utils.Core.1.5.0\lib\netstandard1.5\Capital.GSG.FX.Utils.Core.dll</HintPath>
     </Reference>
     <Reference Include="Capital.GSG.FX.Utils.Core.Logging, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Capital.GSG.FX.Utils.Core.Logging.2.2.1\lib\netstandard1.5\Capital.GSG.FX.Utils.Core.Logging.dll</HintPath>
@@ -160,8 +160,8 @@
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\portable-net45+win8+wpa81\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Monitoring.Server.Connector, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Monitoring.Server.Connector.3.16.0\lib\netstandard1.5\Monitoring.Server.Connector.dll</HintPath>
+    <Reference Include="Monitoring.Server.Connector, Version=3.18.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Monitoring.Server.Connector.3.18.0\lib\netstandard1.5\Monitoring.Server.Connector.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
