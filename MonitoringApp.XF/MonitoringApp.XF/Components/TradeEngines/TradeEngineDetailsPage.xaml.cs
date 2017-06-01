@@ -202,11 +202,10 @@ namespace MonitoringApp.XF.Components.TradeEngines
         {
             stopTradingStratsPicker.Items.Clear();
 
-            tradingCrosses = ViewModel?.TradeEngine.Strats?.Where(s => s.Trading)?.Select(s => s.Cross.ToString()).OrderBy(c => c).ToList();
 
-            if (!tradingCrosses.IsNullOrEmpty())
+            if (!ViewModel.TradeEngine.TradingCrosses.IsNullOrEmpty())
             {
-                tradingCrosses.Insert(0, "ALL");
+                tradingCrosses = new List<string>((new string[1] { "ALL" }).Concat(ViewModel.TradeEngine.TradingCrosses));
 
                 foreach (var item in tradingCrosses)
                     stopTradingCrossesPicker.Items.Add(item);
@@ -317,11 +316,10 @@ namespace MonitoringApp.XF.Components.TradeEngines
         {
             startTradingCrossesPicker.Items.Clear();
 
-            nonTradingCrosses = ViewModel?.TradeEngine.Strats?.Where(s => !s.Trading)?.Select(s => s.Cross.ToString()).OrderBy(c => c).ToList();
 
-            if (!nonTradingCrosses.IsNullOrEmpty())
+            if (!ViewModel.TradeEngine.NonTradingCrosses.IsNullOrEmpty())
             {
-                nonTradingCrosses.Insert(0, "ALL");
+                nonTradingCrosses = new List<string>((new string[1] { "ALL" }).Concat(ViewModel.TradeEngine.NonTradingCrosses));
 
                 foreach (var item in nonTradingCrosses)
                     startTradingCrossesPicker.Items.Add(item);
@@ -337,11 +335,10 @@ namespace MonitoringApp.XF.Components.TradeEngines
             closePositionsPicker.Items.Clear();
             cancelOrdersPicker.Items.Clear();
 
-            allCrosses = ViewModel?.TradeEngine.Strats?.Select(s => s.Cross.ToString()).OrderBy(c => c).ToList();
 
-            if (!allCrosses.IsNullOrEmpty())
+            if (!ViewModel.TradeEngine.AllCrosses.IsNullOrEmpty())
             {
-                allCrosses.Insert(0, "ALL");
+                allCrosses = new List<string>((new string[1] { "ALL" }).Concat(ViewModel.TradeEngine.AllCrosses));
 
                 foreach (var item in allCrosses)
                 {

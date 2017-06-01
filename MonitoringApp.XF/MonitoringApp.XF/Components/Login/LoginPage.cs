@@ -39,7 +39,7 @@ namespace MonitoringApp.XF.Components.Login
                 //await Navigation.PushAsync(sender);
                 else
                 {
-                    if (Device.OS == TargetPlatform.iOS)
+                    if (Device.RuntimePlatform == Device.iOS)
                         await Navigation.PopToRootAsync();
 
                     Application.Current.MainPage = new MainPage();

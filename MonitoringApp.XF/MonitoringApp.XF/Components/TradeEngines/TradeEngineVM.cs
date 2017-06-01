@@ -26,27 +26,31 @@ namespace MonitoringApp.XF.Components.TradeEngines
 
         public ObservableCollection<TradeEngineConfigStrategyVM> Strats { get; set; }
 
+        public ObservableCollection<TradeEngineTradingStatusCrossVM> Crosses { get; set; }
+
+        public IEnumerable<string> AllCrosses => Crosses?.Select(s => s.Cross.ToString()).OrderBy(c => c);
+
+        public IEnumerable<string> TradingCrosses => Crosses?.Where(c => c.IsTrading)?.Select(s => s.Cross.ToString()).OrderBy(c => c);
+
         public string TradingCrossesStr
         {
             get
             {
-                var tradingCrosses = Strats?.Where(s => s.Trading)?.Select(s => s.Cross.ToString()).OrderBy(c => c);
-
-                if (!tradingCrosses.IsNullOrEmpty())
-                    return string.Join(", ", tradingCrosses);
+                if (!TradingCrosses.IsNullOrEmpty())
+                    return string.Join(", ", TradingCrosses);
                 else
                     return string.Empty;
             }
         }
 
+        public IEnumerable<string> NonTradingCrosses => Crosses?.Where(c => !c.IsTrading)?.Select(s => s.Cross.ToString()).OrderBy(c => c);
+
         public string NonTradingCrossesStr
         {
             get
             {
-                var nonTradingCrosses = Strats?.Where(s => !s.Trading)?.Select(s => s.Cross.ToString()).OrderBy(c => c);
-
-                if (!nonTradingCrosses.IsNullOrEmpty())
-                    return string.Join(", ", nonTradingCrosses);
+                if (!NonTradingCrosses.IsNullOrEmpty())
+                    return string.Join(", ", NonTradingCrosses);
                 else
                     return string.Empty;
             }
@@ -105,21 +109,6 @@ namespace MonitoringApp.XF.Components.TradeEngines
         }
     }
 
-    public static class TradeEngineVMExtensions
-    {
-        public static TradeEngineVM ToTradeEngineVM(this TradeEngineTradingStatus te)
-        {
-            if (te == null)
-                return null;
-
-            return new TradeEngineVM()
-            {
-                EngineName = te.EngineName,
-                Strats = te.Strats.ToTradeEngineConfigStrategyVMs(),
-            };
-        }
-    }
-
     public class TradeEngineConfigStrategyVM : BaseViewModel
     {
         private bool active;
@@ -132,20 +121,6 @@ namespace MonitoringApp.XF.Components.TradeEngines
                 {
                     active = value;
                     OnPropertyChanged(nameof(Active));
-                }
-            }
-        }
-
-        private Cross cross;
-        public Cross Cross
-        {
-            get { return cross; }
-            set
-            {
-                if (cross != value)
-                {
-                    cross = value;
-                    OnPropertyChanged(nameof(Cross));
                 }
             }
         }
@@ -193,6 +168,78 @@ namespace MonitoringApp.XF.Components.TradeEngines
         }
     }
 
+    public class TradeEngineTradingStatusCrossVM : BaseViewModel
+    {
+        private Cross cross;
+        public Cross Cross
+        {
+            get { return cross; }
+            set
+            {
+                if (cross != value)
+                {
+                    cross = value;
+                    OnPropertyChanged(nameof(Cross));
+                }
+            }
+        }
+
+        private bool isTrading;
+        public bool IsTrading
+        {
+            get { return isTrading; }
+            set
+            {
+                if (isTrading != value)
+                {
+                    isTrading = value;
+                    OnPropertyChanged(nameof(IsTrading));
+                }
+            }
+        }
+    }
+
+    public static class TradeEngineVMExtensions
+    {
+        private static TradeEngineTradingStatusCrossVM ToTradeEngineTradingStatusCrossVM(this TradeEngineTradingStatusCross teCrossStatus)
+        {
+            if (teCrossStatus == null)
+                return null;
+
+            return new TradeEngineTradingStatusCrossVM()
+            {
+                Cross = teCrossStatus.Cross,
+                IsTrading = teCrossStatus.IsTrading
+            };
+        }
+
+        public static ObservableCollection<TradeEngineTradingStatusCrossVM> ToTradeEngineTradingStatusCrossVMs(this IEnumerable<TradeEngineTradingStatusCross> teCrossStatuses)
+        {
+            if (teCrossStatuses.IsNullOrEmpty())
+                return new ObservableCollection<TradeEngineTradingStatusCrossVM>();
+
+            ObservableCollection<TradeEngineTradingStatusCrossVM> col = new ObservableCollection<TradeEngineTradingStatusCrossVM>();
+
+            foreach (var teCrossStatus in teCrossStatuses)
+                col.Add(teCrossStatus.ToTradeEngineTradingStatusCrossVM());
+
+            return col;
+        }
+
+        public static TradeEngineVM ToTradeEngineVM(this TradeEngineTradingStatus te)
+        {
+            if (te == null)
+                return null;
+
+            return new TradeEngineVM()
+            {
+                Crosses = te.Crosses.ToTradeEngineTradingStatusCrossVMs(),
+                EngineName = te.EngineName,
+                Strats = te.Strats.ToTradeEngineConfigStrategyVMs(),
+            };
+        }
+    }
+
     public static class TradeEngineConfigStrategyVMExtensions
     {
         private static TradeEngineConfigStrategyVM ToTradeEngineConfigStrategyVM(this TradeEngineConfigStrategy strat)
@@ -203,7 +250,6 @@ namespace MonitoringApp.XF.Components.TradeEngines
             return new TradeEngineConfigStrategyVM()
             {
                 Active = strat.Active,
-                Cross = strat.Cross,
                 Name = strat.Name,
                 Trading = strat.Trading,
                 Version = strat.Version

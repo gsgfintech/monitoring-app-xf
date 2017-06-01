@@ -29,7 +29,7 @@ namespace MonitoringApp.XF.Managers
         }
 
         private Dictionary<DateTime, List<Order>> ordersDict = new Dictionary<DateTime, List<Order>>();
-        private Dictionary<(Broker Broker, int PermanentId), Order> detailedOrders = new Dictionary<(Broker Broker, int PermanentId), Order>();
+        private Dictionary<(Broker Broker, long PermanentId), Order> detailedOrders = new Dictionary<(Broker Broker, long PermanentId), Order>();
 
         private OrderManager()
         {
@@ -67,7 +67,7 @@ namespace MonitoringApp.XF.Managers
             }
         }
 
-        public async Task<Order> GetOrderByPermanentId(Broker broker, int permanentId)
+        public async Task<Order> GetOrderByPermanentId(Broker broker, long permanentId)
         {
             try
             {

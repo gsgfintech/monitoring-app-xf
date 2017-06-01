@@ -26,12 +26,12 @@ namespace MonitoringApp.XF.Components.Orders
             }
         }
 
-        public async Task GetOrderByPermanentId(Broker broker, int permanentId)
+        public async Task GetOrderByPermanentId(Broker broker, long permanentId)
         {
             await LoadOrderByPermanentId(broker, permanentId);
         }
 
-        private async Task LoadOrderByPermanentId(Broker broker, int permanentId)
+        private async Task LoadOrderByPermanentId(Broker broker, long permanentId)
         {
             Order = (await OrderManager.Instance.GetOrderByPermanentId(broker, permanentId)).ToOrderViewModel();
 
